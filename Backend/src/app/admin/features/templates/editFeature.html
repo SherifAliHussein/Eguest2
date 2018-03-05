@@ -1,0 +1,154 @@
+<div class="modal-content">
+    <div class="modal-header bordered">
+        <h2 class="pmd-card-title-text">{{'UpdateFeatureLbl' | translate}}</h2>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" name="editFeatureForm">
+            <div>
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" ng-class="{'active':$index == 0}" ng-repeat="lang in editFeatureDlCtrl.language">
+                        <a href="javascript:void(0);" data-target="#{{lang.value}}-form" aria-controls="home" role="tab" data-toggle="tab">
+                            {{lang.value | translate}}
+                        </a>
+                    </li>
+                </ul>
+                <div class="pmd-card">
+                    <div class="pmd-card-body">
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            <div role="tablist" class="tab-pane" ng-class="{'active':$index == 0}" ng-repeat="lang in editFeatureDlCtrl.language" id="{{lang.value}}-form">
+                                <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed">
+                                    <label for="first-name"> {{ lang.value+'Name' | translate}} </label>
+                                    <input required type="text" class="mat-input form-control" name="featureNameDictionary{{lang.value+'Name'}}" ng-model="editFeatureDlCtrl.feature.featureNameDictionary[lang.key]" ng-minlength="3" ng-maxlength="40">
+                                    <div ng-messages="editFeatureForm.featureNameDictionary{{lang.value+'Name'}}.$error">
+                                        <div ng-show="editFeatureForm.featureNameDictionary{{lang.value+'Name'}}.$error.required && !editFeatureForm.featureNameDictionary{{lang.value+'Name'}}.$pristine">{{'requiredErr' | translate}}</div>
+                                        <div ng-show="(editFeatureForm.featureNameDictionary{{lang.value+'Name'}}.$error.minlength || editFeatureForm.featureNameDictionary{{lang.value+'Name'}}.$error.maxlength) && !editFeatureForm.featureNameDictionary{{lang.value+'Name'}}.$error.required">{{'NameLengthError' | translate}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed" >       
+                    <input id="logoImage" name="logoImage" style="display: none;" onchange="angular.element(this).scope().AddFeatureImage(this.files)" type="file" required>
+                    <button ng-click="editFeatureDlCtrl.LoadUploadLogo()" >{{'UploadBtn' | translate}}</button>
+                    <img ng-src="{{editFeatureDlCtrl.feature.imageURL}}" style="max-height: 200px;max-width: 200px;">
+                    <div ng-messages="editFeatureForm.logoImage.$error" >
+                        <div ng-if="editFeatureForm.logoImage.$error.required">{{'requiredErr' | translate}}</div>
+                    </div>
+                </div>
+
+                <div class="group-fields clearfix row">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="checkbox pmd-default-theme">
+                            <label class=" checkbox-pmd-ripple-effect">
+                                <input type="checkbox" ng-model="editFeatureDlCtrl.feature.hasDetails" ng-change="editFeatureDlCtrl.changeFeatureDetail()">
+                                <span>{{'hasDetailsLbl' | translate}}</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+
+        <div ng-show="editFeatureDlCtrl.feature.hasDetails">
+
+            <div class="pmd-card pmd-z-depth pmd-card-custom-view" ng-if="editFeatureDlCtrl.feature.featureDetails.length > 0">
+                <div class="table-responsive">
+                    <table class="table pmd-table table-hover">
+                        <thead>
+                            <tr>
+                                <th>{{'DescriptionLbl' | translate}}</th>
+                                <!-- <th>{{'IsFreeLbl' | translate}}</th> -->
+                                <th>{{'priceLbl' | translate}}</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="featureDetail in (editFeatureDlCtrl.feature.featureDetails   |filter: {isDeleted: false}) | limitTo : 10 : editFeatureDlCtrl.currentPage*10"
+                             >
+                                <td data-title="Name">{{featureDetail.descriptionDictionary[selectedLanguage]}}</td>
+                                <!-- <td data-title="Name" >{{featureDetail.isFree}}</td> -->
+                                <td data-title="Name">
+                                    <span ng-if="featureDetail.isFree">{{'freelbl' |translate}}</span>
+                                    <span ng-if="!featureDetail.isFree">{{featureDetail.price}}</span>
+                                </td>
+                                <td width="30%">
+                                    <i class="material-icons md-dark pmd-md cursorPointer font25" ng-click="editFeatureDlCtrl.edit(featureDetail)">mode_edit</i>
+                                    <i class="material-icons pmd-md deleteButton cursorPointer font25" ng-click="editFeatureDlCtrl.remove(featureDetail)">delete</i>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div style="text-align:center;" paging page="1" page-size="10" total="(editFeatureDlCtrl.feature.featureDetails |filter: {isDeleted: false}).length"
+                paging-action="editFeatureDlCtrl.changePage(page)" flex="nogrow" show-prev-next="true" show-first-last="true" hide-if-empty="true" disabled-class="hide">
+                  </div>
+            </div>
+            <button ng-show="!editFeatureDlCtrl.moreDetail" class="btn pmd-ripple-effect btn-primary" type="button" ng-click="editFeatureDlCtrl.enableMoreDetail()">{{'AddMoreDetailBtn' | translate}}</button>
+
+            <form class="form-horizontal" name="newFeatureDetailForm" ng-show="editFeatureDlCtrl.moreDetail">
+                <div>
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" ng-class="{'active':$index == 0}" ng-repeat="lang in editFeatureDlCtrl.language">
+                            <a href="javascript:void(0);" data-target="#{{lang.value}}-detail-form" aria-controls="home" role="tab" data-toggle="tab">
+                                {{lang.value | translate}}
+                            </a>
+                        </li>
+                        <!-- <li role="presentation">
+                            <a href="javascript:void(0);" data-target="#arabic-form" aria-controls="about" role="tab" data-toggle="tab">{{'arabic' | translate}}</a>
+                        </li> -->
+                    </ul>
+                    <div class="pmd-card">
+                        <div class="pmd-card-body">
+                            <!-- Tab panes -->
+                            <div class="tab-content">
+                                <div role="tablist" class="tab-pane" ng-class="{'active':$index == 0}" ng-repeat="lang in editFeatureDlCtrl.language" id="{{lang.value}}-detail-form">
+                                    <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed">
+                                        <label for="first-name"> {{ lang.value+'DescriptionLbl' | translate}} </label>
+                                        <input required type="text" class="mat-input form-control" name="featureDetailDescDictionary{{lang.value+'Name'}}" 
+                                        ng-model="editFeatureDlCtrl.featureDetailDescDictionary[lang.key]" ng-change="editFeatureDlCtrl.checkFeatureDetail()" ng-minlength="3" ng-maxlength="40">
+                                        <div ng-messages="newFeatureDetailForm.featureDetailDescDictionary{{lang.value+'Name'}}.$error">
+                                            <div ng-show="newFeatureDetailForm.featureDetailDescDictionary{{lang.value+'Name'}}.$error.required && !newFeatureDetailForm.featureDetailDescDictionary{{lang.value+'Name'}}.$pristine">{{'requiredErr' | translate}}</div>
+                                            <div ng-show="(newFeatureDetailForm.featureDetailDescDictionary{{lang.value+'Name'}}.$error.minlength || newFeatureDetailForm.featureDetailDescDictionary{{lang.value+'Name'}}.$error.maxlength) && !newFeatureDetailForm.featureDetailDescDictionary{{lang.value+'Name'}}.$error.required">{{'NameLengthError' | translate}}</div>
+                                        </div>
+                                        <div ng-show="editFeatureDlCtrl.featureDetailExist">{{'FeatureDetailExist' | translate}}</div>                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="group-fields clearfix row">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="checkbox pmd-default-theme">
+                                <label class=" checkbox-pmd-ripple-effect">
+                                    <input type="checkbox" ng-model="editFeatureDlCtrl.isFree">
+                                    <span>{{'IsFreeLbl' | translate}}</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed" ng-if="!editFeatureDlCtrl.isFree">
+                        <label for="first-name"> {{ 'priceLbl' | translate}} </label>
+                        <input required type="number" class="mat-input form-control" name="price" ng-model="editFeatureDlCtrl.price" ng-min="1">
+
+                    </div>
+                    <button ng-disabled="editFeatureDlCtrl.featureDetailExist || newFeatureDetailForm.$invalid || (!editFeatureDlCtrl.isFree && editFeatureDlCtrl.price <=0)" class="btn pmd-ripple-effect btn-primary" type="button" ng-click="editFeatureDlCtrl.AddFeatureDetail()">{{'AddMoreBtn' | translate}}</button>
+            </form>
+
+        </div>
+    </div>
+</div>
+<div class="pmd-modal-action text-right">
+    <button ng-disabled="editFeatureDlCtrl.featureDetailExist || editFeatureForm.$invalid 
+    || (editFeatureDlCtrl.moreDetail && editFeatureDlCtrl.feature.hasDetails && newFeatureCtrl.featureDetails.length <= 0)" class="btn pmd-ripple-effect btn-primary" type="button" ng-click="editFeatureDlCtrl.updateFeature()">{{'saveChangesBtn' | translate}}</button>
+    <button class="btn pmd-ripple-effect btn-default" type="button" ng-click="editFeatureDlCtrl.close()">{{'DiscardBtn' | translate}}</button>
+</div>
+</div>
+
+

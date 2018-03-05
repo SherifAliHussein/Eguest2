@@ -1,0 +1,81 @@
+<!-- <script type="text/javascript">
+    $(document).ready(function () {
+        $(".direct-expand").click(function(){
+            debugger;
+         //   $(".direct-child-table").slideToggle(300);
+            $(this).toggleClass( "child-table-collapse" );
+        });
+    });
+    </script> -->
+<div >    
+    <div ng-if="adminRequestCtrl.requests.results.length == 0">
+            <span>{{'NorequestsAvailable' | translate}}</span>
+    </div>
+    <div class="pmd-card pmd-z-depth pmd-card-custom-view" ng-if="adminRequestCtrl.requests.results.length > 0">
+        <div class="table-responsive pmd-card pmd-z-depth">
+            <table class="table table-mc-red pmd-table">
+                <thead>
+                    <tr>
+                        <th >{{'RoomLbl' | translate}}</th>
+                        <th >{{'Featurelbl' | translate}}</th>
+                        <th >{{'CreateTime' | translate}}</th>
+                        <th >{{'StatusLbl' | translate}}</th>
+                        <th></th>                        
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat-start="request in adminRequestCtrl.requests.results">
+                        <td data-title="Name" >{{request.roomName}}</td>
+                        <td data-title="Name" >{{request.featureNameDictionary[selectedLanguage]}}</td>
+                        <td data-title="Name" >{{request.createTime}}</td>
+                        <td data-title="Name" >{{request.status|translate}} <span ng-if="request.status!='Pending'"> {{request.modifier}} {{request.modifyTime}}</span> </td>
+                       
+                        <td ng-if="user.role === 'Supervisor' && request.status =='Pending'">
+                            <a ng-click="adminRequestCtrl.Approve(request.featureId,request.requestId)" class="cursorPointer">{{'ApproveBtn' | translate}}</a>
+                            <a ng-click="adminRequestCtrl.Reject(request.requestId)" class="cursorPointer">{{'RejectBtn' | translate}}</a>
+                        </td>
+                        <td class="pmd-table-row-action" ng-if="request.requestDetails.length >0">
+                            <span href="javascript:void(0);" ng-click="request.show=!request.show;adminRequestCtrl.showMore($event)" class="btn pmd-btn-fab pmd-btn-flat pmd-ripple-effect btn-default btn-sm child-table-expand direct-expand"><i class="material-icons md-dark pmd-sm"></i></span>
+                        </td>
+                    </tr>
+                    <tr ng-repeat-end class="child-table" ng-if="request.requestDetails.length >0" ng-show="request.show">
+                            <td colspan="12">
+                                <div class="direct-child-table" >
+                                    <table class="table pmd-table table-striped table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>{{'DescriptionLbl' | translate}}</th>
+                                                <th>{{'NumberLbl' | translate}}</th>
+                                                <th>{{'priceLbl' |translate}}</th>
+                                                <th>{{'totalpriceLbl'|translate}}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr ng-repeat="requestDetail in request.requestDetails">
+                                            <td>{{requestDetail.descriptionDictionary[selectedLanguage]}} </td>
+                                            <td>{{requestDetail.number}}</td>
+                                            <td>
+                                                <span ng-if="requestDetail.price <= 0">{{'freelbl' |translate}}</span>
+                                                <span ng-if="requestDetail.price > 0">{{requestDetail.price}}</span>
+                                            </td>
+                                            <td>
+                                                <span ng-if="requestDetail.price <= 0">{{'freelbl' |translate}}</span>
+                                                <span ng-if="requestDetail.price > 0">{{requestDetail.price * requestDetail.number}} </span>
+                                            </td>
+                                        </tr>
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div style="text-align:center;" paging page="1" page-size="10" total="adminRequestCtrl.requests.totalCount" paging-action="adminRequestCtrl.changePage( page)"
+        flex="nogrow" show-prev-next="true" show-first-last="true" hide-if-empty="true" disabled-class="hide">
+            </div>
+    </div> 
+    
+</div>					
+    
