@@ -219,6 +219,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\ECuestDB-TestingV1.2.mdf" />
+    <Content Include="App_Data\ECuestDB-TestingV1.2_log.ldf">
+      <DependentUpon>ECuestDB-TestingV1.2.mdf</DependentUpon>
+    </Content>
     <Content Include="scripts\ai.0.22.9-build00167.js" />
     <Content Include="scripts\ai.0.22.9-build00167.min.js" />
     <Content Include="Web.config">
@@ -298,9 +302,7 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Data\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\E-Guest.BLL\E-Guest.BLL.csproj">
       <Project>{2494abb0-509d-43e4-b614-ab2339485885}</Project>
