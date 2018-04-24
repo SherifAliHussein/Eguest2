@@ -12,8 +12,10 @@ namespace E_Guest.API.Models
 
         public bool IsDeleted { get; set; }
         public bool IsActive { get; set; }
-        public bool HasDetails { get; set; }
-        public List<FeatureDetailModel> FeatureDetails { get; set; }
+        //public bool HasDetails { get; set; }
+        //public List<FeatureDetailModel> FeatureDetails { get; set; }
+        public List<FeatureControlModel> FeatureControl { get; set; }
+
         public string ImageURL { get; internal set; }
         public bool IsImageChange { get; set; }
 

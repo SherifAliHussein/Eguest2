@@ -3,10 +3,10 @@
 
     angular
         .module('home')
-        .controller('homeCtrl', ['$rootScope', '$translate', '$scope', 'HomeResource', 'ResturantResource', 'appCONSTANTS', '$state', '_', 'authenticationService', 'authorizationService', '$localStorage', 'userRolesEnum', 'ToastService', 'CartIconService', 'totalCartService','$location', '$window' , '$timeout', homeCtrl])
+        .controller('homeCtrl', ['$rootScope', '$translate', '$scope', 'HomeResource', 'ResturantResource', 'appCONSTANTS', '$state', '_', 'authenticationService', 'authorizationService', '$localStorage', 'userRolesEnum', 'ToastService', 'CartIconService', 'totalCartService','$location', '$window' , '$timeout','FeedBackResource','$stateParams', '$filter', homeCtrl])
 
 
-    function homeCtrl($rootScope, $translate, $scope, HomeResource, ResturantResource, appCONSTANTS, $state, _, authenticationService, authorizationService, $localStorage, userRolesEnum, ToastService,CartIconService,  totalCartService,$location,$window ,$timeout) {
+    function homeCtrl($rootScope, $translate, $scope, HomeResource, ResturantResource, appCONSTANTS, $state, _, authenticationService, authorizationService, $localStorage, userRolesEnum, ToastService,CartIconService,  totalCartService,$location,$window ,$timeout,FeedBackResource,$stateParams,$filter) {
         // Event listener for state change.
         // if ($location.protocol() !== 'https') {
         //     $window.location.href = $location.absUrl().replace('http', 'https');
@@ -24,7 +24,6 @@
    
 
         var storedNames = JSON.parse(localStorage.getItem("checkOut"));
-        debugger
         vm.cart = storedNames;
         if (vm.cart != null) {
             for (var i = 0; i < vm.cart.length; i++) {
@@ -35,6 +34,7 @@
                 $scope.homeTotalNo = vm.total; 
             }  
         }
+        totalCartService.homeTotalNo =  vm.total;
         // $scope.$watch(function () { return Data.getFirstName(); }, function (newValue, oldValue) {
         //     if (newValue !== oldValue)
         //     {
@@ -232,7 +232,7 @@
             return authorizationService.isLoggedIn();
         }
         $scope.isRestaurantPage = function () {
-            var ff = $state.current.name!='Features';
+            var ff = $state.current.name!='Features' && $state.current.name!='featureDetail';
             return ff;
         }
         $scope.changeLanguage = function (language) {
@@ -250,8 +250,64 @@
             if($state.current.name == "Items")
                 $state.reload();
         }
+        $scope.rate = 0;
+        $scope.createBy = "";
+        $scope.comment = "";
+        $scope.feedbacks= [] ;
+        $scope.page = 1;
+        $scope.getAllComments = function(){
+            $scope.rate = 0;
+            $scope.createBy = "";
+            $scope.comment = "";
+            $scope.page = 1;               
+            ResturantResource.getResturantGlobalInfo({ restaurantId: $stateParams.restaurantId}).$promise.then(function (results) {
+                $scope.globalInfo = results
+            });
 
-        alert($scope.homeTotalNo)
+           
+            FeedBackResource.getAllFeedBack({ restaurantId: $stateParams.restaurantId,pagesize:4}).$promise.then(function (results) {
+                $scope.feedbacks = results;
+                
+                $scope.feedbacks.results.forEach(function(element) {
+                    element.createTime = element.createTime+"z"
+                    element.createTime = $filter('date')(new Date(element.createTime), "dd/MM/yyyy hh:mm a");
+                    
+                }, this);
+            },
+            function (data, status) {
+
+             });
+                
+        }
+        $scope.getMoreComments = function(){
+            $scope.page ++;
+            FeedBackResource.getAllFeedBack({ restaurantId: $stateParams.restaurantId,page:$scope.page,pagesize:4}).$promise.then(function (results) {
+                
+                results.results.forEach(function(element) {
+                    element.createTime = element.createTime+"z"
+                    element.createTime = $filter('date')(new Date(element.createTime), "dd/MM/yyyy hh:mm a");
+                    
+                }, this);
+                $scope.feedbacks.results = $scope.feedbacks.results.concat(results.results);
+                $scope.feedbacks.nextPageURL = results.nextPageURL;
+            },
+            function (data, status) {
+                // $scope.feedbacks.results = $scope.feedbacks.results.concat(results.results);
+                // $scope.feedbacks.nextPageURL = results.nextPageURL;
+                });
+            
+        }
+        $scope.applyComment = function(rate,createBy,comment)
+        {
+            var newComment = new FeedBackResource();
+            newComment.rate = rate;
+            newComment.createBy = createBy;
+            newComment.comment = comment;
+            newComment.restaurantId= $stateParams.restaurantId;
+            newComment.createTime = (new Date()).toISOString();
+            newComment.$createFeedBack();
+           
+        }
         
     }
 }

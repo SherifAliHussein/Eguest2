@@ -3,9 +3,9 @@
 
     angular
         .module('home')
-        .controller('ItemController', ['$compile','$scope', '$translate', '$stateParams', 'appCONSTANTS', 'categoryItemsTemplatePrepService', 'ResturantPrepService', 'totalCartService','CartIconService', ItemController])
+        .controller('ItemController', ['$compile','$scope', '$translate', '$stateParams', 'appCONSTANTS', 'categoryItemsTemplatePrepService', 'ResturantPrepService', 'totalCartService','CartIconService','ItemsResource', ItemController])
 
-    function ItemController($compile,$scope, $translate, $stateParams, appCONSTANTS, categoryItemsTemplatePrepService, ResturantPrepService, totalCartService,CartIconService) {
+    function ItemController($compile,$scope, $translate, $stateParams, appCONSTANTS, categoryItemsTemplatePrepService, ResturantPrepService, totalCartService,CartIconService,ItemsResource) {
  
         var vm = this;
         $scope.cartIcon = true;
@@ -15,41 +15,21 @@
         vm.catgoryTemplates = categoryItemsTemplatePrepService;
         $scope.$parent.globalInfo= ResturantPrepService;
         vm.selectedLanguage = $scope.selectedLanguage;
-        // $scope.$watch('$scope.selectedLanguage', function (newValue) {
-            
-        //   });
-        // var el = $compile("<flipbook itempagectrl='itemCtrl.catgoryTemplates.templates' itemdetails='itemCtrl.itemDetails' selected-Language='selectedLanguage'></flipbook>")( $scope );
-        // document.getElementById("ttt").innerHTML ='';
-        // document.getElementById("ttt").append(el[0])
-          $scope.$on('updateFlipBookDesign', function(event) {
-        //    if($scope.selectedLanguage == 'ar-eg'){
-        //     document.querySelector("#flipbook .page-wrapper").style.left = 0
-        //     document.querySelector("#flipbook .page-wrapper").style.right= "auto"
-        //    }else if($scope.selectedLanguage == 'en-us'){
-
-        //     document.querySelector("#flipbook .page-wrapper").style.left = "auto"
-        //     document.querySelector("#flipbook .page-wrapper").style.right= 0
-        //    }
-        // $("#flipbook").turn("destroy");
-        // var el = $compile("<flipbook itempagectrl='itemCtrl.catgoryTemplates.templates' itemdetails='itemCtrl.itemDetails' selected-Language='selectedLanguage'></flipbook>")( $scope );
-        // document.getElementById("ttt").innerHTML ='';
-        // document.getElementById("ttt").append(el[0])
-        });
+        
         vm.restaurantId = $stateParams.restaurantId;
         console.log($scope.selectedLanguage)
-        
+       /* 
      //   console.log(vm.catgoryTemplates);
        //  vm.itemDetails;
         // vm.viewItemDetails=function(item){
         //     console.log(item)
         // vm.itemDetails = categoryItemsTemplatePrepService.templates[0].itemModels[0];
-        // } 
+        // } */
        vm.currentItem=0; 
        vm.selectedSize = 10;
         vm.selectedSide = 10; 
         $scope.checkradioasd = -1;
         $scope.selectedCount=1;
-      //  $scope.homeTotalNo = '';
         $scope.cart = [];
         $scope.total = 0;
         $scope.item = {
@@ -114,15 +94,12 @@ if(vm.currentItem != product.itemID){
                           if (id === stordId && objsize ===stordSize) {
                             repeat = true;
                             $scope.cart[z].itemobj.count +=CheckOutLocalstorage[s].itemobj.count;
-                            // $scope.cart[z].itemobj.count += 1;
-                      //  $scope.cart.push(CheckOutLocalstorage[s]); 
+                           
                         
                         }
                     }
                     if (!repeat) {
-                       // product.count = 1;
                         $scope.item.itemobj = product;
-                        //$scope.cart.push($scope.item);
                         $scope.cart.push(CheckOutLocalstorage[s]); 
                     }
                     
@@ -168,13 +145,13 @@ if(vm.currentItem != product.itemID){
                 var index = $scope.item.sides.indexOf(side);
                 $scope.item.sides.splice(index, 1);
                 if ($scope.item.sides.length == 0) {
-                    //     $scope.displayAdd = false;
+                        /* $scope.displayAdd = false;*/
                 }
             }
             else {
                 $scope.item.sides.push(side);
                 if ($scope.item.sides.length > 0 && $scope.item.size != "") {
-                    //   $scope.displayAdd = true;
+                    /*  $scope.displayAdd = true;*/
                 }
             }
         };
@@ -184,10 +161,20 @@ if(vm.currentItem != product.itemID){
         };
         $scope.removeCounter = function () { 
             if($scope.selectedCount <= 1){
-return;
+                return;
             }
             $scope.selectedCount = $scope.selectedCount-1;  
         };
+
+        vm.likeItem = function(item){
+            item.like++;
+            ItemsResource.likeItem({itemId:item.itemID});
+        }
+        vm.dislikeItem = function(item){
+            item.dislike++;
+            ItemsResource.dislikeItem({itemId:item.itemID});
+           
+        }
     }
 
 }

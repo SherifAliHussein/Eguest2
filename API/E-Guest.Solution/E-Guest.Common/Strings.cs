@@ -19,6 +19,7 @@ namespace E_Guest.Common
         public const string DefaultLanguage = "en-US";
 
         public const int BackgroundId = 3;
+        public const int FeaturesBackgroundId = 1;
 
 
         public const long DefaultTemplateId = 1;

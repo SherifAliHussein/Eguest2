@@ -309,7 +309,23 @@
                                 resolve: {     
                                     allMenuPrepService: allMenuPrepService
                                 }
-                            })
+                            }).state('feedBacks', {
+                                url: '/feedback',
+                                templateUrl: './app/RestaurantAdmin/templates/feedbacks.html',
+                                controller: 'feedBackController',
+                                'controllerAs': 'feedBackCtrl',
+                                data: {
+                                    permissions: {
+                                        only: ['RestaurantAdmin'],
+                                       redirectTo: 'root'
+                                    },
+                                    displayName: 'Menu'
+                                },
+                                resolve: {
+                                    feedBacksPrepService: feedBacksPrepService
+                                }
+
+                                                         })
         });
 
                 menusPrepService.$inject = ['MenuResource']
@@ -415,6 +431,10 @@
                 WaitersLimitPrepService.$inject = ['WaitersLimitResource']
         function WaitersLimitPrepService(WaitersLimitResource) {
             return WaitersLimitResource.getWaitersLimit().$promise;
+        }
+        feedBacksPrepService.$inject = ['FeedBackResource']
+        function feedBacksPrepService(FeedBackResource) {
+            return FeedBackResource.getAllFeedBack().$promise;
         }
 }());
 (function() {
@@ -1412,268 +1432,56 @@
 
 	    angular
         .module('home')
-        .controller('CategoryTemplateController', ['$scope','$translate', '$stateParams', 'appCONSTANTS','$uibModal','allMenuPrepService','templatesPrepService','ToastService' ,'GetCategoriesNameResource','CategoryTemplateResource' ,  CategoryTemplateController])
+        .controller('feedBackController', ['$scope','$filter', 'appCONSTANTS','feedBacksPrepService','ToastService' , 'FeedBackResource',  feedBackController])
 
-    function CategoryTemplateController($scope,$translate,$stateParams, appCONSTANTS,$uibModal, allMenuPrepService, templatesPrepService, ToastService, GetCategoriesNameResource, CategoryTemplateResource){
-        var vm = this;
-        vm.menus = allMenuPrepService;
-        vm.templates = templatesPrepService;
-        vm.selectedTemplateId= 0;
-        vm.selectedMenu = vm.menus[0];
-        vm.selectedTemplates = [];
-        vm.page=1;
+    function feedBackController($scope,$filter, appCONSTANTS,feedBacksPrepService,ToastService ,FeedBackResource){
 
-                var totalItemsCount = 0;
-        vm.isCategoryTemplateReady = false;
-		$('.pmd-sidebar-nav>li>a').removeClass("active")	
-		$($('.pmd-sidebar-nav').children()[4].children[0]).addClass("active")
-        function loadCategory(){
-            if(vm.selectedMenu != null){
+		        var vm = this;
+        vm.feedBacks = feedBacksPrepService;
+        vm.feedBacks.results.forEach(function(element) {
+            element.createTime = element.createTime+"z"
+            element.createTime = $filter('date')(new Date(element.createTime), "dd/MM/yyyy hh:mm a");
 
-                            GetCategoriesNameResource.getAllCategoriesName({ MenuId: vm.selectedMenu.menuId })
-            .$promise.then(function(results) {
-                vm.categories = results;                
-                vm.selectedTemplates = [];
-                vm.page=1;
-                totalItemsCount = 0;
-                vm.selectedCategory = vm.categories[0];
-                vm.selectedTemplateId= 0;
-                vm.remainingItems = vm.selectedCategory.itemCount;
-                if(vm.selectedCategory.itemCount <= totalItemsCount){
-                    vm.isCategoryTemplateReady = true;
-                }
-			},
-            function(data, status) {
-				ToastService.show("right","bottom","fadeInUp",data.message,"error");
-            });
-            }
+                    }, this);
+
+		$('.pmd-sidebar-nav>li>a').removeClass("active")
+		$($('.pmd-sidebar-nav').children()[5].children[0]).addClass("active")
+        vm.currentPage = 1;
+        vm.changePage = function (page) {
+            vm.currentPage = page;
+            refreshFeedBack();
+		}        
+		function refreshFeedBack(){
+            FeedBackResource.getAllFeedBack({page:vm.currentPage}).$promise.then(function (results) {
+
+                                results.results.forEach(function(element) {
+                    element.createTime = element.createTime+"z"
+                    element.createTime = $filter('date')(new Date(element.createTime), "dd/MM/yyyy hh:mm a");
+
+                                    }, this);
+                vm.feedBacks = results;
+
+                            },
+            function (data, status) {
+
+             });
         }
-        loadCategory();
-        vm.changeMenu = function(){
-            loadCategory();
-        }
-
-        vm.changeCategory = function(){
-            vm.selectedTemplates = [];
-            vm.page=1;
-            totalItemsCount = 0;
-            vm.selectedTemplateId= 0;        
-            vm.remainingItems = vm.selectedCategory.itemCount;
-            vm.isCategoryTemplateReady = false;
-
-                    }
-
-
-        vm.selectTemplate = function(){
-            vm.templates.forEach(function(element) {
-                if(element.id == vm.selectedTemplateId){
-                    var temp = angular.copy(element);
-                    temp.page = vm.page;
-                    vm.selectedTemplates.push(temp);
-                    vm.selectedTemplateId = 0;
-                    vm.page++;
-                    totalItemsCount += temp.itemCount;
-                    if(vm.selectedCategory.itemCount <= totalItemsCount){
-                        vm.isCategoryTemplateReady = true;
-                    }
-                    vm.remainingItems = vm.selectedCategory.itemCount - totalItemsCount;
-                    vm.remainingItems  = vm.remainingItems < 0 ? 0 : vm.remainingItems ;
-                }
-            }, this);
-            console.log(vm.selectedTemplates)
-        }
-
-        vm.save = function(){
-            var newCategroyTemplate = new CategoryTemplateResource();
-            var categoryTemplates = []
-            vm.selectedTemplates.forEach(function(element) {
-                categoryTemplates.push({categoryId:vm.selectedCategory.categoryId,templateId:element.id,pageNumber:element.page})
-            }, this);
-            newCategroyTemplate.PageModels = categoryTemplates;
-            newCategroyTemplate.$create({ categoryId: vm.selectedCategory.categoryId }).then(
-                function(data, status) {
-					ToastService.show("right","bottom","fadeInUp",$translate.instant('TemplateUpdateSuccessfuly'),"success");
-                },
-                function(data, status) {
-					ToastService.show("right","bottom","fadeInUp",data.data.message,"error");
-                }
-            );
-        }
-
-
-    }
+	}
 
 	}
-());(function() {
-    angular
-      .module('home')
-      .factory('TemplateResource', ['$resource', 'appCONSTANTS', TemplateResource])
-      .factory('CategoryTemplateResource', ['$resource', 'appCONSTANTS', CategoryTemplateResource]);
-
-      function TemplateResource($resource, appCONSTANTS) {
-      return $resource(appCONSTANTS.API_URL + 'Templates/', {}, {
-        getTemplates: { method: 'GET', useToken: true,isArray: true }
-      })
-    }
-
-    function CategoryTemplateResource($resource, appCONSTANTS) {
-      return $resource(appCONSTANTS.API_URL + 'Categories/:categoryId/Template', {}, {
-        create: { method: 'POST', useToken: true }
-      })
-    }
-
-}());
-  (function () {
-    'use strict';
-	
-    angular
-        .module('home')
-        .controller('itemOrderController', ['$scope','$stateParams','$translate', 'appCONSTANTS','$uibModal' ,'allMenuPrepService','GetCategoriesNameResource','GetItemsResource','ToastService','ItemOrderResource','UpdateItemOrderResource',  itemOrderController])
-
-    function itemOrderController($scope,$stateParams ,$translate , appCONSTANTS,$uibModal ,allMenuPrepService,GetCategoriesNameResource,GetItemsResource,ToastService,ItemOrderResource,UpdateItemOrderResource){
-		var vm = this;
-
-	
-		
-        vm.menus = allMenuPrepService;
-		vm.selectedMenu = vm.menus[0];
-		vm.categoryItems = [];
-		vm.sortingLog = [];
-		vm.sortingLogId = [];
-		vm.isChanged = true;
-		$('.pmd-sidebar-nav>li>a').removeClass("active")	
-		$($('.pmd-sidebar-nav').children()[6].children[0]).addClass("active")
-        function loadCategory(){
-            if(vm.selectedMenu != null){
-                
-            GetCategoriesNameResource.getAllCategoriesName({ MenuId: vm.selectedMenu.menuId })
-            .$promise.then(function(results) {
-                vm.categories = results;                
-                vm.selectedTemplates = [];
-                vm.page=1; 
-                vm.selectedCategory = vm.categories[0];
-				vm.selectedTemplateId= 0;
-				
-				vm.changeCategory();
-              
-			},
-            function(data, status) {
-				ToastService.show("right","bottom","fadeInUp",data.message,"error");
-            });
-            }
-        }
-        loadCategory();
-        vm.changeMenu = function(){
-            loadCategory();
-        }
-
-        vm.changeCategory = function(){ 
-			vm.page=1;     
-			vm.isChanged = true;
-			ItemOrderResource.getAllItemOrder({ categoryId: vm.selectedCategory.categoryId})
-            .$promise.then(function(results) {
-				vm.categoryItems = results.templates; 
-				console.log(vm.categoryItems);               
-                vm.selectedTemplates = [];
-                vm.page=1; 
-                vm.selectedTemplateId= 0;
-				vm.isChanged = false;  
-				asd()
-			},
-            function(data, status) {
-				ToastService.show("right","bottom","fadeInUp",data.message,"error");
-            });
-            
-        }		
-		
-		vm.sortableOptions = {
-			placeholder: "app",
-			connectWith: ".apps-container"
-		  };
-		  
-
-		  vm.Save = function(){
-			vm.isChanged = true;			
-			  console.log(vm.categoryItems);
-			  var itemOrder = [];
-			  var count = 1;
-			  vm.categoryItems.forEach(function(element) {
-				  element.itemModels.forEach(function(item) {
-					itemOrder.push({itemId: item.itemID,orderNumber:count});
-					count++;
-				  }, this);
-			  }, this);
-			  var itemOrderResource = new UpdateItemOrderResource();
-			  itemOrderResource.itemNames = itemOrder;
-			  itemOrderResource.$updateOrder().then(
-                function(data, status) {
-					ToastService.show("right","bottom","fadeInUp",$translate.instant('OrderItemUpdateSuccess'),"success");
-					 vm.isChanged = false;                     
-					 
-                },
-                function(data, status) {
-                    vm.isChanged = false;                     
-					ToastService.show("right","bottom","fadeInUp",data.data.message,"error");
-                }
-            );
-		  }
-
-		  vm.error = false;
-		  function asd(){
-			vm.categoryItems.forEach(function(element) {
-				$scope.$watch(function () { return element.itemModels.length  },function(newVal,oldVal){
-					vm.error = false;
-					vm.categoryItems.forEach(function(element) {
-						if(element.itemModels.length > element.itemCount){
-							vm.error =true;
-							return false;
-						}
-						else
-						{
-							if(!vm.error)
-							vm.error = false;		
-						}
-					}, this);
-				 })
-			
-			}, this);
-		  }
-		  vm.isValid = function(){
-			vm.categoryItems.forEach(function(element) {
-				if(element.itemModels.length > element.itemCount){
-					vm.error =true;
-					return false;
-				}
-				else
-				{
-					vm.error = false;		
-				}
-			}, this);
-			vm.error = false;
-			return false;
-		  }
-	}
-	
-}
-    ());
+());
 (function() {
     angular
       .module('home')
-      .factory('ItemOrderResource', ['$resource', 'appCONSTANTS', ItemOrderResource])
-      .factory('UpdateItemOrderResource', ['$resource', 'appCONSTANTS', UpdateItemOrderResource])  
+      .factory('FeedBackResource', ['$resource', 'appCONSTANTS', FeedBackResource])
 
-      function ItemOrderResource($resource, appCONSTANTS) {  
-              return $resource(appCONSTANTS.API_URL + 'Categories/:categoryId/Items/Templates', {}, { 
-                getAllItemOrder: { method: 'GET', useToken: true }
-        })
-    }
+    function FeedBackResource($resource, appCONSTANTS) {
+      return $resource(appCONSTANTS.API_URL + 'FeedBacks/', {}, {
+        getAllFeedBack: { method: 'GET', useToken: true }
+      })
+  }
 
-    function UpdateItemOrderResource($resource, appCONSTANTS) {  
-        return $resource(appCONSTANTS.API_URL + 'Items/Order', {}, { 
-          updateOrder: { method: 'PUT', useToken: true,isArray: true }
-  })
-}
-   
+
 }());
   (function () {
     'use strict';
@@ -2304,6 +2112,158 @@
 	}	
 }());
 (function () {
+    'use strict';
+	
+    angular
+        .module('home')
+        .controller('itemOrderController', ['$scope','$stateParams','$translate', 'appCONSTANTS','$uibModal' ,'allMenuPrepService','GetCategoriesNameResource','GetItemsResource','ToastService','ItemOrderResource','UpdateItemOrderResource',  itemOrderController])
+
+    function itemOrderController($scope,$stateParams ,$translate , appCONSTANTS,$uibModal ,allMenuPrepService,GetCategoriesNameResource,GetItemsResource,ToastService,ItemOrderResource,UpdateItemOrderResource){
+		var vm = this;
+
+	
+		
+        vm.menus = allMenuPrepService;
+		vm.selectedMenu = vm.menus[0];
+		vm.categoryItems = [];
+		vm.sortingLog = [];
+		vm.sortingLogId = [];
+		vm.isChanged = true;
+		$('.pmd-sidebar-nav>li>a').removeClass("active")	
+		$($('.pmd-sidebar-nav').children()[6].children[0]).addClass("active")
+        function loadCategory(){
+            if(vm.selectedMenu != null){
+                
+            GetCategoriesNameResource.getAllCategoriesName({ MenuId: vm.selectedMenu.menuId })
+            .$promise.then(function(results) {
+                vm.categories = results;                
+                vm.selectedTemplates = [];
+                vm.page=1; 
+                vm.selectedCategory = vm.categories[0];
+				vm.selectedTemplateId= 0;
+				
+				vm.changeCategory();
+              
+			},
+            function(data, status) {
+				ToastService.show("right","bottom","fadeInUp",data.message,"error");
+            });
+            }
+        }
+        loadCategory();
+        vm.changeMenu = function(){
+            loadCategory();
+        }
+
+        vm.changeCategory = function(){ 
+			vm.page=1;     
+			vm.isChanged = true;
+			ItemOrderResource.getAllItemOrder({ categoryId: vm.selectedCategory.categoryId})
+            .$promise.then(function(results) {
+				vm.categoryItems = results.templates; 
+				console.log(vm.categoryItems);               
+                vm.selectedTemplates = [];
+                vm.page=1; 
+                vm.selectedTemplateId= 0;
+				vm.isChanged = false;  
+				asd()
+			},
+            function(data, status) {
+				ToastService.show("right","bottom","fadeInUp",data.message,"error");
+            });
+            
+        }		
+		
+		vm.sortableOptions = {
+			placeholder: "app",
+			connectWith: ".apps-container"
+		  };
+		  
+
+		  vm.Save = function(){
+			vm.isChanged = true;			
+			  console.log(vm.categoryItems);
+			  var itemOrder = [];
+			  var count = 1;
+			  vm.categoryItems.forEach(function(element) {
+				  element.itemModels.forEach(function(item) {
+					itemOrder.push({itemId: item.itemID,orderNumber:count});
+					count++;
+				  }, this);
+			  }, this);
+			  var itemOrderResource = new UpdateItemOrderResource();
+			  itemOrderResource.itemNames = itemOrder;
+			  itemOrderResource.$updateOrder().then(
+                function(data, status) {
+					ToastService.show("right","bottom","fadeInUp",$translate.instant('OrderItemUpdateSuccess'),"success");
+					 vm.isChanged = false;                     
+					 
+                },
+                function(data, status) {
+                    vm.isChanged = false;                     
+					ToastService.show("right","bottom","fadeInUp",data.data.message,"error");
+                }
+            );
+		  }
+
+		  vm.error = false;
+		  function asd(){
+			vm.categoryItems.forEach(function(element) {
+				$scope.$watch(function () { return element.itemModels.length  },function(newVal,oldVal){
+					vm.error = false;
+					vm.categoryItems.forEach(function(element) {
+						if(element.itemModels.length > element.itemCount){
+							vm.error =true;
+							return false;
+						}
+						else
+						{
+							if(!vm.error)
+							vm.error = false;		
+						}
+					}, this);
+				 })
+			
+			}, this);
+		  }
+		  vm.isValid = function(){
+			vm.categoryItems.forEach(function(element) {
+				if(element.itemModels.length > element.itemCount){
+					vm.error =true;
+					return false;
+				}
+				else
+				{
+					vm.error = false;		
+				}
+			}, this);
+			vm.error = false;
+			return false;
+		  }
+	}
+	
+}
+    ());
+(function() {
+    angular
+      .module('home')
+      .factory('ItemOrderResource', ['$resource', 'appCONSTANTS', ItemOrderResource])
+      .factory('UpdateItemOrderResource', ['$resource', 'appCONSTANTS', UpdateItemOrderResource])  
+
+      function ItemOrderResource($resource, appCONSTANTS) {  
+              return $resource(appCONSTANTS.API_URL + 'Categories/:categoryId/Items/Templates', {}, { 
+                getAllItemOrder: { method: 'GET', useToken: true }
+        })
+    }
+
+    function UpdateItemOrderResource($resource, appCONSTANTS) {  
+        return $resource(appCONSTANTS.API_URL + 'Items/Order', {}, { 
+          updateOrder: { method: 'PUT', useToken: true,isArray: true }
+  })
+}
+   
+}());
+  (function () {
     'use strict';
 	
     angular
@@ -3256,13 +3216,140 @@
 
 	    angular
         .module('home')
-        .controller('editFeatureController', ['$scope','$state','$http','$translate','appCONSTANTS', 'FeatureResource','ToastService','featurePrepService',  editFeatureController])
+        .controller('CategoryTemplateController', ['$scope','$translate', '$stateParams', 'appCONSTANTS','$uibModal','allMenuPrepService','templatesPrepService','ToastService' ,'GetCategoriesNameResource','CategoryTemplateResource' ,  CategoryTemplateController])
 
-	function editFeatureController($scope, $state ,$http, $translate,appCONSTANTS, FeatureResource,ToastService, featurePrepService,callBackFunction){
+    function CategoryTemplateController($scope,$translate,$stateParams, appCONSTANTS,$uibModal, allMenuPrepService, templatesPrepService, ToastService, GetCategoriesNameResource, CategoryTemplateResource){
+        var vm = this;
+        vm.menus = allMenuPrepService;
+        vm.templates = templatesPrepService;
+        vm.selectedTemplateId= 0;
+        vm.selectedMenu = vm.menus[0];
+        vm.selectedTemplates = [];
+        vm.page=1;
+
+                var totalItemsCount = 0;
+        vm.isCategoryTemplateReady = false;
+		$('.pmd-sidebar-nav>li>a').removeClass("active")	
+		$($('.pmd-sidebar-nav').children()[4].children[0]).addClass("active")
+        function loadCategory(){
+            if(vm.selectedMenu != null){
+
+                            GetCategoriesNameResource.getAllCategoriesName({ MenuId: vm.selectedMenu.menuId })
+            .$promise.then(function(results) {
+                vm.categories = results;                
+                vm.selectedTemplates = [];
+                vm.page=1;
+                totalItemsCount = 0;
+                vm.selectedCategory = vm.categories[0];
+                vm.selectedTemplateId= 0;
+                vm.remainingItems = vm.selectedCategory.itemCount;
+                if(vm.selectedCategory.itemCount <= totalItemsCount){
+                    vm.isCategoryTemplateReady = true;
+                }
+			},
+            function(data, status) {
+				ToastService.show("right","bottom","fadeInUp",data.message,"error");
+            });
+            }
+        }
+        loadCategory();
+        vm.changeMenu = function(){
+            loadCategory();
+        }
+
+        vm.changeCategory = function(){
+            vm.selectedTemplates = [];
+            vm.page=1;
+            totalItemsCount = 0;
+            vm.selectedTemplateId= 0;        
+            vm.remainingItems = vm.selectedCategory.itemCount;
+            vm.isCategoryTemplateReady = false;
+
+                    }
+
+
+        vm.selectTemplate = function(){
+            vm.templates.forEach(function(element) {
+                if(element.id == vm.selectedTemplateId){
+                    var temp = angular.copy(element);
+                    temp.page = vm.page;
+                    vm.selectedTemplates.push(temp);
+                    vm.selectedTemplateId = 0;
+                    vm.page++;
+                    totalItemsCount += temp.itemCount;
+                    if(vm.selectedCategory.itemCount <= totalItemsCount){
+                        vm.isCategoryTemplateReady = true;
+                    }
+                    vm.remainingItems = vm.selectedCategory.itemCount - totalItemsCount;
+                    vm.remainingItems  = vm.remainingItems < 0 ? 0 : vm.remainingItems ;
+                }
+            }, this);
+            console.log(vm.selectedTemplates)
+        }
+
+        vm.save = function(){
+            var newCategroyTemplate = new CategoryTemplateResource();
+            var categoryTemplates = []
+            vm.selectedTemplates.forEach(function(element) {
+                categoryTemplates.push({categoryId:vm.selectedCategory.categoryId,templateId:element.id,pageNumber:element.page})
+            }, this);
+            newCategroyTemplate.PageModels = categoryTemplates;
+            newCategroyTemplate.$create({ categoryId: vm.selectedCategory.categoryId }).then(
+                function(data, status) {
+					ToastService.show("right","bottom","fadeInUp",$translate.instant('TemplateUpdateSuccessfuly'),"success");
+                },
+                function(data, status) {
+					ToastService.show("right","bottom","fadeInUp",data.data.message,"error");
+                }
+            );
+        }
+
+
+    }
+
+	}
+());(function() {
+    angular
+      .module('home')
+      .factory('TemplateResource', ['$resource', 'appCONSTANTS', TemplateResource])
+      .factory('CategoryTemplateResource', ['$resource', 'appCONSTANTS', CategoryTemplateResource]);
+
+      function TemplateResource($resource, appCONSTANTS) {
+      return $resource(appCONSTANTS.API_URL + 'Templates/', {}, {
+        getTemplates: { method: 'GET', useToken: true,isArray: true }
+      })
+    }
+
+    function CategoryTemplateResource($resource, appCONSTANTS) {
+      return $resource(appCONSTANTS.API_URL + 'Categories/:categoryId/Template', {}, {
+        create: { method: 'POST', useToken: true }
+      })
+    }
+
+}());
+  (function () {
+    'use strict';
+
+	    angular
+        .module('home')
+        .controller('editFeatureController', ['$scope','$state','$http','$translate','appCONSTANTS', 'controlEnum', 'FeatureResource','ToastService','featurePrepService',  editFeatureController])
+
+	function editFeatureController($scope, $state ,$http, $translate,appCONSTANTS, controlEnum, FeatureResource,ToastService, featurePrepService){
 		var vm = this;
 		vm.language = appCONSTANTS.supportedLanguage;
 
-				vm.feature = featurePrepService;
+		        vm.feature = featurePrepService;
+        vm.controls= controlEnum;
+        vm.SelectedControlId=[];
+        vm.SelectedControl = [];
+        vm.feature.featureControl.forEach(function(element) {
+			var kk = vm.controls.filter(function(item){
+				return (item.id ===  element.control);
+              })[0];
+
+              			vm.SelectedControlId.push(element.control)
+			vm.SelectedControl.push(element.control)
+        }, this);
 		vm.moreDetail = false;
 		vm.editmode = false;		
 		vm.enableMoreDetail = function(){
@@ -3331,17 +3418,29 @@
 		}
         vm.remove = function(featureDetail){
 			featureDetail.isDeleted = true;
+        }
+
+                vm.controlChange = function(){
+			vm.SelectedControl = []
+			for(var i=0;i<vm.SelectedControlId.length;i++){
+				var control = vm.controls.filter(function(item){
+					return (item.id ===  vm.SelectedControlId[i]);
+				})[0]
+				vm.SelectedControl.push(control.id)  
+			}
 		}
 		vm.updateFeature = function(){
             var updateFeature = new FeatureResource();
             updateFeature.featureNameDictionary = vm.feature.featureNameDictionary;
-            updateFeature.hasDetails = vm.feature.hasDetails;
+           var count = 1;
+           updateFeature.featureControl =[]
+           vm.SelectedControl.forEach(function(element) {
+            updateFeature.featureControl.push({control:element,order:count})
+               count++;
+           }, this);
 			updateFeature.featureId = vm.feature.featureId;
 			updateFeature.isImageChange = isImageChange;
 			updateFeature.type = "0";
-			if(vm.feature.hasDetails){
-                updateFeature.featureDetails = vm.feature.featureDetails
-			}
 			var model = new FormData();
 			model.append('data', JSON.stringify(updateFeature));
 			model.append('file', featureImage);
@@ -3542,13 +3641,14 @@
 
 	    angular
         .module('home')
-        .controller('featureController', ['$scope','$stateParams','$translate', 'appCONSTANTS','$uibModal', 'FeatureResource','ActivateFeatureResource','DeactivateFeatureResource','featuresPrepService','featureAsRestaurantPrepService','ToastService',  featureController])
+        .controller('featureController', ['$scope','$stateParams','$translate', 'appCONSTANTS', 'controlEnum','$uibModal', 'FeatureResource','ActivateFeatureResource','DeactivateFeatureResource','featuresPrepService','featureAsRestaurantPrepService','ToastService',  featureController])
 
-    function featureController($scope,$stateParams ,$translate , appCONSTANTS,$uibModal, FeatureResource,ActivateFeatureResource,DeactivateFeatureResource,featuresPrepService,featureAsRestaurantPrepService,ToastService){
+    function featureController($scope,$stateParams ,$translate , appCONSTANTS, controlEnum,$uibModal, FeatureResource,ActivateFeatureResource,DeactivateFeatureResource,featuresPrepService,featureAsRestaurantPrepService,ToastService){
 
         var vm = this;
         vm.features = featuresPrepService;
 		vm.Now = $scope.getCurrentTime();
+		vm.control = controlEnum;
 		vm.featureAsRestaurant = featureAsRestaurantPrepService;
 		console.log(featureAsRestaurantPrepService)
 		$('.pmd-sidebar-nav>li>a').removeClass("active")
@@ -3621,13 +3721,15 @@
     angular
       .module('home')
       .factory('FeatureResource', ['$resource', 'appCONSTANTS', FeatureResource])
+      .factory('ControlResource', ['$resource', 'appCONSTANTS', ControlResource])
       .factory('ActivateFeatureResource', ['$resource', 'appCONSTANTS', ActivateFeatureResource])
       .factory('DeactivateFeatureResource', ['$resource', 'appCONSTANTS', DeactivateFeatureResource]);
 
       function FeatureResource($resource, appCONSTANTS) {
       return $resource(appCONSTANTS.API_URL + 'Features/:featureId', {}, {
         getAllFeatures: { method: 'GET', useToken: true },
-        getAllActivatedFeatures: {url: appCONSTANTS.API_URL + 'Features/Activated', method: 'GET', useToken: true },
+        getAllActivatedFeatures: {url: appCONSTANTS.API_URL + 'Features/Activated', method: 'GET', useToken: true },        
+        getAllFeaturesName: {url:appCONSTANTS.API_URL + 'Features/Name', method: 'GET', useToken: true,isArray:true },
         checkFeatureAsRestaurant: {url: appCONSTANTS.API_URL + 'Features/Restaurant', method: 'GET', useToken: true },
         getFeature: { method: 'GET', useToken: true },
         create: { method: 'POST', useToken: true },
@@ -3635,6 +3737,12 @@
         update: { method: 'PUT', useToken: true }
       })
     }
+
+    function ControlResource($resource, appCONSTANTS) {
+      return $resource(appCONSTANTS.API_URL + 'Features/Control', {}, {
+        GetAllControls: { method: 'GET', useToken: true, isArray:true}
+      })
+  }
 
     function ActivateFeatureResource($resource, appCONSTANTS) {
         return $resource(appCONSTANTS.API_URL + 'Features/:featureId/Activate', {}, {
@@ -3683,7 +3791,7 @@
                             only: ['admin'],
                            redirectTo: 'root'
                         }
-                    }
+                    },
 
                                  })
                 .state('editFeature', {
@@ -3698,7 +3806,7 @@
                           }
                       },
                       resolve: {
-                        featurePrepService: featurePrepService
+                        featurePrepService: featurePrepService,
                       }
                   })               
                   .state('newFeatureRestaurant', {
@@ -3756,19 +3864,24 @@
         function restaurantsNamePrepService(RestaurantResource) {
             return RestaurantResource.getAllRestaurantsName().$promise;
         }
+
+        controlsPrepService.$inject = ['ControlResource']
+        function controlsPrepService(ControlResource) {
+            return ControlResource.GetAllControls().$promise;
+        }
 }());
 (function () {
     'use strict';
 
 	    angular
         .module('home')
-        .controller('newFeatureController', ['$scope','$state','appCONSTANTS','$http','$translate' , 'FeatureResource','ToastService','$rootScope',  newFeatureController])
+        .controller('newFeatureController', ['$scope','$state','appCONSTANTS', 'controlEnum','$http','$translate' , 'FeatureResource','ToastService',  newFeatureController])
 
-	function newFeatureController($scope, $state , appCONSTANTS,$http, $translate , FeatureResource,ToastService,$rootScope){
+	function newFeatureController($scope, $state , appCONSTANTS,controlEnum,$http, $translate , FeatureResource,ToastService){
 		var vm = this;
         vm.language = appCONSTANTS.supportedLanguage;
-
-        		vm.close = function(){
+        vm.controls= controlEnum;
+		vm.close = function(){
             $state.go('features');            
 		}
         vm.isChanged = false;
@@ -3777,6 +3890,7 @@
         vm.featureDetails = [] ;
         vm.featureDetailExist =false;
         vm.currentPage = 0;
+        vm.SelectedControl = []
         vm.changePage = function(page){
             vm.currentPage = page-1;
         }
@@ -3794,7 +3908,7 @@
             if(!isFound)
             vm.featureDetailExist =false;            
         }
-        vm.AddFeatureDetail = function(){
+        vm.AddFeatureDetail = function(){   
             if(vm.editmode){
                 vm.featureDetails[vm.editIndex].descriptionDictionary=vm.featureDetailDescDictionary;
                 vm.featureDetails[vm.editIndex].price = vm.isFree?0:vm.price;
@@ -3831,12 +3945,14 @@
 			vm.isChanged = true;
             var newFeature = new FeatureResource();
             newFeature.featureNameDictionary = vm.featureNameDictionary;
-            newFeature.hasDetails = vm.hasDetails;
+            var count = 1;
+            newFeature.featureControl =[]
+            vm.SelectedControl.forEach(function(element) {
+                newFeature.featureControl.push({control:element.id,order:count})
+                count++;
+            }, this);
             newFeature.type = "0";
-            if(vm.hasDetails){
-                newFeature.featureDetails = vm.featureDetails
 
-            }
 
             var model = new FormData();
 			model.append('data', JSON.stringify(newFeature));
@@ -4005,6 +4121,195 @@
 
         	}	
 }());
+(function () {
+    'use strict';
+	
+    angular
+        .module('home')
+        .controller('featuresBackgroundController', ['$scope','$stateParams','$translate', 'appCONSTANTS','$uibModal','FeaturesBackgroundResource','backgroundsPrepService','ToastService',  featuresBackgroundController])
+
+    function featuresBackgroundController($scope,$stateParams ,$translate , appCONSTANTS,$uibModal,FeaturesBackgroundResource,backgroundsPrepService,ToastService){
+
+        var vm = this;
+		vm.Backgrounds = backgroundsPrepService;
+		console.log(vm.Backgrounds);
+		vm.Now = $scope.getCurrentTime();
+		$('.pmd-sidebar-nav>li>a').removeClass("active")	
+		$($('.pmd-sidebar-nav').children()[6].children[0]).addClass("active")
+		
+		function refreshBackgrounds(){
+			var k = FeaturesBackgroundResource.getAllBackgrounds({page:vm.currentPage }).$promise.then(function(results) {
+				vm.Backgrounds = results
+				console.log(vm.Backgrounds);
+			},
+            function(data, status) {
+				ToastService.show("right","bottom","fadeInUp",data.message,"error");
+            });
+		}
+		vm.currentPage = 1;
+        vm.changePage = function (page) {
+            vm.currentPage = page;
+            refreshBackgrounds();
+		}
+		vm.openbackgroundDialog = function(){		
+			 
+				var modalContent = $uibModal.open({
+					templateUrl: './app/admin/featuresbackground/templates/newBackground.html',
+					controller: 'featuresbackgroundDialogController',
+					controllerAs: 'backgroundCtrl',
+					resolve:{ 
+						callBackFunction:function(){return refreshBackgrounds;}
+					}
+					
+				});
+		 
+		}
+		
+		vm.Activate = function(background){
+			FeaturesBackgroundResource.Activate({backgroundId:background.featuresBackgroundId})
+			.$promise.then(function(result){
+				background.isActive = true;
+				refreshBackgrounds();
+			},
+			function(data, status) {
+				ToastService.show("right","bottom","fadeInUp",data.data.message,"error");
+			})
+		}
+
+		
+	}
+	
+}
+    ());
+(function() {
+    angular
+      .module('home')
+      .factory('FeaturesBackgroundResource', ['$resource', 'appCONSTANTS', FeaturesBackgroundResource])
+
+    function FeaturesBackgroundResource($resource, appCONSTANTS) {  
+        return $resource(appCONSTANTS.API_URL + 'FeatureBackgrounds/', {}, { 
+            getAllBackgrounds: { method: 'GET', useToken: true },
+            Activate: {url: appCONSTANTS.API_URL + 'FeatureBackgrounds/:backgroundId/Activate/', method: 'GET', useToken: true}
+            
+        })
+    }
+  
+
+}());
+  (function() {
+    'use strict';
+
+    angular
+        .module('home')
+        .config(function($stateProvider, $urlRouterProvider) {
+
+            $stateProvider
+            .state('featuresBackgrounds', {
+                url: '/features/Background',
+                templateUrl: './app/admin/featuresbackground/templates/background.html',
+                controller: 'featuresBackgroundController',
+                'controllerAs': 'backgroundCtrl',
+                data: {
+                    permissions: {
+                        only: ['RestaurantAdmin'],
+                        redirectTo: 'root'
+                    },
+                    displayName: 'Backgrounds'
+                },
+                resolve: {
+                    backgroundsPrepService: backgroundsPrepService
+                }
+            })
+        });
+
+                backgroundsPrepService.$inject = ['FeaturesBackgroundResource']
+        function backgroundsPrepService(FeaturesBackgroundResource) {
+            return FeaturesBackgroundResource.getAllBackgrounds().$promise; 
+        }
+}());
+(function () {
+    'use strict';
+	
+    angular
+        .module('home')
+        .controller('featuresbackgroundDialogController', ['$scope','$state','$uibModalInstance','$http','$translate','appCONSTANTS' , 'BackgroundResource','ToastService','callBackFunction','$rootScope',  featuresbackgroundDialogController])
+
+	function featuresbackgroundDialogController($scope, $state , $uibModalInstance,$http, $translate,appCONSTANTS , BackgroundResource,ToastService,callBackFunction,$rootScope){
+		var vm = this;
+		vm.menuName = "";
+		vm.close = function(){
+			$uibModalInstance.dismiss('cancel');
+		}
+		
+		vm.AddNewbackground = function(){
+            var newbackground = new Object();
+            
+
+			var model = new FormData();
+			model.append('data', JSON.stringify(newbackground));
+			model.append('file', backgroundImage);
+			$http({
+				method: 'POST',
+				url: appCONSTANTS.API_URL + 'FeatureBackgrounds/',
+				useToken: true,
+				headers: { 'Content-Type': undefined },
+				data: model
+			}).then(
+				function(data, status) {
+					ToastService.show("right","bottom","fadeInUp",$translate.instant('backgroundAddSuccess'),"success"); 
+					 $uibModalInstance.dismiss('cancel');
+					 callBackFunction();
+				},
+				function(data, status) {
+					ToastService.show("right","bottom","fadeInUp",data.data.message,"error");
+				}
+            );
+        }
+        
+        vm.LoadUploadImage = function() {
+			$("#backgroundImage").click();
+		}
+		var backgroundImage; 
+		$scope.AddbackgroundImage = function(element) {
+			var imageFile = element[0];
+
+			var allowedImageTypes = ['image/jpg', 'image/png', 'image/jpeg']
+
+			if (imageFile && imageFile.size >= 0 && ((imageFile.size / (1024 * 1000)) < 2)) {
+
+				if (allowedImageTypes.indexOf(imageFile.type) !== -1) {
+					$scope.newbackgroundForm.$dirty=true;
+					$scope.$apply(function() {
+						
+						backgroundImage= imageFile;
+						var reader = new FileReader();
+
+						reader.onloadend = function() {
+							vm.backgroundImage= reader.result;
+							
+							$scope.$apply();
+						};
+						if (imageFile) {
+							reader.readAsDataURL(imageFile);
+						}
+					})
+				} else {
+					$("#logoImage").val('');
+					ToastService.show("right","bottom","fadeInUp",$translate.instant('imageTypeError'),"error");
+				}
+
+			} else {
+				if (imageFile) {
+					$("#logoImage").val('');
+					ToastService.show("right","bottom","fadeInUp",$translate.instant('imgaeSizeError'),"error");
+				}
+
+			}
+
+
+		}
+	}	
+}());
 (function() {
     angular
       .module('home')
@@ -4027,29 +4332,63 @@
 	    angular
         .module('home')
         .controller('adminRequestController', ['$scope','$stateParams','$translate', 'appCONSTANTS','$uibModal', 'RequestResource'
-        ,'requestsPrepService','$filter','ToastService','authorizationService','FeatureResource',  adminRequestController])
+        ,'requestsPrepService','$filter','ToastService','authorizationService','FeatureResource','roomsNamePrepService','featuresNamePrepService',  adminRequestController])
 
     function adminRequestController($scope,$stateParams ,$translate , appCONSTANTS,$uibModal, RequestResource
-        ,requestsPrepService,$filter,ToastService,authorizationService,FeatureResource){
+        ,requestsPrepService,$filter,ToastService,authorizationService,FeatureResource,roomsNamePrepService,featuresNamePrepService){
 
         var vm = this;
         vm.requests = requestsPrepService;
+        vm.rooms = [{roomId:0,roomName:"All rooms"}];
+        vm.selectedRoom = vm.rooms[0];
+        vm.rooms = vm.rooms.concat(roomsNamePrepService);
+
+
+                vm.features = [{featureId:0,featureNameDictionary:{'en-us':"All features",'ar-eg':"كل الميزات"}}];
+        vm.selectedFeature = vm.features[0];
+        vm.features = vm.features.concat(featuresNamePrepService);
+
         _.forEach(vm.requests.results, function (request) {
             request.createTime= request.createTime+"Z";
            request.createTime = $filter('date')(new Date(request.createTime), "dd/MM/yyyy hh:mm a");
            request.modifyTime= request.modifyTime+"Z";
           request.modifyTime = $filter('date')(new Date(request.modifyTime), "dd/MM/yyyy hh:mm a");
+          if(request.requestTime !=null){                      
+            request.requestTime= request.requestTime+"Z";
+            request.requestTime = $filter('date')(new Date(request.requestTime), "dd/MM/yyyy hh:mm a");
+          }
+          request.requestDetails.forEach(function(element) {
+            if(element.from !=null){                      
+                element.from= element.from+"Z";
+                element.from = $filter('date')(new Date(element.from), "dd/MM/yyyy hh:mm a");
+              }
+              if(element.to !=null){                      
+                element.to= element.to+"Z";
+                element.to = $filter('date')(new Date(element.to), "dd/MM/yyyy hh:mm a");
+              }
+          }, this);
         });
         $('.pmd-sidebar-nav>li>a').removeClass("active")
         var user = authorizationService.getUser();
 
                 if(user.role === 'Admin')
             $($('.pmd-sidebar-nav').children()[3].children[0]).addClass("active")
-        else
+        else if(user.role === 'Supervisor')
             $($('.pmd-sidebar-nav').children()[0].children[0]).addClass("active")
+        else
+            $($('.pmd-sidebar-nav').children()[1].children[0]).addClass("active")
 
 				function refreshRequests(){
-			var k = RequestResource.getAllRequest({ page:vm.currentPage }).$promise.then(function(results) {
+            vm.isLoading = true;
+            var from =""
+            if($('#datepicker-start').val() != "") 
+                from  = (new Date($('#datepicker-start').val())).toISOString().replace('Z','');
+
+                            var to =""
+            if($('#datepicker-end').val() != "") 
+                to  = (new Date($('#datepicker-end').val())).toISOString().replace('Z','');
+            var k = RequestResource.getAllRequest({ page:vm.currentPage,roomId: vm.selectedRoom.roomId
+                ,featureId:vm.selectedFeature.featureId,from:from , to:to }).$promise.then(function(results) {
 
 				                vm.requests = results;
                 _.forEach(vm.requests.results, function (request) {
@@ -4057,13 +4396,31 @@
                    request.createTime = $filter('date')(new Date(request.createTime), "dd/MM/yyyy hh:mm a");
                    request.modifyTime= request.modifyTime+"Z";
                   request.modifyTime = $filter('date')(new Date(request.modifyTime), "dd/MM/yyyy hh:mm a");
-                });
+                  if(request.requestTime !=null){                      
+                    request.requestTime= request.requestTime+"Z";
+                    request.requestTime = $filter('date')(new Date(request.requestTime), "dd/MM/yyyy hh:mm a");
+                  }
+                  request.requestDetails.forEach(function(element) {
+                    if(element.from !=null){                      
+                        element.from= element.from+"Z";
+                        element.from = $filter('date')(new Date(element.from), "dd/MM/yyyy hh:mm a");
+                      }
+                      if(element.to !=null){                      
+                        element.to= element.to+"Z";
+                        element.to = $filter('date')(new Date(element.to), "dd/MM/yyyy hh:mm a");
+                      }
+                  }, this);
+
+                                  });
+                vm.isLoading = false;
 			},
             function(data, status) {
-				ToastService.show("right","bottom","fadeInUp",data.message,"error");
+                ToastService.show("right","bottom","fadeInUp",data.message,"error");
+                vm.isLoading = false;
             });
-		}
-		vm.currentPage  = 1;
+        }
+
+        		vm.currentPage  = 1;
         vm.changePage  = function (page) {
             vm.currentPage = page;
             refreshRequests();
@@ -4088,29 +4445,9 @@
         }
 
         vm.Approve = function(featureId,requestId){
-            FeatureResource.getFeature({featureId:featureId}).$promise.then(function(result){
-                if(!result.hasDetails){
-                    ApproveRequest(requestId)
-                }
-                else {
-                    var modalContent = $uibModal.open({
-                        templateUrl: './app/admin/requests/templates/requestDetail.html',
-                        controller: 'requestDetailDialogController',
-                        controllerAs: 'requestDetailDlCtrl',
-                        resolve:{
-                            feature:function(){ return result},
-                            requestId:function(){ return requestId},
-                            callBackFunction:function(){return ApproveRequest;},
-                            language:function(){return $scope.selectedLanguage;}
+            ApproveRequest(requestId);
 
-                                                    }
 
-                                            });
-                }
-            },
-			function(data, status) {
-				ToastService.show("right","bottom","fadeInUp",data.data.message,"error");
-			})
 
                     }
         vm.Reject = function(requestId){
@@ -4145,7 +4482,9 @@
                         }
                     },
                     resolve: {
-                        requestsPrepService: requestsPrepService
+                        requestsPrepService: requestsPrepService,
+                        roomsNamePrepService: roomsNamePrepService,
+                        featuresNamePrepService: featuresNamePrepService
                     }
 
                                     })
@@ -4154,6 +4493,16 @@
                 requestsPrepService.$inject = ['RequestResource']
         function requestsPrepService(RequestResource) {
             return RequestResource.getAllRequest().$promise;
+        }
+
+        roomsNamePrepService.$inject = ['RoomResource']
+        function roomsNamePrepService(RoomResource) {
+            return RoomResource.getAllRoomsName().$promise;
+        }
+
+        featuresNamePrepService.$inject = ['FeatureResource']
+        function featuresNamePrepService(FeatureResource) {
+            return FeatureResource.getAllFeaturesName().$promise;
         }
 }());
 (function () {
@@ -4586,7 +4935,7 @@
 		vm.Now = $scope.getCurrentTime();
 		vm.waitersLimit = waitersLimitPrepService;
 		$('.pmd-sidebar-nav>li>a').removeClass("active")
-		$($('.pmd-sidebar-nav').children()[1].children[0]).addClass("active")
+		$($('.pmd-sidebar-nav').children()[5].children[0]).addClass("active")
 		
 		var allRestaurantType;
 		RestaurantTypeResource.getAllRestaurantType().$promise.then(function(results) {
@@ -4745,7 +5094,7 @@
         var vm = this;
 		vm.restaurantTypes = restaurantTypesPrepService;
 		$('.pmd-sidebar-nav>li>a').removeClass("active")
-		$($('.pmd-sidebar-nav').children()[0].children[0]).addClass("active")
+		$($('.pmd-sidebar-nav').children()[4].children[0]).addClass("active")
 		
 		function refreshType(){
 			var k = RestaurantTypeResource.getAllRestaurantType().$promise.then(function(results) {
@@ -4863,16 +5212,139 @@
 		}
 	}	
 }());
+(function() {
+    angular
+      .module('home')
+      .factory('BuildingResource', ['$resource', 'appCONSTANTS', BuildingResource]);
+
+      function BuildingResource($resource, appCONSTANTS) {
+      return $resource(appCONSTANTS.API_URL + 'Buildings/:buildingId', {}, {
+        getAllBuildings: { method: 'GET', useToken: true },
+        create: { method: 'POST', useToken: true },
+        deleteBuilding: { method: 'DELETE', useToken: true },
+        update: { method: 'PUT', useToken: true }
+      })
+    }
+
+
+}());
+  (function() {
+    angular
+      .module('home')
+      .factory('FloorResource', ['$resource', 'appCONSTANTS', FloorResource]);
+
+      function FloorResource($resource, appCONSTANTS) {
+      return $resource(appCONSTANTS.API_URL + 'Floors/:floorId', {}, {
+        getAllFloors: { method: 'GET', useToken: true },
+        create: { method: 'POST', useToken: true },
+        deleteFloor: { method: 'DELETE', useToken: true },
+        update: { method: 'PUT', useToken: true }
+      })
+    }
+
+
+}());
+  (function () {
+    'use strict';
+
+	    angular
+        .module('home')
+        .controller('buildingDialogController', ['$scope','$uibModalInstance','$translate' , 'BuildingResource','ToastService','callBackFunction',  buildingDialogController])
+
+	function buildingDialogController($scope,$uibModalInstance, $translate , BuildingResource,ToastService,callBackFunction){
+		var vm = this;
+		vm.close = function(){
+			$uibModalInstance.dismiss('cancel');
+		}
+
+				vm.AddNewBuilding = function(){
+			var newBuliding = new BuildingResource();
+            newBuliding.buildingName = vm.buildingName;
+            newBuliding.$create().then(
+                function(data, status) {
+					ToastService.show("right","bottom","fadeInUp",$translate.instant('BuildingAddSuccess'),"success");
+					$uibModalInstance.dismiss('cancel');
+					callBackFunction();
+                },
+                function(data, status) {
+					ToastService.show("right","bottom","fadeInUp",data.data.message,"error");
+                }
+            );
+		}
+	}	
+}());
 (function () {
     'use strict';
 
 	    angular
         .module('home')
-        .controller('editRoomDialogController', ['$uibModalInstance','$translate', 'RoomResource','ToastService','Room','callBackFunction',  editRoomDialogController])
+        .controller('editBuildingDialogController', ['$uibModalInstance','$translate', 'BuildingResource','ToastService','Building','callBackFunction',  editBuildingDialogController])
 
-	function editRoomDialogController($uibModalInstance, $translate, RoomResource,ToastService,  Room, callBackFunction){
+	function editBuildingDialogController($uibModalInstance, $translate, BuildingResource,ToastService,  Building, callBackFunction){
+		var vm = this;
+        vm.Building = Building;
+        vm.close = function(){
+			$uibModalInstance.dismiss('cancel');
+        }
+		vm.updateBuilding = function(){
+			var updateBuilding = new BuildingResource();
+            updateBuilding.buildingName = vm.Building.buildingName;
+            updateBuilding.buildingId = Building.buildingId;
+            updateBuilding.$update().then(
+                function(data, status) {
+					ToastService.show("right","bottom","fadeInUp",$translate.instant('BuildingUpdateSuccess'),"success");
+					$uibModalInstance.dismiss('cancel');
+					callBackFunction();
+                },
+                function(data, status) {
+					ToastService.show("right","bottom","fadeInUp",data.data.message,"error");
+                }
+            );
+		}
+	}	
+}());
+(function () {
+    'use strict';
+
+	    angular
+        .module('home')
+        .controller('editFloorDialogController', ['$uibModalInstance','$translate', 'FloorResource','ToastService','Floor','callBackFunction',  editFloorDialogController])
+
+	function editFloorDialogController($uibModalInstance, $translate, FloorResource,ToastService,  Floor, callBackFunction){
+		var vm = this;
+        vm.Floor = Floor;
+        vm.close = function(){
+			$uibModalInstance.dismiss('cancel');
+        }
+		vm.updateFloor = function(){
+			var updateFloor = new FloorResource();
+            updateFloor.FloorName = vm.Floor.floorName;
+            updateFloor.FloorId = Floor.floorId;
+            updateFloor.$update().then(
+                function(data, status) {
+					ToastService.show("right","bottom","fadeInUp",$translate.instant('FloorUpdateSuccess'),"success");
+					$uibModalInstance.dismiss('cancel');
+					callBackFunction();
+                },
+                function(data, status) {
+					ToastService.show("right","bottom","fadeInUp",data.data.message,"error");
+                }
+            );
+		}
+	}	
+}());
+(function () {
+    'use strict';
+
+	    angular
+        .module('home')
+        .controller('editRoomDialogController', ['$uibModalInstance','$translate', 'RoomResource','ToastService','Room','callBackFunction',  'Buildings', 'Floors',  editRoomDialogController])
+
+	function editRoomDialogController($uibModalInstance, $translate, RoomResource,ToastService,  Room, callBackFunction, Buildings, Floors){
 		var vm = this;
         vm.Room = Room;
+		vm.Buildings = Buildings.results;
+		vm.Floors = Floors.results;
         vm.Room.confirmPassword = Room.password;
         vm.close = function(){
 			$uibModalInstance.dismiss('cancel');
@@ -4883,9 +5355,40 @@
             updateRoom.name = vm.Room.name;
             updateRoom.password = vm.Room.password;
             updateRoom.roomId = Room.roomId;
+			updateRoom.buildingId = vm.Room.buildingId;
+			updateRoom.floorId = vm.Room.floorId;
             updateRoom.$update().then(
                 function(data, status) {
 					ToastService.show("right","bottom","fadeInUp",$translate.instant('RoomUpdateSuccess'),"success");
+					$uibModalInstance.dismiss('cancel');
+					callBackFunction();
+                },
+                function(data, status) {
+					ToastService.show("right","bottom","fadeInUp",data.data.message,"error");
+                }
+            );
+		}
+	}	
+}());
+(function () {
+    'use strict';
+
+	    angular
+        .module('home')
+        .controller('floorDialogController', ['$scope','$uibModalInstance','$translate' , 'FloorResource','ToastService','callBackFunction',  floorDialogController])
+
+	function floorDialogController($scope,$uibModalInstance, $translate , FloorResource,ToastService,callBackFunction){
+		var vm = this;
+		vm.close = function(){
+			$uibModalInstance.dismiss('cancel');
+		}
+
+				vm.AddNewFloor = function(){
+			var newFloor = new FloorResource();
+            newFloor.floorName = vm.floorName;
+            newFloor.$create().then(
+                function(data, status) {
+					ToastService.show("right","bottom","fadeInUp",$translate.instant('FloorAddSuccess'),"success");
 					$uibModalInstance.dismiss('cancel');
 					callBackFunction();
                 },
@@ -4907,6 +5410,7 @@
       function RoomResource($resource, appCONSTANTS) {
         return $resource(appCONSTANTS.API_URL + 'Rooms/:roomId', {}, {
           getAllRooms: { method: 'GET', useToken: true },
+          getAllRoomsName: {url:appCONSTANTS.API_URL + 'Rooms/Name', method: 'GET', useToken: true,isArray:true },
           getRoom: { method: 'GET', useToken: true },
           create: { method: 'POST', useToken: true },
           deleteRoom: { method: 'DELETE', useToken: true },
@@ -4953,7 +5457,9 @@
                     },
                     resolve: {
                         RoomsPrepService: RoomsPrepService,
-                        roomLimitPrepService:roomLimitPrepService
+                        roomLimitPrepService:roomLimitPrepService,
+                        BuildingsPrepService:BuildingsPrepService,
+                        FloorsPrepService:FloorsPrepService
                     }
 
                                  })
@@ -4968,16 +5474,30 @@
         function roomLimitPrepService(AdminRoomsLimitResource) {
             return AdminRoomsLimitResource.getRoomsLimitAndConsumed().$promise;
         }
+
+        BuildingsPrepService.$inject = ['BuildingResource']
+        function BuildingsPrepService(BuildingResource) {
+            return BuildingResource.getAllBuildings().$promise;
+        }
+
+        FloorsPrepService.$inject = ['FloorResource']
+        function FloorsPrepService(FloorResource) {
+            return FloorResource.getAllFloors().$promise;
+        }
 }());
 (function () {
     'use strict';
 
 	    angular
         .module('home')
-        .controller('roomDialogController', ['$scope','$uibModalInstance','$translate' , 'RoomResource','ToastService','callBackFunction','$rootScope',  roomDialogController])
+        .controller('roomDialogController', ['$scope','$uibModalInstance','$translate' , 'RoomResource','ToastService','callBackFunction','Buildings' ,'Floors' ,  roomDialogController])
 
-	function roomDialogController($scope,$uibModalInstance, $translate , RoomResource,ToastService,callBackFunction,$rootScope){
+	function roomDialogController($scope,$uibModalInstance, $translate , RoomResource,ToastService,callBackFunction,Buildings,Floors){
 		var vm = this;
+		vm.Buildings = Buildings.results;
+		vm.Floors = Floors.results;
+		vm.selectedBuilding = vm.Buildings.length >0 ? vm.Buildings[0]:null;
+		vm.selectedFloor = vm.Floors.length >0 ? vm.Floors[0]:null;
 		vm.close = function(){
 			$uibModalInstance.dismiss('cancel');
 		}
@@ -4987,6 +5507,8 @@
             newRoom.roomName = vm.roomName;
             newRoom.name = vm.name;
 			newRoom.password = vm.password;
+			newRoom.buildingId = vm.selectedBuilding.buildingId;
+			newRoom.floorId = vm.selectedFloor.floorId;
             newRoom.$create().then(
                 function(data, status) {
 					ToastService.show("right","bottom","fadeInUp",$translate.instant('RoomAddSuccess'),"success");
@@ -5006,15 +5528,20 @@
 	    angular
         .module('home')
         .controller('roomsController', ['$scope','$stateParams','$translate', 'appCONSTANTS','$uibModal', 'RoomResource'
-        ,'ActivateRoomResource','DeactivateRoomResource','RoomsPrepService','roomLimitPrepService','ToastService',  roomsController])
+		,'ActivateRoomResource','DeactivateRoomResource','RoomsPrepService','roomLimitPrepService','ToastService','AdminRoomsLimitResource'
+		,'BuildingsPrepService','FloorsPrepService','BuildingResource','FloorResource',  roomsController])
 
     function roomsController($scope,$stateParams ,$translate , appCONSTANTS,$uibModal, RoomResource,
-        ActivateRoomResource,DeactivateRoomResource,RoomsPrepService,roomLimitPrepService,ToastService){
+		ActivateRoomResource,DeactivateRoomResource,RoomsPrepService,roomLimitPrepService,ToastService,AdminRoomsLimitResource,
+		BuildingsPrepService,FloorsPrepService,BuildingResource,FloorResource){
 
         var vm = this;
         vm.rooms = RoomsPrepService;
-        vm.roomsLimit = roomLimitPrepService;
-		$('.pmd-sidebar-nav>li>a').removeClass("active")
+		vm.roomsLimit = roomLimitPrepService;
+		vm.buildings = BuildingsPrepService;
+		vm.floors = FloorsPrepService;
+
+				$('.pmd-sidebar-nav>li>a').removeClass("active")
 		$($('.pmd-sidebar-nav').children()[2].children[0]).addClass("active")
 
 				function refreshRooms(){
@@ -5024,7 +5551,13 @@
 			},
             function(data, status) {
 				ToastService.show("right","bottom","fadeInUp",data.message,"error");
-            });
+			});
+			AdminRoomsLimitResource.getRoomsLimitAndConsumed().$promise.then(function(results) {
+				vm.roomsLimit = results;
+			},
+            function(data, status) {
+				ToastService.show("right","bottom","fadeInUp",data.message,"error");
+			});
 		}
 		vm.currentPage  = 1;
         vm.changePageRooms  = function (page) {
@@ -5032,16 +5565,32 @@
             refreshRooms();
 		}
 		vm.openRoomDialog = function(){
-				var modalContent = $uibModal.open({
-					templateUrl: './app/admin/room/templates/newRoom.html',
-					controller: 'roomDialogController',
-					controllerAs: 'roomDlCtrl',
-					resolve:{
-						callBackFunction:function(){return refreshRooms;}
-					}
+			var buildings;
+			var floors;
+			BuildingResource.getAllBuildings({ pageSize:0 }).$promise.then(function(results) {
+				buildings = results;
+				FloorResource.getAllFloors({ pageSize:0 }).$promise.then(function(results) {
+					floors = results;
+					var modalContent = $uibModal.open({
+						templateUrl: './app/admin/room/templates/newRoom.html',
+						controller: 'roomDialogController',
+						controllerAs: 'roomDlCtrl',
+						resolve:{
+							callBackFunction:function(){return refreshRooms;},
+							Buildings:function(){return buildings;},
+							Floors:function(){return floors;}
+						}
 
-									});
-		}
+											});
+				},
+				function(data, status) {
+				});
+			},
+            function(data, status) {
+			});
+
+
+									}
 		function confirmationDelete(itemId){
 			RoomResource.deleteRoom({roomId:itemId}).$promise.then(function(results) {
 				ToastService.show("right","bottom","fadeInUp",$translate.instant('RoomDeleteSuccess'),"success");
@@ -5069,18 +5618,31 @@
 		}
 
 				vm.openEditRoomDialog = function(index){
-			var modalContent = $uibModal.open({
-				templateUrl: './app/admin/room/templates/editRoom.html',
-				controller: 'editRoomDialogController',
-				controllerAs: 'editRoomDlCtrl',
-				resolve:{
-					Room:function(){ return vm.rooms.results[index]},
-					callBackFunction:function(){return refreshRooms;}
-				}
+			var buildings;
+			var floors;
+			BuildingResource.getAllBuildings({ pageSize:0 }).$promise.then(function(results) {
+				buildings = results;
+				FloorResource.getAllFloors({ pageSize:0 }).$promise.then(function(results) {
+					floors = results;
+					var modalContent = $uibModal.open({
+						templateUrl: './app/admin/room/templates/editRoom.html',
+						controller: 'editRoomDialogController',
+						controllerAs: 'editRoomDlCtrl',
+						resolve:{
+							Room:function(){ return angular.copy(vm.rooms.results[index])},
+							callBackFunction:function(){return refreshRooms;},
+							Buildings:function(){return buildings;},
+							Floors:function(){return floors;}
+						}
 
-							});
-
-					}
+											});
+				},
+				function(data, status) {
+				});
+			},
+			function(data, status) {
+			});
+		}
 		vm.ActivateRoom = function(room){
 			ActivateRoomResource.Activate({roomId:room.roomId})
 			.$promise.then(function(result){
@@ -5101,7 +5663,142 @@
 			})
 		}		
 
-			}
+
+
+		function refreshBuildings(){
+			var k = BuildingResource.getAllBuildings({ page:vm.currentPageBuilding }).$promise.then(function(results) {
+
+								vm.buildings = results;
+			},
+            function(data, status) {
+				ToastService.show("right","bottom","fadeInUp",data.message,"error");
+			});
+
+					}
+		vm.currentPageBuilding  = 1;
+        vm.changePageBuilding  = function (page) {
+            vm.currentPageBuilding = page;
+            refreshBuildings();
+		}
+		vm.openBuildingDialog = function(){
+				var modalContent = $uibModal.open({
+					templateUrl: './app/admin/room/templates/newBuilding.html',
+					controller: 'buildingDialogController',
+					controllerAs: 'buildingDlCtrl',
+					resolve:{
+						callBackFunction:function(){return refreshBuildings;}
+					}
+
+									});
+		}
+		function confirmationDeleteBuilding(itemId){
+			BuildingResource.deleteBuilding({buildingId:itemId}).$promise.then(function(results) {
+				ToastService.show("right","bottom","fadeInUp",$translate.instant('BuildingDeleteSuccess'),"success");
+				if(vm.buildings.results.length ==1 && vm.currentPageBuilding > 1)
+					vm.currentPageBuilding = vm.currentPageBuilding -1;
+                    refreshBuildings();
+			},
+            function(data, status) {
+				ToastService.show("right","bottom","fadeInUp",data.message,"error");
+            });
+		}
+		vm.openDeleteBuildingDialog = function(name,id){			
+			var modalContent = $uibModal.open({
+				templateUrl: './app/core/Delete/templates/ConfirmDeleteDialog.html',
+				controller: 'confirmDeleteDialogController',
+				controllerAs: 'deleteDlCtrl',
+				resolve: {
+					itemName: function () { return name },
+					itemId: function() { return id },
+					message:function() { return null},
+					callBackFunction:function() { return confirmationDeleteBuilding }
+				}
+
+							});
+		}
+
+				vm.openEditBuildingDialog = function(index){
+			var modalContent = $uibModal.open({
+				templateUrl: './app/admin/room/templates/editBuilding.html',
+				controller: 'editBuildingDialogController',
+				controllerAs: 'editBuildingDlCtrl',
+				resolve:{
+					Building:function(){ return angular.copy(vm.buildings.results[index])},
+					callBackFunction:function(){return refreshBuildings;}
+				}
+
+							});
+
+					}
+
+
+
+				function refreshFloors(){
+			var k = FloorResource.getAllFloors({ page:vm.currentPageFloor }).$promise.then(function(results) {
+
+								vm.floors = results;
+			},
+            function(data, status) {
+				ToastService.show("right","bottom","fadeInUp",data.message,"error");
+			});
+
+					}
+		vm.currentPageFloor  = 1;
+        vm.changePageFloor  = function (page) {
+            vm.currentPageFloor = page;
+            refreshFloors();
+		}
+		vm.openFloorDialog = function(){
+				var modalContent = $uibModal.open({
+					templateUrl: './app/admin/room/templates/newFloor.html',
+					controller: 'floorDialogController',
+					controllerAs: 'floorDlCtrl',
+					resolve:{
+						callBackFunction:function(){return refreshFloors;}
+					}
+
+									});
+		}
+		function confirmationDeleteFloor(itemId){
+			FloorResource.deleteFloor({floorId:itemId}).$promise.then(function(results) {
+				ToastService.show("right","bottom","fadeInUp",$translate.instant('FloorDeleteSuccess'),"success");
+				if(vm.floors.results.length ==1 && vm.currentPageFloor > 1)
+					vm.currentPageFloor = vm.currentPageFloor -1;
+                    refreshFloors();
+			},
+            function(data, status) {
+				ToastService.show("right","bottom","fadeInUp",data.message,"error");
+            });
+		}
+		vm.openDeleteFloorDialog = function(name,id){			
+			var modalContent = $uibModal.open({
+				templateUrl: './app/core/Delete/templates/ConfirmDeleteDialog.html',
+				controller: 'confirmDeleteDialogController',
+				controllerAs: 'deleteDlCtrl',
+				resolve: {
+					itemName: function () { return name },
+					itemId: function() { return id },
+					message:function() { return null},
+					callBackFunction:function() { return confirmationDeleteFloor }
+				}
+
+							});
+		}
+
+				vm.openEditFloorDialog = function(index){
+			var modalContent = $uibModal.open({
+				templateUrl: './app/admin/room/templates/editFloor.html',
+				controller: 'editFloorDialogController',
+				controllerAs: 'editFloorDlCtrl',
+				resolve:{
+					Floor:function(){ return angular.copy(vm.floors.results[index])},
+					callBackFunction:function(){return refreshFloors;}
+				}
+
+							});
+
+					}
+	}
 
 	}());
 (function () {
@@ -5344,7 +6041,7 @@
 				controller: 'editReceptionistDialogController',
 				controllerAs: 'editReceptionistDlCtrl',
 				resolve:{
-					Receptionist:function(){ return vm.receptionists.results[index]},
+					Receptionist:function(){ return angular.copy(vm.receptionists.results[index])},
 					callBackFunction:function(){return refreshReceptionists;}
 				}
 
@@ -5440,7 +6137,7 @@
                     controller: 'editSupervisorDialogController',
                     controllerAs: 'editSupervisorDlCtrl',
                     resolve:{
-                        Supervisor:function(){ return vm.supervisors.results[index]},
+                        Supervisor:function(){ return angular.copy(vm.supervisors.results[index])},
                         features:function(){ return results},                        
                         callBackFunction:function(){return refreshSupervisors;},
                         selectedLanguage:function(){return $scope.selectedLanguage;}
@@ -5563,4 +6260,1550 @@
         function SupervisorsPrepService(SupervisorResource) {
             return SupervisorResource.getAllSupervisors().$promise;
         }
+}());
+(function () {
+    'use strict';
+
+	    angular
+        .module('home')
+        .controller('supervisorReportController', ['$scope','$stateParams','$translate', 'appCONSTANTS','$uibModal', 'RequestResource'
+        ,'requestsPrepService','$filter','ToastService','authorizationService','FeatureResource','roomsNamePrepService','featuresNamePrepService',  supervisorReportController])
+
+    function supervisorReportController($scope,$stateParams ,$translate , appCONSTANTS,$uibModal, RequestResource
+        ,requestsPrepService,$filter,ToastService,authorizationService,FeatureResource,roomsNamePrepService,featuresNamePrepService){
+
+        var vm = this;
+        vm.requests = requestsPrepService;
+        vm.rooms = [{roomId:0,roomName:"All rooms"}];
+        vm.selectedRoom = vm.rooms[0];
+        vm.rooms = vm.rooms.concat(roomsNamePrepService);
+
+
+                vm.features = [{featureId:0,featureNameDictionary:{'en-us':"All features",'ar-eg':"كل الميزات"}}];
+        vm.selectedFeature = vm.features[0];
+        vm.features = vm.features.concat(featuresNamePrepService);
+
+        _.forEach(vm.requests.results, function (request) {
+            request.createTime= request.createTime+"Z";
+           request.createTime = $filter('date')(new Date(request.createTime), "dd/MM/yyyy hh:mm a");
+           request.modifyTime= request.modifyTime+"Z";
+          request.modifyTime = $filter('date')(new Date(request.modifyTime), "dd/MM/yyyy hh:mm a");
+          if(request.requestTime !=null){                      
+            request.requestTime= request.requestTime+"Z";
+            request.requestTime = $filter('date')(new Date(request.requestTime), "dd/MM/yyyy hh:mm a");
+          }
+          request.requestDetails.forEach(function(element) {
+            if(element.from !=null){                      
+                element.from= element.from+"Z";
+                element.from = $filter('date')(new Date(element.from), "dd/MM/yyyy hh:mm a");
+              }
+              if(element.to !=null){                      
+                element.to= element.to+"Z";
+                element.to = $filter('date')(new Date(element.to), "dd/MM/yyyy hh:mm a");
+              }
+          }, this);
+        });
+        $('.pmd-sidebar-nav>li>a').removeClass("active")
+        var user = authorizationService.getUser();
+
+                $($('.pmd-sidebar-nav').children()[2].children[0]).addClass("active")
+
+				function refreshRequests(){
+            vm.isLoading = true;
+            var from ="";
+            if($('#datepicker-start').val() != "") 
+                from  = (new Date($('#datepicker-start').val())).toISOString().replace('Z','');
+
+                            var to ="";
+            if($('#datepicker-end').val() != "") 
+                to  = (new Date($('#datepicker-end').val())).toISOString().replace('Z','');
+            var k = RequestResource.getAllRequest({ page:vm.currentPage,roomId: vm.selectedRoom.roomId
+                ,featureId:vm.selectedFeature.featureId,from:from , to:to }).$promise.then(function(results) {
+
+				                vm.requests = results;
+                _.forEach(vm.requests.results, function (request) {
+                    request.createTime= request.createTime+"Z";
+                   request.createTime = $filter('date')(new Date(request.createTime), "dd/MM/yyyy hh:mm a");
+                   request.modifyTime= request.modifyTime+"Z";
+                  request.modifyTime = $filter('date')(new Date(request.modifyTime), "dd/MM/yyyy hh:mm a");
+                  if(request.requestTime !=null){                      
+                    request.requestTime= request.requestTime+"Z";
+                    request.requestTime = $filter('date')(new Date(request.requestTime), "dd/MM/yyyy hh:mm a");
+                  }
+                  request.requestDetails.forEach(function(element) {
+                    if(element.from !=null){                      
+                        element.from= element.from+"Z";
+                        element.from = $filter('date')(new Date(element.from), "dd/MM/yyyy hh:mm a");
+                      }
+                      if(element.to !=null){                      
+                        element.to= element.to+"Z";
+                        element.to = $filter('date')(new Date(element.to), "dd/MM/yyyy hh:mm a");
+                      }
+                  }, this);
+
+                                  });
+                vm.isLoading = false;
+			},
+            function(data, status) {
+                ToastService.show("right","bottom","fadeInUp",data.message,"error");
+                vm.isLoading = false;
+            });
+        }
+
+        		vm.currentPage  = 1;
+        vm.changePage  = function (page) {
+            vm.currentPage = page;
+            refreshRequests();
+
+           		}	
+        vm.showMore = function(element)
+        {
+            $(element.currentTarget).toggleClass( "child-table-collapse" );
+        }
+	}
+
+	}());
+(function() {
+    'use strict';
+
+    angular
+        .module('home')
+        .config(function($stateProvider, $urlRouterProvider) {
+
+            $stateProvider
+                .state('supervisorReports', {
+                    url: '/Reports',
+                    templateUrl: './app/supervisor/Reports/templates/supervisorReports.html',
+                    controller: 'supervisorReportController',
+                    'controllerAs': 'reportsCtrl',
+                    data: {
+                        permissions: {
+                            only: ['Room'],
+                            redirectTo: 'root'
+                        }
+                    },
+                    resolve: {
+                        requestsPrepService: requestsPrepService,
+                        roomsNamePrepService: roomsNamePrepService,
+                        featuresNamePrepService: featuresNamePrepService
+                    }
+
+                                    })
+        });
+
+                requestsPrepService.$inject = ['RequestResource']
+        function requestsPrepService(RequestResource) {
+            return RequestResource.getAllRequest().$promise;
+        }
+
+        roomsNamePrepService.$inject = ['RoomResource']
+        function roomsNamePrepService(RoomResource) {
+            return RoomResource.getAllRoomsName().$promise;
+        }
+
+        featuresNamePrepService.$inject = ['FeatureResource']
+        function featuresNamePrepService(FeatureResource) {
+            return FeatureResource.getAllFeaturesName().$promise;
+        }
+}());
+(function() {
+    'use strict';
+
+    angular
+        .module('home')
+        .config(function($stateProvider, $urlRouterProvider) {
+
+            $stateProvider
+                .state('manageFeatures', {
+                    url: '/ManageFeature',
+                    templateUrl: './app/supervisor/features/templates/features.html',
+                    controller: 'manageFeaturesController',
+                    'controllerAs': 'manageFeaturesCtrl',
+                    data: {
+                        permissions: {
+                            only: ['Room'],
+                            redirectTo: 'root'
+                        }
+                    },
+                    resolve: {
+                        featuresPrepService: featuresPrepService
+                    }
+
+                                    })
+        });
+
+                featuresPrepService.$inject = ['ManageFeatureResource']
+        function featuresPrepService(ManageFeatureResource) {
+            return ManageFeatureResource.getAllFeatures().$promise;
+        }
+}());
+(function () {
+    'use strict';
+
+	    angular
+        .module('home')
+        .controller('manageFeaturesController', ['$scope','$stateParams','$translate', 'appCONSTANTS','$uibModal', 'ManageFeatureResource'
+        ,'featuresPrepService','$filter','ToastService', 'controlEnum',  manageFeaturesController])
+
+    function manageFeaturesController($scope,$stateParams ,$translate , appCONSTANTS,$uibModal, ManageFeatureResource
+        ,featuresPrepService,$filter,ToastService , controlEnum){
+
+        var vm = this;
+        vm.features = featuresPrepService;
+        vm.controls = controlEnum;
+        vm.isAvailable = false;
+        vm.islistAvailable = false;
+	}
+
+	}());
+(function() {
+    angular
+      .module('home')
+      .factory('ManageFeatureResource', ['$resource', 'appCONSTANTS', ManageFeatureResource]);
+
+      function ManageFeatureResource($resource, appCONSTANTS) {
+      return $resource(appCONSTANTS.API_URL + 'Features/', {}, {
+        getAllFeatures: { method: 'GET', useToken: true,isArray:true },
+        getFeatureDetails: {url: appCONSTANTS.API_URL + 'Features/Detail/:featureControlId', method: 'GET', useToken: true },
+        deleteFeatureDetailAvailability: {url: appCONSTANTS.API_URL + 'Features/Detail/Available/:availableId', method: 'DELETE', useToken: true },
+        getFeatureDetails: {url: appCONSTANTS.API_URL + 'Features/Detail/:featureControlId', method: 'GET', useToken: true },
+        switchFeatureControl: {url: appCONSTANTS.API_URL + 'Features/Control/:featureControlId/Switch', method: 'GET', useToken: true },
+        deleteFeatureDetail: {url: appCONSTANTS.API_URL + 'Features/Detail/:featureDetailId', method: 'DELETE', useToken: true }
+      })
+    }
+
+}());
+  (function() {
+    angular
+        .module('home')
+        .factory('AvailableControlService',[ AvailableControlService]);
+
+    function AvailableControlService() {
+        var featureDetail;
+        var featureName;
+        var FeatureControlId;
+        return {
+            setFeatureDetail: function(param) {
+                featureDetail = param;
+            },
+            getFeatureDetail:function(){
+                return featureDetail;
+            },
+            setFeatureName:function(param){
+                featureName = param;
+            },            
+            getFeatureName:function(){
+                return featureName;
+            },
+            setFeatureControlId:function(param){
+                FeatureControlId = param;
+            },            
+            getFeatureControlId:function(){
+                return FeatureControlId;
+            }
+        }
+
+    }
+}());
+
+angular.module('home').directive('datetimepicker', function(){
+	return {
+		require: '?ngModel',
+		restrict: 'A',
+		link: function(scope, element, attrs, ngModel){
+
+			if(!ngModel) return; 
+
+			ngModel.$render = function(){
+				element.val( ngModel.$viewValue || '' );
+			}
+
+
+			element.on('dp.change', function(e){
+                if(element[0].id.includes('start')){
+                    var k = angular.copy(element[0].id);
+                    k = k.replace('start','end')
+                    $('#'+k).data("DateTimePicker").minDate(e.date)
+                }
+				scope.$apply(read);
+			});
+
+			read();
+
+			function read() {
+				var value = element.val();
+				ngModel.$setViewValue(value);
+			}
+		}
+	}
+});
+angular.module('home').directive('availableControl', function(){
+    return {
+        restrict: 'E',
+        replace: true,
+        scope: { featureControl: '=',selectedLanguage:'=',isAvailable:"=",featureName:"=" },
+        templateUrl: "./app/supervisor/features/AvailableControl/templates/AvailableControl.html",
+        controllerAs:"availableControler",
+        controller:function($scope,$rootScope,controlEnum ,daysEnum,ManageFeatureResource,appCONSTANTS,$uibModal,ToastService,$translate,AvailableControlService,$filter){
+            var vm = this;
+            vm.featureControl = $scope.featureControl;
+            vm.controls = controlEnum;
+            vm.days = daysEnum;
+            vm.language = appCONSTANTS.supportedLanguage;
+            vm.currentPage = 1;
+            vm.featureDetails = [];
+            function loadDetails(){
+                vm.isLoading = true;
+                ManageFeatureResource.getFeatureDetails({featureControlId:vm.featureControl.featureControlId,page:vm.currentPage}).$promise.then(function (results) {
+                    vm.featureDetails = results;
+                    vm.isLoading = false;        
+
+                                        vm.featureDetails.results.forEach(function(element) {
+                        element.availables.forEach(function(item) {
+                            item.from= item.from+"Z";
+                            item.from = $filter('date')(new Date(item.from), "hh:mm a");
+                            item.to= item.to+"Z";
+                            item.to = $filter('date')(new Date(item.to), "hh:mm a");
+                        }, this);    
+                    }, this);        
+                },
+                function (data, status) {
+
+                                        });
+            }
+            vm.controlType = vm.featureControl.controlType == "Multiple"?true:false;
+            vm.switch = function(){
+                ManageFeatureResource.switchFeatureControl({featureControlId:vm.featureControl.featureControlId});
+            }
+            loadDetails();
+            $rootScope.$on('availableChange', function (event) {
+                loadDetails();
+            });
+            vm.changePage  = function (page) {
+                vm.currentPage = page;
+                loadDetails();
+            }
+            vm.addNew = function(){
+                $scope.isAvailable = true;
+                AvailableControlService.setFeatureName($scope.featureName)
+                AvailableControlService.setFeatureControlId(vm.featureControl.featureControlId)
+
+            }
+            vm.openEditDialog=function(index){
+                $scope.isAvailable = true;
+                AvailableControlService.setFeatureName($scope.featureName)
+                AvailableControlService.setFeatureControlId(vm.featureControl.featureControlId)
+                AvailableControlService.setFeatureDetail(angular.copy(vm.featureDetails.results[index]));
+
+            }
+            function confirmationDelete(itemId){
+                ManageFeatureResource.deleteFeatureDetail({featureDetailId:itemId}).$promise.then(function(results) {
+                    ToastService.show("right","bottom","fadeInUp",$translate.instant('FeatureUpdateSuccess'),"success");
+                    if(vm.featureDetails.results.length ==1 && vm.currentPage > 1)
+                        vm.currentPage = vm.currentPage -1;
+                        loadDetails();
+                },
+                function(data, status) {
+                    ToastService.show("right","bottom","fadeInUp",data.message,"error");
+                });
+            }
+            vm.openDeleteDialog = function(name,id){			
+                var modalContent = $uibModal.open({
+                    templateUrl: './app/core/Delete/templates/ConfirmDeleteDialog.html',
+                    controller: 'confirmDeleteDialogController',
+                    controllerAs: 'deleteDlCtrl',
+                    resolve: {
+                        itemName: function () { return name },
+                        itemId: function() { return id },
+                        message:function() { return null},
+                        callBackFunction:function() { return confirmationDelete }
+                    }
+
+                                    });
+            }
+
+                         }
+
+            };
+});angular.module('home').directive('availableControlForm', function(){
+    return {
+        restrict: 'E',
+        replace: true,
+        scope: { featureControl: '=',selectedLanguage:'=',isAvailable:"=" },
+        templateUrl: "./app/supervisor/features/AvailableControl/templates/AvailableControlPopup.html",
+        controllerAs:"availableControlDlCtrl",
+        controller:function($scope,$rootScope,controlEnum ,daysEnum,ManageFeatureResource,appCONSTANTS,$http,ToastService,$translate,AvailableControlService,$timeout,$filter){
+            var vm = this;
+            vm.featureControl = $scope.featureControl;
+            vm.controls = controlEnum;
+            vm.days = daysEnum;
+            vm.language = appCONSTANTS.supportedLanguage;
+            vm.featureName = AvailableControlService.getFeatureName();
+            vm.close = function(){
+                $scope.isAvailable = false;                
+            }
+            $timeout(function(){
+                vm.days.forEach(function(element) {
+                    $('#datepicker-start'+element.id).datetimepicker({
+                        format: 'LT'
+                    });
+
+                    $('#datepicker-end'+element.id).datetimepicker({
+                        format: 'LT'
+                    });
+
+                                    }, this);
+             }, 100);
+             vm.changeDay = function(day){
+                if(!day.isSelected){
+                    day.startTime= "";
+                    day.endTime= "";
+                    day.max= "";
+                }
+            }
+            function add(){
+                vm.isChanged = true;
+                var newFeatureDetail = new ManageFeatureResource();
+                newFeatureDetail.descriptionDictionary = vm.featureDetail.descriptionDictionary;
+                newFeatureDetail.isFree= vm.featureDetail.isFree;
+                newFeatureDetail.price = vm.featureDetail.isFree?0:vm.featureDetail.price;
+                newFeatureDetail.featureControlId = AvailableControlService.getFeatureControlId();
+                newFeatureDetail.availables = []
+                var today= new Date()
+
+                                vm.days.forEach(function(element) {
+                    if(element.isSelected){
+                        newFeatureDetail.availables.push({                            
+                            from: (new Date(today.getMonth()+"/"+today.getDate()+"/"+today.getFullYear()+" "+element.startTime).toISOString()).replace('Z',''),
+                            to: (new Date(today.getMonth()+"/"+today.getDate()+"/"+today.getFullYear()+" "+element.endTime).toISOString()).replace('Z',''),
+                            max:element.max,day:element.id});
+                    }
+                }, this);
+                var model = new FormData();
+                model.append('data', JSON.stringify(newFeatureDetail));
+                $http({
+                    method: 'POST',
+                    url: appCONSTANTS.API_URL + 'Features/Detail',
+                    useToken: true,
+                    headers: { 'Content-Type': undefined },
+                    data: model
+                }).then(
+                    function(data, status) {
+                        ToastService.show("right","bottom","fadeInUp",$translate.instant('FeatureUpdateSuccess'),"success");
+                         vm.isChanged = false;                     
+                         $scope.isAvailable = false;
+                         $rootScope.$broadcast('availableChange');
+                    },
+                    function(data, status) {
+                        vm.isChanged = false;                     
+                        ToastService.show("right","bottom","fadeInUp",data.data.message,"error");
+                    }
+                );
+
+                            }
+            function update(){
+                vm.isChanged = true;
+                var newFeatureDetail = new ManageFeatureResource();
+                newFeatureDetail.featureDetailId = vm.featureDetail.featureDetailId;
+                newFeatureDetail.isFree= vm.featureDetail.isFree;
+                newFeatureDetail.price = vm.featureDetail.isFree?0:vm.featureDetail.price;
+                newFeatureDetail.featureControlId = AvailableControlService.getFeatureControlId();
+                newFeatureDetail.availables = [];
+                var today= new Date()
+
+                vm.days.forEach(function(element) {
+                    if(element.isSelected){
+                        newFeatureDetail.availables.push({
+                            from:(new Date(today.getMonth()+"/"+today.getDate()+"/"+today.getFullYear()+" "+element.startTime).toISOString()).replace('Z',''),
+                            to:(new Date(today.getMonth()+"/"+today.getDate()+"/"+today.getFullYear()+" "+element.endTime).toISOString()).replace('Z',''),
+                            max:element.max,day:element.id,availableId:element.availableId});
+                    }
+                }, this);
+                var model = new FormData();
+                model.append('data', JSON.stringify(newFeatureDetail));
+                $http({
+                    method: 'PUT',
+                    url: appCONSTANTS.API_URL + 'Features/Detail',
+                    useToken: true,
+                    headers: { 'Content-Type': undefined },
+                    data: model
+                }).then(
+                    function(data, status) {
+                        ToastService.show("right","bottom","fadeInUp",$translate.instant('FeatureUpdateSuccess'),"success");
+                         vm.isChanged = false;
+                         $scope.isAvailable = false;
+                         $rootScope.$broadcast('availableChange');
+                    },
+                    function(data, status) {
+                        vm.isChanged = false;                     
+                        ToastService.show("right","bottom","fadeInUp",data.data.message,"error");
+                    }
+                );
+            }
+            featureDetail = AvailableControlService.getFeatureDetail();
+            if(featureDetail == null){
+                vm.save = add;
+                vm.featureDetail = {};
+                vm.featureDetail.isFree = true;
+                vm.featureDetail.price  = 0;
+
+                           }
+            else{
+                vm.save = update;
+                vm.featureDetail = featureDetail;
+                vm.days.forEach(function(element) {
+                    var day = $filter('filter')(featureDetail.availables, {day:element.id});
+                    if(day.length >0){
+                        $timeout(function(){
+                                $('#datepicker-start'+element.id).datetimepicker({
+                                    format: 'LT'
+                                });
+
+                                $('#datepicker-end'+element.id).datetimepicker({
+                                    format: 'LT'
+                                });
+
+                                                        element.isSelected = true;
+                        element.startTime = day[0].from;
+                        element.endTime = day[0].to;
+                        element.max = day[0].max;
+                        element.availableId = day[0].availableId
+                         }, 100);
+                    }
+                }, this);
+
+
+            }
+
+
+                                     }
+
+            };
+});
+angular.module('home').directive('imageControl', function(){
+    return {
+        restrict: 'E',
+        replace: true,
+        scope: { featureControl: '=',selectedLanguage:'=' },
+        templateUrl: "./app/supervisor/features/ImageControl/templates/ImageControl.html",
+        controllerAs:"imageControler",
+        controller:function($scope,controlEnum,ManageFeatureResource,appCONSTANTS,$uibModal,ToastService,$translate){
+            var vm = this;
+            vm.featureControl = $scope.featureControl;
+            vm.controls = controlEnum;
+            vm.Now = (new Date()).getTime();
+            vm.language = appCONSTANTS.supportedLanguage;
+            vm.currentPage = 1;
+            vm.featureDetails = [];
+            function loadDetails(){
+                vm.isLoading = true;
+                ManageFeatureResource.getFeatureDetails({featureControlId:vm.featureControl.featureControlId,page:vm.currentPage}).$promise.then(function (results) {
+                    vm.featureDetails = results;
+                    vm.isLoading = false;                
+                },
+                function (data, status) {
+
+                                        });
+            }
+            loadDetails();
+            vm.changePage  = function (page) {
+                vm.currentPage = page;
+                loadDetails();
+            }
+            vm.addNew = function(){
+                var modalContent = $uibModal.open({
+                    templateUrl: "./app/supervisor/features/ImageControl/templates/ImageControlPopup.html",
+                    controller: 'ImageControlDialogController',
+                    controllerAs: 'imageControlDlCtrl',
+                    resolve:{
+                        callBackFunction:function(){return loadDetails;},
+                        featureDetail:function(){return null;},
+                        language:function(){return vm.language;},
+                        featureControlId:function(){return vm.featureControl.featureControlId;}
+                    }
+
+                                    });
+            }
+            vm.openEditDialog=function(index){
+                var modalContent = $uibModal.open({
+                    templateUrl: "./app/supervisor/features/ImageControl/templates/ImageControlPopup.html",
+                    controller: 'ImageControlDialogController',
+                    controllerAs: 'imageControlDlCtrl',
+                    resolve:{
+                        callBackFunction:function(){return loadDetails;},
+                        featureDetail:function(){return angular.copy(vm.featureDetails.results[index]);},
+                        language:function(){return vm.language;},
+                        featureControlId:function(){return vm.featureControl.featureControlId;}
+                    }
+
+                                    });
+            }
+            function confirmationDelete(itemId){
+                ManageFeatureResource.deleteFeatureDetail({featureDetailId:itemId}).$promise.then(function(results) {
+                    ToastService.show("right","bottom","fadeInUp",$translate.instant('FeatureUpdateSuccess'),"success");
+                    if(vm.featureDetails.results.length ==1 && vm.currentPage > 1)
+                        vm.currentPage = vm.currentPage -1;
+                        loadDetails();
+                },
+                function(data, status) {
+                    ToastService.show("right","bottom","fadeInUp",data.message,"error");
+                });
+            }
+            vm.openDeleteDialog = function(name,id){			
+                var modalContent = $uibModal.open({
+                    templateUrl: './app/core/Delete/templates/ConfirmDeleteDialog.html',
+                    controller: 'confirmDeleteDialogController',
+                    controllerAs: 'deleteDlCtrl',
+                    resolve: {
+                        itemName: function () { return name },
+                        itemId: function() { return id },
+                        message:function() { return null},
+                        callBackFunction:function() { return confirmationDelete }
+                    }
+
+                                    });
+            }
+
+                         }
+
+            };
+});(function () {
+    'use strict';
+
+	    angular
+        .module('home')
+        .controller('ImageControlDialogController', ['$scope','$uibModalInstance','$translate','appCONSTANTS' ,'$http' , 'ManageFeatureResource','ToastService','callBackFunction' ,'featureDetail', 'language','featureControlId' ,  ImageControlDialogController])
+
+	function ImageControlDialogController($scope,$uibModalInstance, $translate, appCONSTANTS, $http, ManageFeatureResource,ToastService,callBackFunction,featureDetail,language,featureControlId){
+		var vm = this;
+        vm.featureDetail = featureDetail;
+        vm.language = language;
+		vm.close = function(){
+			$uibModalInstance.dismiss('cancel');
+		}
+		vm.isChanged = false;
+		function add(){
+            vm.isChanged = true;
+			var newFeatureDetail = new ManageFeatureResource();
+            newFeatureDetail.isImageChange= isImageChange;
+            newFeatureDetail.featureControlId = featureControlId;
+            var model = new FormData();
+			model.append('data', JSON.stringify(newFeatureDetail));
+			model.append('file', image);
+			$http({
+				method: 'POST',
+				url: appCONSTANTS.API_URL + 'Features/Detail',
+				useToken: true,
+				headers: { 'Content-Type': undefined },
+				data: model
+			}).then(
+                function(data, status) {
+					ToastService.show("right","bottom","fadeInUp",$translate.instant('FeatureUpdateSuccess'),"success");
+					 vm.isChanged = false;                     
+                     $uibModalInstance.dismiss('cancel');
+                     callBackFunction();                    
+                },
+                function(data, status) {
+                    vm.isChanged = false;                     
+					ToastService.show("right","bottom","fadeInUp",data.data.message,"error");
+                }
+            );
+
+                    }
+        function update(){
+            vm.isChanged = true;
+			var newFeatureDetail = new ManageFeatureResource();
+            newFeatureDetail.featureDetailId = vm.featureDetail.featureDetailId;
+            newFeatureDetail.isImageChange= isImageChange;            
+            newFeatureDetail.featureControlId = featureControlId;
+            var model = new FormData();
+			model.append('data', JSON.stringify(newFeatureDetail));
+			model.append('file', image);
+			$http({
+				method: 'PUT',
+				url: appCONSTANTS.API_URL + 'Features/Detail',
+				useToken: true,
+				headers: { 'Content-Type': undefined },
+				data: model
+			}).then(
+                function(data, status) {
+					ToastService.show("right","bottom","fadeInUp",$translate.instant('FeatureUpdateSuccess'),"success");
+					 vm.isChanged = false;
+                     $uibModalInstance.dismiss('cancel');
+                     callBackFunction();  
+                },
+                function(data, status) {
+                    vm.isChanged = false;                     
+					ToastService.show("right","bottom","fadeInUp",data.data.message,"error");
+                }
+            );
+        }
+        vm.LoadUpload = function () {
+            $("#logoImage").click();
+        }
+        var image;
+        var isImageChange = false;
+
+                $scope.AddImage = function (element) {
+            var logoFile = element[0];
+
+            var allowedImageTypes = ['image/jpg', 'image/png', 'image/jpeg']
+
+            if (logoFile && logoFile.size >= 0 && ((logoFile.size / (1024 * 1000)) < 2)) {
+
+                if (allowedImageTypes.indexOf(logoFile.type) !== -1) {
+                    $scope.newForm.$dirty = true;
+                    $scope.$apply(function () {
+
+                        image = logoFile;
+                        isImageChange = true;                        
+                        var reader = new FileReader();
+
+                        reader.onloadend = function () {
+                            vm.featureDetail.imageURL = reader.result;
+                            $scope.$apply();
+                        };
+                        if (logoFile) {
+                            reader.readAsDataURL(logoFile);
+                        }
+                    })
+                } else {
+                    $("#logoImage").val('');
+                    ToastService.show("right", "bottom", "fadeInUp", $translate.instant('imageTypeError'), "error");
+                }
+
+            } else {
+                if (logoFile) {
+                    $("#logoImage").val('');
+                    ToastService.show("right", "bottom", "fadeInUp", $translate.instant('imgaeSizeError'), "error");
+                }
+
+            }
+
+
+        }
+        if(featureDetail == null){
+            vm.save = add;
+            vm.featureDetail = {};
+            vm.featureDetail.isFree = true;
+        }
+        else{
+            vm.save = update;
+            vm.featureDetail = featureDetail;
+        }
+	}	
+}());
+angular.module('home').directive('listofavailableControl', function(){
+    return {
+        restrict: 'E',
+        replace: true,
+        scope: { featureControl: '=',selectedLanguage:'=',islistAvailable:"=",featureName:"=" },
+        templateUrl: "./app/supervisor/features/ListOfAvailableControl/templates/ListOfAvailableControl.html",
+        controllerAs:"listOfAvailableControler",
+        controller:function($scope,$rootScope,controlEnum ,daysEnum,ManageFeatureResource,appCONSTANTS,$uibModal,ToastService,$translate,AvailableControlService,$filter){
+            var vm = this;
+            vm.featureControl = $scope.featureControl;
+            vm.controls = controlEnum;
+            vm.days = daysEnum;
+            vm.language = appCONSTANTS.supportedLanguage;
+            vm.currentPage = 1;
+            vm.featureDetails = [];
+            function loadDetails(){
+                vm.isLoading = true;
+                ManageFeatureResource.getFeatureDetails({featureControlId:vm.featureControl.featureControlId,page:vm.currentPage}).$promise.then(function (results) {
+                    vm.featureDetails = results;
+                    vm.isLoading = false;        
+
+                                        vm.featureDetails.results.forEach(function(element) {
+                        element.availables.forEach(function(item) {
+                            item.from= item.from+"Z";
+                            item.from = $filter('date')(new Date(item.from), "hh:mm a");
+                            item.to= item.to+"Z";
+                            item.to = $filter('date')(new Date(item.to), "hh:mm a");
+                        }, this);    
+                    }, this);        
+                },
+                function (data, status) {
+
+                                        });
+            }
+            vm.controlType = vm.featureControl.controlType == "Multiple"?true:false;
+            vm.showMore = function(element)
+            {
+                $(element.currentTarget).toggleClass( "child-table-collapse" );
+            }
+            vm.switch = function(){
+                ManageFeatureResource.switchFeatureControl({featureControlId:vm.featureControl.featureControlId});
+            }
+            loadDetails();
+            $rootScope.$on('listofavailableChange', function (event) {
+                loadDetails();
+            });
+            vm.changePage  = function (page) {
+                vm.currentPage = page;
+                loadDetails();
+            }
+            vm.addNew = function(){
+                $scope.islistAvailable = true;
+                AvailableControlService.setFeatureName($scope.featureName)
+                AvailableControlService.setFeatureControlId(vm.featureControl.featureControlId)
+                AvailableControlService.setFeatureDetail(null);
+
+
+            }
+            vm.openEditDialog=function(index){
+                $scope.islistAvailable = true;
+                AvailableControlService.setFeatureName($scope.featureName)
+                AvailableControlService.setFeatureControlId(vm.featureControl.featureControlId)
+                AvailableControlService.setFeatureDetail(angular.copy(vm.featureDetails.results[index]));
+
+            }
+            function confirmationDelete(itemId){
+                ManageFeatureResource.deleteFeatureDetail({featureDetailId:itemId}).$promise.then(function(results) {
+                    ToastService.show("right","bottom","fadeInUp",$translate.instant('FeatureUpdateSuccess'),"success");
+                    if(vm.featureDetails.results.length ==1 && vm.currentPage > 1)
+                        vm.currentPage = vm.currentPage -1;
+                        loadDetails();
+                },
+                function(data, status) {
+                    ToastService.show("right","bottom","fadeInUp",data.message,"error");
+                });
+            }
+            vm.openDeleteDialog = function(name,id){			
+                var modalContent = $uibModal.open({
+                    templateUrl: './app/core/Delete/templates/ConfirmDeleteDialog.html',
+                    controller: 'confirmDeleteDialogController',
+                    controllerAs: 'deleteDlCtrl',
+                    resolve: {
+                        itemName: function () { return name },
+                        itemId: function() { return id },
+                        message:function() { return null},
+                        callBackFunction:function() { return confirmationDelete }
+                    }
+
+                                    });
+            }
+
+                         }
+
+            };
+});angular.module('home').directive('listofavailableControlForm', function(){
+    return {
+        restrict: 'E',
+        replace: true,
+        scope: { featureControl: '=',selectedLanguage:'=',islistAvailable:"=" },
+        templateUrl: "./app/supervisor/features/ListOfAvailableControl/templates/ListOfAvailableControlPopup.html",
+        controllerAs:"listOfAvailableControlDlCtrl",
+        controller:function($scope,$rootScope,controlEnum ,daysEnum,ManageFeatureResource,appCONSTANTS,$http,ToastService,$translate,AvailableControlService,$timeout,$filter){
+            var vm = this;
+            vm.featureControl = $scope.featureControl;
+            vm.controls = controlEnum;
+            vm.days = angular.copy(daysEnum);
+            vm.language = appCONSTANTS.supportedLanguage;
+            vm.featureName = AvailableControlService.getFeatureName();
+            vm.close = function(){
+                $scope.islistAvailable = false;                
+            }
+            $timeout(function(){
+                vm.days.forEach(function(element) {
+                    $('#datepicker-start'+element.id).datetimepicker({
+                        format: 'LT'
+                    });
+
+                    $('#datepicker-end'+element.id).datetimepicker({
+                        format: 'LT'
+                    });
+
+                                    }, this);
+             }, 100);
+             vm.changeDay = function(day){
+                 if(!day.isSelected){
+                     day.startTime= "";
+                     day.endTime= "";
+                     day.max= "";
+                 }
+             }
+            function add(){
+                vm.isChanged = true;
+                var newFeatureDetail = new ManageFeatureResource();
+                newFeatureDetail.descriptionDictionary = vm.featureDetail.descriptionDictionary;
+                newFeatureDetail.isFree= vm.featureDetail.isFree;
+                newFeatureDetail.price = vm.featureDetail.isFree?0:vm.featureDetail.price;
+                newFeatureDetail.featureControlId = AvailableControlService.getFeatureControlId();
+                newFeatureDetail.availables = []
+                var today= new Date()
+
+                                vm.days.forEach(function(element) {
+                    if(element.isSelected){
+                        newFeatureDetail.availables.push({                            
+                            from: (new Date(today.getMonth()+"/"+today.getDate()+"/"+today.getFullYear()+" "+element.startTime).toISOString()).replace('Z',''),
+                            to: (new Date(today.getMonth()+"/"+today.getDate()+"/"+today.getFullYear()+" "+element.endTime).toISOString()).replace('Z',''),
+                            max:element.max,day:element.id});
+                    }
+                }, this);
+                var model = new FormData();
+                model.append('data', JSON.stringify(newFeatureDetail));
+                $http({
+                    method: 'POST',
+                    url: appCONSTANTS.API_URL + 'Features/Detail',
+                    useToken: true,
+                    headers: { 'Content-Type': undefined },
+                    data: model
+                }).then(
+                    function(data, status) {
+                        ToastService.show("right","bottom","fadeInUp",$translate.instant('FeatureUpdateSuccess'),"success");
+                         vm.isChanged = false;                     
+                         $scope.islistAvailable = false;
+                         $rootScope.$broadcast('listofavailableChange');
+                    },
+                    function(data, status) {
+                        vm.isChanged = false;                     
+                        ToastService.show("right","bottom","fadeInUp",data.data.message,"error");
+                    }
+                );
+
+                            }
+            function update(){
+                vm.isChanged = true;
+                var newFeatureDetail = new ManageFeatureResource();
+                newFeatureDetail.descriptionDictionary = vm.featureDetail.descriptionDictionary;
+                newFeatureDetail.featureDetailId = vm.featureDetail.featureDetailId;
+                newFeatureDetail.isFree= vm.featureDetail.isFree;
+                newFeatureDetail.price = vm.featureDetail.isFree?0:vm.featureDetail.price;
+                newFeatureDetail.featureControlId = AvailableControlService.getFeatureControlId();
+                newFeatureDetail.availables = [];
+                var today= new Date()
+
+                vm.days.forEach(function(element) {
+                    if(element.isSelected){
+                        newFeatureDetail.availables.push({
+                            from:(new Date(today.getMonth()+"/"+today.getDate()+"/"+today.getFullYear()+" "+element.startTime).toISOString()).replace('Z',''),
+                            to:(new Date(today.getMonth()+"/"+today.getDate()+"/"+today.getFullYear()+" "+element.endTime).toISOString()).replace('Z',''),
+                            max:element.max,day:element.id,availableId:element.availableId});
+                    }
+                }, this);
+                var model = new FormData();
+                model.append('data', JSON.stringify(newFeatureDetail));
+                $http({
+                    method: 'PUT',
+                    url: appCONSTANTS.API_URL + 'Features/Detail',
+                    useToken: true,
+                    headers: { 'Content-Type': undefined },
+                    data: model
+                }).then(
+                    function(data, status) {
+                        ToastService.show("right","bottom","fadeInUp",$translate.instant('FeatureUpdateSuccess'),"success");
+                         vm.isChanged = false;
+                         $scope.islistAvailable = false;
+                         $rootScope.$broadcast('listofavailableChange');                         
+                    },
+                    function(data, status) {
+                        vm.isChanged = false;                     
+                        ToastService.show("right","bottom","fadeInUp",data.data.message,"error");
+                    }
+                );
+            }
+            featureDetail = AvailableControlService.getFeatureDetail();
+            if(featureDetail == null){
+                vm.save = add;
+                vm.featureDetail = {};
+                vm.featureDetail.isFree = true;
+                vm.featureDetail.price  = 0;
+
+                           }
+            else{
+                vm.save = update;
+                vm.featureDetail = featureDetail;
+                vm.days.forEach(function(element) {
+                    var day = $filter('filter')(featureDetail.availables, {day:element.id});
+                    if(day.length >0){
+                        $timeout(function(){
+                                $('#datepicker-start'+element.id).datetimepicker({
+                                    format: 'LT'
+                                });
+
+                                $('#datepicker-end'+element.id).datetimepicker({
+                                    format: 'LT'
+                                });
+
+                                                        element.isSelected = true;
+                        element.startTime = day[0].from;
+                        element.endTime = day[0].to;
+                        element.max = day[0].max;
+                        element.availableId = day[0].availableId
+                         }, 100);
+                    }
+                }, this);
+
+
+            }
+
+
+                                     }
+
+            };
+});
+angular.module('home').directive('textandimageControl', function(){
+    return {
+        restrict: 'E',
+        replace: true,
+        scope: { featureControl: '=',selectedLanguage:'=' },
+        templateUrl: "./app/supervisor/features/TextAndImageControl/templates/TextAndImageControl.html",
+        controllerAs:"textAndImageControler",
+        controller:function($scope,controlEnum,ManageFeatureResource,appCONSTANTS,$uibModal,ToastService,$translate){
+            var vm = this;
+            vm.featureControl = $scope.featureControl;
+            vm.controls = controlEnum;
+            vm.Now = (new Date()).getTime();
+            vm.language = appCONSTANTS.supportedLanguage;
+            vm.currentPage = 1;
+            vm.featureDetails = [];
+            function loadDetails(){
+                vm.isLoading = true;
+                ManageFeatureResource.getFeatureDetails({featureControlId:vm.featureControl.featureControlId,page:vm.currentPage}).$promise.then(function (results) {
+                    vm.featureDetails = results;
+                    vm.isLoading = false;                
+                },
+                function (data, status) {
+
+                                        });
+            }
+            loadDetails();
+            vm.controlType = vm.featureControl.controlType == "Multiple"?true:false;
+            vm.switch = function(){
+                ManageFeatureResource.switchFeatureControl({featureControlId:vm.featureControl.featureControlId});
+            }
+            vm.changePage  = function (page) {
+                vm.currentPage = page;
+                loadDetails();
+            }
+            vm.addNew = function(){
+                var modalContent = $uibModal.open({
+                    templateUrl: "./app/supervisor/features/TextAndImageControl/templates/TextAndImageControlPopup.html",
+                    controller: 'TextAndImageControlDialogController',
+                    controllerAs: 'textAndImageControlDlCtrl',
+                    resolve:{
+                        callBackFunction:function(){return loadDetails;},
+                        featureDetail:function(){return null;},
+                        language:function(){return vm.language;},
+                        featureControlId:function(){return vm.featureControl.featureControlId;}
+                    }
+
+                                    });
+            }
+            vm.openEditDialog=function(index){
+                var modalContent = $uibModal.open({
+                    templateUrl: "./app/supervisor/features/TextAndImageControl/templates/TextAndImageControlPopup.html",
+                    controller: 'TextAndImageControlDialogController',
+                    controllerAs: 'textAndImageControlDlCtrl',
+                    resolve:{
+                        callBackFunction:function(){return loadDetails;},
+                        featureDetail:function(){return angular.copy(vm.featureDetails.results[index]);},
+                        language:function(){return vm.language;},
+                        featureControlId:function(){return vm.featureControl.featureControlId;}
+                    }
+
+                                    });
+            }
+            function confirmationDelete(itemId){
+                ManageFeatureResource.deleteFeatureDetail({featureDetailId:itemId}).$promise.then(function(results) {
+                    ToastService.show("right","bottom","fadeInUp",$translate.instant('FeatureUpdateSuccess'),"success");
+                    if(vm.featureDetails.results.length ==1 && vm.currentPage > 1)
+                        vm.currentPage = vm.currentPage -1;
+                        loadDetails();
+                },
+                function(data, status) {
+                    ToastService.show("right","bottom","fadeInUp",data.message,"error");
+                });
+            }
+            vm.openDeleteDialog = function(name,id){			
+                var modalContent = $uibModal.open({
+                    templateUrl: './app/core/Delete/templates/ConfirmDeleteDialog.html',
+                    controller: 'confirmDeleteDialogController',
+                    controllerAs: 'deleteDlCtrl',
+                    resolve: {
+                        itemName: function () { return name },
+                        itemId: function() { return id },
+                        message:function() { return null},
+                        callBackFunction:function() { return confirmationDelete }
+                    }
+
+                                    });
+            }
+
+                         }
+
+            };
+});(function () {
+    'use strict';
+
+	    angular
+        .module('home')
+        .controller('TextAndImageControlDialogController', ['$scope','$uibModalInstance','$translate','appCONSTANTS' ,'$http' , 'ManageFeatureResource','ToastService','callBackFunction' ,'featureDetail', 'language','featureControlId' ,  TextAndImageControlDialogController])
+
+	function TextAndImageControlDialogController($scope,$uibModalInstance, $translate, appCONSTANTS, $http, ManageFeatureResource,ToastService,callBackFunction,featureDetail,language,featureControlId){
+		var vm = this;
+        vm.featureDetail = featureDetail;
+        vm.language = language;
+		vm.close = function(){
+			$uibModalInstance.dismiss('cancel');
+		}
+		vm.isChanged = false;
+		function add(){
+            vm.isChanged = true;
+			var newFeatureDetail = new ManageFeatureResource();
+            newFeatureDetail.descriptionDictionary = vm.featureDetail.descriptionDictionary;
+            newFeatureDetail.isFree= vm.featureDetail.isFree;
+            newFeatureDetail.isImageChange= isImageChange;
+            newFeatureDetail.price = vm.featureDetail.isFree?0:vm.featureDetail.price;
+            newFeatureDetail.featureControlId = featureControlId;
+            var model = new FormData();
+			model.append('data', JSON.stringify(newFeatureDetail));
+			model.append('file', image);
+			$http({
+				method: 'POST',
+				url: appCONSTANTS.API_URL + 'Features/Detail',
+				useToken: true,
+				headers: { 'Content-Type': undefined },
+				data: model
+			}).then(
+                function(data, status) {
+					ToastService.show("right","bottom","fadeInUp",$translate.instant('FeatureUpdateSuccess'),"success");
+					 vm.isChanged = false;                     
+                     $uibModalInstance.dismiss('cancel');
+                     callBackFunction();                    
+                },
+                function(data, status) {
+                    vm.isChanged = false;                     
+					ToastService.show("right","bottom","fadeInUp",data.data.message,"error");
+                }
+            );
+
+                    }
+        function update(){
+            vm.isChanged = true;
+			var newFeatureDetail = new ManageFeatureResource();
+            newFeatureDetail.descriptionDictionary = vm.featureDetail.descriptionDictionary;
+            newFeatureDetail.featureDetailId = vm.featureDetail.featureDetailId;
+            newFeatureDetail.isFree= vm.featureDetail.isFree;
+            newFeatureDetail.price = vm.featureDetail.isFree?0:vm.featureDetail.price;
+            newFeatureDetail.isImageChange= isImageChange;            
+            newFeatureDetail.featureControlId = featureControlId;
+            var model = new FormData();
+			model.append('data', JSON.stringify(newFeatureDetail));
+			model.append('file', image);
+			$http({
+				method: 'PUT',
+				url: appCONSTANTS.API_URL + 'Features/Detail',
+				useToken: true,
+				headers: { 'Content-Type': undefined },
+				data: model
+			}).then(
+                function(data, status) {
+					ToastService.show("right","bottom","fadeInUp",$translate.instant('FeatureUpdateSuccess'),"success");
+					 vm.isChanged = false;
+                     $uibModalInstance.dismiss('cancel');
+                     callBackFunction();  
+                },
+                function(data, status) {
+                    vm.isChanged = false;                     
+					ToastService.show("right","bottom","fadeInUp",data.data.message,"error");
+                }
+            );
+        }
+        vm.LoadUpload = function () {
+            $("#logoImage").click();
+        }
+        var image;
+        var isImageChange = false;
+
+                $scope.AddImage = function (element) {
+            var logoFile = element[0];
+
+            var allowedImageTypes = ['image/jpg', 'image/png', 'image/jpeg']
+
+            if (logoFile && logoFile.size >= 0 && ((logoFile.size / (1024 * 1000)) < 2)) {
+
+                if (allowedImageTypes.indexOf(logoFile.type) !== -1) {
+                    $scope.newForm.$dirty = true;
+                    $scope.$apply(function () {
+
+                        image = logoFile;
+                        isImageChange = true;                        
+                        var reader = new FileReader();
+
+                        reader.onloadend = function () {
+                            vm.featureDetail.imageURL = reader.result;
+                            $scope.$apply();
+                        };
+                        if (logoFile) {
+                            reader.readAsDataURL(logoFile);
+                        }
+                    })
+                } else {
+                    $("#logoImage").val('');
+                    ToastService.show("right", "bottom", "fadeInUp", $translate.instant('imageTypeError'), "error");
+                }
+
+            } else {
+                if (logoFile) {
+                    $("#logoImage").val('');
+                    ToastService.show("right", "bottom", "fadeInUp", $translate.instant('imgaeSizeError'), "error");
+                }
+
+            }
+
+
+        }
+        if(featureDetail == null){
+            vm.save = add;
+            vm.featureDetail = {};
+            vm.featureDetail.isFree = true;
+        }
+        else{
+            vm.save = update;
+            vm.featureDetail = featureDetail;
+        }
+	}	
+}());
+angular.module('home').directive('textControl', function(){
+    return {
+        restrict: 'E',
+        replace: true,
+        scope: { featureControl: '=',selectedLanguage:'=' },
+        templateUrl: "./app/supervisor/features/TextControl/templates/TextControl.html",
+        controllerAs:"textControler",
+        controller:function($scope,controlEnum,ManageFeatureResource,appCONSTANTS,$uibModal,ToastService,$translate){
+            var vm = this;
+            vm.featureControl = $scope.featureControl;
+            vm.controls = controlEnum;
+
+                        vm.language = appCONSTANTS.supportedLanguage;
+            vm.currentPage = 1;
+            vm.featureDetails = [];
+            function loadDetails(){
+                vm.isLoading = true;
+                ManageFeatureResource.getFeatureDetails({featureControlId:vm.featureControl.featureControlId,page:vm.currentPage}).$promise.then(function (results) {
+                    vm.featureDetails = results;
+                    vm.isLoading = false;                
+                },
+                function (data, status) {
+
+                                        });
+            }
+            vm.controlType = vm.featureControl.controlType == "Multiple"?true:false;
+            vm.switch = function(){
+                ManageFeatureResource.switchFeatureControl({featureControlId:vm.featureControl.featureControlId});
+            }
+            loadDetails();
+            vm.changePage  = function (page) {
+                vm.currentPage = page;
+                loadDetails();
+            }
+            vm.addNew = function(){
+                var modalContent = $uibModal.open({
+                    templateUrl: "./app/supervisor/features/TextControl/templates/TextControlPopup.html",
+                    controller: 'TextControlDialogController',
+                    controllerAs: 'textControlDlCtrl',
+                    resolve:{
+                        callBackFunction:function(){return loadDetails;},
+                        featureDetail:function(){return null;},
+                        language:function(){return vm.language;},
+                        featureControlId:function(){return vm.featureControl.featureControlId;}
+                    }
+
+                                    });
+            }
+            vm.openEditDialog=function(index){
+                var modalContent = $uibModal.open({
+                    templateUrl: "./app/supervisor/features/TextControl/templates/TextControlPopup.html",
+                    controller: 'TextControlDialogController',
+                    controllerAs: 'textControlDlCtrl',
+                    resolve:{
+                        callBackFunction:function(){return loadDetails;},
+                        featureDetail:function(){return angular.copy(vm.featureDetails.results[index]);},
+                        language:function(){return vm.language;},
+                        featureControlId:function(){return vm.featureControl.featureControlId;}
+                    }
+
+                                    });
+            }
+            function confirmationDelete(itemId){
+                ManageFeatureResource.deleteFeatureDetail({featureDetailId:itemId}).$promise.then(function(results) {
+                    ToastService.show("right","bottom","fadeInUp",$translate.instant('FeatureUpdateSuccess'),"success");
+                    if(vm.featureDetails.results.length ==1 && vm.currentPage > 1)
+                        vm.currentPage = vm.currentPage -1;
+                        loadDetails();
+                },
+                function(data, status) {
+                    ToastService.show("right","bottom","fadeInUp",data.message,"error");
+                });
+            }
+            vm.openDeleteDialog = function(name,id){			
+                var modalContent = $uibModal.open({
+                    templateUrl: './app/core/Delete/templates/ConfirmDeleteDialog.html',
+                    controller: 'confirmDeleteDialogController',
+                    controllerAs: 'deleteDlCtrl',
+                    resolve: {
+                        itemName: function () { return name },
+                        itemId: function() { return id },
+                        message:function() { return null},
+                        callBackFunction:function() { return confirmationDelete }
+                    }
+
+                                    });
+            }
+
+                         }
+
+            };
+});(function () {
+    'use strict';
+
+	    angular
+        .module('home')
+        .controller('TextControlDialogController', ['$scope','$uibModalInstance','$translate','appCONSTANTS' ,'$http' , 'ManageFeatureResource','ToastService','callBackFunction' ,'featureDetail', 'language','featureControlId' ,  TextControlDialogController])
+
+	function TextControlDialogController($scope,$uibModalInstance, $translate, appCONSTANTS, $http, ManageFeatureResource,ToastService,callBackFunction,featureDetail,language,featureControlId){
+		var vm = this;
+        vm.featureDetail = featureDetail;
+        vm.language = language;
+		vm.close = function(){
+			$uibModalInstance.dismiss('cancel');
+		}
+		vm.isChanged = false;
+		function add(){
+            vm.isChanged = true;
+			var newFeatureDetail = new ManageFeatureResource();
+            newFeatureDetail.descriptionDictionary = vm.featureDetail.descriptionDictionary;
+            newFeatureDetail.isFree= vm.featureDetail.isFree;
+            newFeatureDetail.price = vm.featureDetail.isFree?0:vm.featureDetail.price;
+            newFeatureDetail.featureControlId = featureControlId;
+            var model = new FormData();
+			model.append('data', JSON.stringify(newFeatureDetail));
+			$http({
+				method: 'POST',
+				url: appCONSTANTS.API_URL + 'Features/Detail',
+				useToken: true,
+				headers: { 'Content-Type': undefined },
+				data: model
+			}).then(
+                function(data, status) {
+					ToastService.show("right","bottom","fadeInUp",$translate.instant('FeatureUpdateSuccess'),"success");
+					 vm.isChanged = false;                     
+                     $uibModalInstance.dismiss('cancel');
+                     callBackFunction();                    
+                },
+                function(data, status) {
+                    vm.isChanged = false;                     
+					ToastService.show("right","bottom","fadeInUp",data.data.message,"error");
+                }
+            );
+
+                    }
+        function update(){
+            vm.isChanged = true;
+			var newFeatureDetail = new ManageFeatureResource();
+            newFeatureDetail.descriptionDictionary = vm.featureDetail.descriptionDictionary;
+            newFeatureDetail.featureDetailId = vm.featureDetail.featureDetailId;
+            newFeatureDetail.isFree= vm.featureDetail.isFree;
+            newFeatureDetail.price = vm.featureDetail.isFree?0:vm.featureDetail.price;
+            newFeatureDetail.featureControlId = featureControlId;
+            var model = new FormData();
+			model.append('data', JSON.stringify(newFeatureDetail));
+			$http({
+				method: 'PUT',
+				url: appCONSTANTS.API_URL + 'Features/Detail',
+				useToken: true,
+				headers: { 'Content-Type': undefined },
+				data: model
+			}).then(
+                function(data, status) {
+					ToastService.show("right","bottom","fadeInUp",$translate.instant('FeatureUpdateSuccess'),"success");
+					 vm.isChanged = false;
+                     $uibModalInstance.dismiss('cancel');
+                     callBackFunction();  
+                },
+                function(data, status) {
+                    vm.isChanged = false;                     
+					ToastService.show("right","bottom","fadeInUp",data.data.message,"error");
+                }
+            );
+        }
+        if(featureDetail == null){
+            vm.save = add;
+            vm.featureDetail = {};
+            vm.featureDetail.isFree = true;
+        }
+        else{
+            vm.save = update;
+            vm.featureDetail = featureDetail;
+        }
+	}	
+}());
+angular.module('home').directive('videoControl', function(){
+    return {
+        restrict: 'E',
+        replace: true,
+        scope: { featureControl: '=',selectedLanguage:'=' },
+        templateUrl: "./app/supervisor/features/VideoControl/templates/VideoControl.html",
+        controllerAs:"videoControler",
+        controller:function($scope,controlEnum,ManageFeatureResource,appCONSTANTS,$uibModal,ToastService,$translate){
+            var vm = this;
+            vm.featureControl = $scope.featureControl;
+            vm.controls = controlEnum;
+
+                        vm.language = appCONSTANTS.supportedLanguage;
+            vm.currentPage = 1;
+            vm.featureDetails = [];
+            function loadDetails(){
+                vm.isLoading = true;
+                ManageFeatureResource.getFeatureDetails({featureControlId:vm.featureControl.featureControlId,page:vm.currentPage}).$promise.then(function (results) {
+                    vm.featureDetails = results;
+                    vm.isLoading = false;                
+                },
+                function (data, status) {
+
+                                        });
+            }
+            loadDetails();
+            vm.changePage  = function (page) {
+                vm.currentPage = page;
+                loadDetails();
+            }
+            vm.addNew = function(){
+                var modalContent = $uibModal.open({
+                    templateUrl: "./app/supervisor/features/VideoControl/templates/VideoControlPopup.html",
+                    controller: 'VideoControlDialogController',
+                    controllerAs: 'videoControlDlCtrl',
+                    resolve:{
+                        callBackFunction:function(){return loadDetails;},
+                        featureDetail:function(){return null;},
+                        language:function(){return vm.language;},
+                        featureControlId:function(){return vm.featureControl.featureControlId;}
+                    }
+
+                                    });
+            }
+            vm.openEditDialog=function(index){
+                var modalContent = $uibModal.open({
+                    templateUrl: "./app/supervisor/features/VideoControl/templates/VideoControlPopup.html",
+                    controller: 'VideoControlDialogController',
+                    controllerAs: 'videoControlDlCtrl',
+                    resolve:{
+                        callBackFunction:function(){return loadDetails;},
+                        featureDetail:function(){return angular.copy(vm.featureDetails.results[index]);},
+                        language:function(){return vm.language;},
+                        featureControlId:function(){return vm.featureControl.featureControlId;}
+                    }
+
+                                    });
+            }
+            function confirmationDelete(itemId){
+                ManageFeatureResource.deleteFeatureDetail({featureDetailId:itemId}).$promise.then(function(results) {
+                    ToastService.show("right","bottom","fadeInUp",$translate.instant('FeatureUpdateSuccess'),"success");
+                    if(vm.featureDetails.results.length ==1 && vm.currentPage > 1)
+                        vm.currentPage = vm.currentPage -1;
+                        loadDetails();
+                },
+                function(data, status) {
+                    ToastService.show("right","bottom","fadeInUp",data.message,"error");
+                });
+            }
+            vm.openDeleteDialog = function(name,id){			
+                var modalContent = $uibModal.open({
+                    templateUrl: './app/core/Delete/templates/ConfirmDeleteDialog.html',
+                    controller: 'confirmDeleteDialogController',
+                    controllerAs: 'deleteDlCtrl',
+                    resolve: {
+                        itemName: function () { return name },
+                        itemId: function() { return id },
+                        message:function() { return null},
+                        callBackFunction:function() { return confirmationDelete }
+                    }
+
+                                    });
+            }
+
+                         }
+
+            };
+});(function () {
+    'use strict';
+
+	    angular
+        .module('home')
+        .controller('VideoControlDialogController', ['$scope','$uibModalInstance','$translate','appCONSTANTS' ,'$http' , 'ManageFeatureResource','ToastService','callBackFunction' ,'featureDetail', 'language','featureControlId' ,  VideoControlDialogController])
+
+	function VideoControlDialogController($scope,$uibModalInstance, $translate, appCONSTANTS, $http, ManageFeatureResource,ToastService,callBackFunction,featureDetail,language,featureControlId){
+		var vm = this;
+        vm.featureDetail = featureDetail;
+        vm.language = language;
+		vm.close = function(){
+			$uibModalInstance.dismiss('cancel');
+		}
+		vm.isChanged = false;
+		function add(){
+            vm.isChanged = true;
+			var newFeatureDetail = new ManageFeatureResource();
+            newFeatureDetail.link = vm.featureDetail.link;
+            newFeatureDetail.featureControlId = featureControlId;
+            var model = new FormData();
+			model.append('data', JSON.stringify(newFeatureDetail));
+			$http({
+				method: 'POST',
+				url: appCONSTANTS.API_URL + 'Features/Detail',
+				useToken: true,
+				headers: { 'Content-Type': undefined },
+				data: model
+			}).then(
+                function(data, status) {
+					ToastService.show("right","bottom","fadeInUp",$translate.instant('FeatureUpdateSuccess'),"success");
+					 vm.isChanged = false;                     
+                     $uibModalInstance.dismiss('cancel');
+                     callBackFunction();                    
+                },
+                function(data, status) {
+                    vm.isChanged = false;                     
+					ToastService.show("right","bottom","fadeInUp",data.data.message,"error");
+                }
+            );
+
+                    }
+        function update(){
+            vm.isChanged = true;
+			var newFeatureDetail = new ManageFeatureResource();
+            newFeatureDetail.link = vm.featureDetail.link;
+            newFeatureDetail.featureDetailId = vm.featureDetail.featureDetailId;
+            newFeatureDetail.featureControlId = featureControlId;
+            var model = new FormData();
+			model.append('data', JSON.stringify(newFeatureDetail));
+			$http({
+				method: 'PUT',
+				url: appCONSTANTS.API_URL + 'Features/Detail',
+				useToken: true,
+				headers: { 'Content-Type': undefined },
+				data: model
+			}).then(
+                function(data, status) {
+					ToastService.show("right","bottom","fadeInUp",$translate.instant('FeatureUpdateSuccess'),"success");
+					 vm.isChanged = false;
+                     $uibModalInstance.dismiss('cancel');
+                     callBackFunction();  
+                },
+                function(data, status) {
+                    vm.isChanged = false;                     
+					ToastService.show("right","bottom","fadeInUp",data.data.message,"error");
+                }
+            );
+        }
+        if(featureDetail == null){
+            vm.save = add;
+            vm.featureDetail = {};
+        }
+        else{
+            vm.save = update;
+            vm.featureDetail = featureDetail;
+        }
+	}	
 }());

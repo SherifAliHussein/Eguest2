@@ -16,5 +16,6 @@ namespace E_Guest.BLL.Services.Interfaces
         void ActivateRoom(long roomId, long adminId);
         void DeActivateRoom(long roomId, long adminId);
         void DeleteRoom(long roomId, long adminId);
+        List<RoomNameDto> GetAllRoomNames(long userId, string role);
     }
 }

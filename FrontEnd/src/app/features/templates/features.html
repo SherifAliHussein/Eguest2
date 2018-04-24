@@ -1,21 +1,14 @@
-<style>
-    .lity-close:hover{
-        top: 40px !important;
-    }
-    .lity-close{
-        top: 40px !important;
-    }
-</style>
+
 <div style="background-color: #83bde6fa" >
     <div >
         
         <div ng-repeat="feature in featureCtrl.features.results" ng-if="globalInfo.featureMode" >
             <div class="col-md-2">
-                <div class="column cursorPointer" ng-if="feature.type=='Normal'" data-lity-target="#inline2" data-lity
-                ng-click="featureCtrl.request(feature.featureId,feature.featureNameDictionary[selectedLanguage])"
-                  style="cursor: pointer; border-radius: 7px;box-shadow: 0 1px 3px rgba(0,0,0,.12), 0 1px 50px rgba(0,0,0,.24);background-color: white;    margin-bottom: 10px;">
+                <div class="column cursorPointer" ng-if="feature.type=='Normal'" 
+                ng-click="$state.go('featureDetail',{featureId: feature.featureId})"
+                  style="cursor: pointer; border-radius: 7px;box-shadow: 0 1px 3px rgba(0,0,0,.12), 0 1px 50px rgba(0,0,0,.24);color: white; background: rgba(8, 8, 8, 0.32);margin-bottom: 10px;">
                         <div>
-                            <img ng-src="{{feature.imageURL}}?type='thumbnail' "  style="width: 100%;border-radius: 7px;"/>
+                            <img ng-src="{{feature.imageURL}}?type='thumbnail' "  style="width: 100%;border-radius: 150px;"/>
                             <div style="text-align: center;font-weight: bold;height: 50px;display: grid;align-items: center;">
                                   {{feature.featureNameDictionary[selectedLanguage]}}
                                 
@@ -24,9 +17,9 @@
                 </div>
                 <div class="column cursorPointer" ng-if="feature.type=='Restaurant'"
                 ng-click="featureCtrl.showRestaurants($index)"
-                  style="cursor: pointer; border-radius: 7px;box-shadow: 0 1px 3px rgba(0,0,0,.12), 0 1px 50px rgba(0,0,0,.24);background-color: white;    margin-bottom: 10px;">
+                  style="cursor: pointer; border-radius: 7px;box-shadow: 0 1px 3px rgba(0,0,0,.12), 0 1px 50px rgba(0,0,0,.24);color: white;background: rgba(8, 8, 8, 0.32);margin-bottom: 10px;">
                         <div>
-                            <img ng-src="{{feature.imageURL}}?type='thumbnail' "  style="width: 100%;border-radius: 7px;"/>
+                            <img ng-src="{{feature.imageURL}}?type='thumbnail' "  style="width: 100%;border-radius: 150px;"/>
                             <div style="text-align: center;font-weight: bold;height: 50px;display: grid;align-items: center;">
                                   {{feature.featureNameDictionary[selectedLanguage]}}
                             
@@ -40,10 +33,10 @@
         <div ng-repeat="restaurant in featureCtrl.features.results[featureCtrl.selectedFeatureIndex].restaurants"ng-if="!globalInfo.featureMode"    >
             <div class="col-md-2">
                 <div class="column cursorPointer" 
-                ng-click="$state.go('menu',{restaurantId:restaurant.restaurantId})"
-                style="cursor: pointer; border-radius: 7px;box-shadow: 0 1px 3px rgba(0,0,0,.12), 0 1px 50px rgba(0,0,0,.24);background-color: white;    margin-bottom: 10px;">
+                ng-click="$state.go('menu',{featureId: featureCtrl.features.results[featureCtrl.selectedFeatureIndex].featureId,restaurantId:restaurant.restaurantId})"
+                style="cursor: pointer; border-radius: 7px;box-shadow: 0 1px 3px rgba(0,0,0,.12), 0 1px 50px rgba(0,0,0,.24);color: white;background: rgba(8, 8, 8, 0.32);margin-bottom: 10px;">
                         <div>
-                            <img ng-src="{{restaurant.imageURL}}?type='thumbnail' "  style="width: 100%;border-radius: 7px;"/>
+                            <img ng-src="{{restaurant.imageURL}}?type='thumbnail' "  style="width: 100%;border-radius: 150px;"/>
                             <div style="text-align: center;font-weight: bold;height: 50px;display: grid;align-items: center;">
                                 {{restaurant.restaurantNameDictionary[selectedLanguage]}}
                             

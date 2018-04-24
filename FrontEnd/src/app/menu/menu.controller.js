@@ -3,9 +3,9 @@
 
     angular
         .module('home')
-        .controller('menuController', ['$rootScope', '$translate', '$scope', 'appCONSTANTS', '$stateParams', 'MenuResource', 'menuPrepService', 'ResturantPrepService', 'CategoriesResource', '$state', '_', 'authenticationService', 'authorizationService', '$localStorage', 'userRolesEnum', 'ToastService', 'ResturantResource', 'MenuOfflineResource', 'OfflineDataResource', menuController])
+        .controller('menuController', ['$rootScope', '$translate', '$scope', 'appCONSTANTS', '$stateParams', 'MenuResource', 'menuPrepService', 'ResturantPrepService', 'CategoriesResource', '$state', '_', 'authenticationService', 'authorizationService', '$localStorage', 'userRolesEnum', 'ToastService', 'ResturantResource', 'MenuOfflineResource', 'OfflineDataResource','CartIconService', menuController])
 
-    function menuController($rootScope, $translate, $scope, appCONSTANTS, $stateParams, MenuResource, menuPrepService, ResturantPrepService, CategoriesResource, $state, _, authenticationService, authorizationService, $localStorage, userRolesEnum, ToastService, ResturantResource, MenuOfflineResource, OfflineDataResource) {
+    function menuController($rootScope, $translate, $scope, appCONSTANTS, $stateParams, MenuResource, menuPrepService, ResturantPrepService, CategoriesResource, $state, _, authenticationService, authorizationService, $localStorage, userRolesEnum, ToastService, ResturantResource, MenuOfflineResource, OfflineDataResource,CartIconService) {
         var vm = this;
         // ResturantResource.getResturantGlobalInfo().$promise.then(function (results) {
 
@@ -15,6 +15,9 @@
         //   function (data, status) {
         //       ToastService.show("right", "bottom", "fadeInUp", data.message, "error");
         //   });
+        $scope.cartIcon = true;        
+        CartIconService.cartIcon = true;
+
         $scope.$parent.globalInfo= ResturantPrepService;
         vm.restaurantId = $stateParams.restaurantId;
         

@@ -28,5 +28,10 @@ namespace E_Guest.DAL.Entities.Model
         public int Number { get; set; }
         
         public decimal Price { get; set; }
+        [Column(TypeName = "datetime2")]
+        public DateTime? From { get; set; }
+
+        [Column(TypeName = "datetime2")]
+        public DateTime? To { get; set; }
     }
 }

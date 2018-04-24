@@ -25,8 +25,9 @@
     "ngprogress-lite": "^1.0.8",
     "ngstorage": "^0.3.10",
     "optipng-bin": "^3.1.2",
-    "propellerkit": "^1.1.0",
-    "propellerkit-select2": "^1.1.0"
+    "propellerkit": "1.1.0",
+    "propellerkit-datetimepicker": "1.1.0",
+    "propellerkit-select2": "1.1.0"
   },
   "devDependencies": {
     "add-stream": "^1.0.0",

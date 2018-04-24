@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css?family=Bad+Script');
 body{
 	overflow:auto;
-	background-image: url(../assets/img/bg.jpg);
+	/* background-image: url(../assets/img/bg.jpg); */
     background-size: cover;
 background-repeat: no-repeat;
 font-family:Roboto-Black;}
@@ -94,7 +94,15 @@ h3{ font-weight: bold;}
     text-align: right;
     direction: rtl;
 }
-
+.main_field_2{overflow: hidden;
+    direction: rtl;
+}
+.main_field_3{
+    direction: rtl;
+}
+.main_field_3_text {
+    text-align: left;
+}
 
 
  .name:before {    background-image: url(../assets/img/user_icon.png);

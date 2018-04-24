@@ -19,7 +19,9 @@
                     },
                     resolve: {
                         RoomsPrepService: RoomsPrepService,
-                        roomLimitPrepService:roomLimitPrepService
+                        roomLimitPrepService:roomLimitPrepService,
+                        BuildingsPrepService:BuildingsPrepService,
+                        FloorsPrepService:FloorsPrepService
                     }
                  
                 })
@@ -33,5 +35,15 @@
         roomLimitPrepService.$inject = ['AdminRoomsLimitResource']
         function roomLimitPrepService(AdminRoomsLimitResource) {
             return AdminRoomsLimitResource.getRoomsLimitAndConsumed().$promise;
+        }
+
+        BuildingsPrepService.$inject = ['BuildingResource']
+        function BuildingsPrepService(BuildingResource) {
+            return BuildingResource.getAllBuildings().$promise;
+        }
+
+        FloorsPrepService.$inject = ['FloorResource']
+        function FloorsPrepService(FloorResource) {
+            return FloorResource.getAllFloors().$promise;
         }
 }());

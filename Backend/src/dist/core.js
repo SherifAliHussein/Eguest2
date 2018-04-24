@@ -14,7 +14,7 @@
       'ngProgressLite',
     'ui.bootstrap',
     'pascalprecht.translate',
-    //'ui.sortable',
+    'ui.sortable',
     ]);
 }());
 ;(function() {
@@ -54,8 +54,8 @@
 	angular
 		.module('core')
 		.constant('appCONSTANTS', {
-			 'API_URL': 'http://localhost:36402/api/',
-			// 'API_URL': 'http://eguestbackend.azurewebsites.net/api/',
+			//  'API_URL': 'http://localhost:36402/api/',
+			'API_URL': 'http://eguestbackend-v2.azurewebsites.net/api/',			
 			'defaultLanguage':'en-us',
 			'supportedLanguage':{
 				'en-us':{'key':'en-us','value':'english'},
@@ -69,7 +69,24 @@
 		}).constant('userRolesEnum', {
 			Admin:"Admin",
 			Room:"Room"
-    });
+    }).constant('controlEnum', [
+		{id:0,text:"ListOfText"},
+		{id:1,text:"ListOfImage"},
+		{id:2,text:"ListOfTextAndImage"},
+		{id:3,text:"Videos"},
+		{id:4,text:"Available"},
+		{id:5,text:"Time"},
+		{id:6,text:"ListOfAvailable"},
+		])
+	.constant('daysEnum', [
+		{id:0,text:"Sunday"},
+		{id:1,text:"Monday"},
+		{id:2,text:"Tuesday"},
+		{id:3,text:"Wednesday"},
+		{id:4,text:"Thursday"},
+		{id:5,text:"Friday"},
+		{id:6,text:"Saturday"},
+		]);;
 }());;(function() {
     'use strict';
 
@@ -181,6 +198,7 @@ angular.module('core')
             "MinimumMsg":"Minimum",
             "ConfirmPasswordLbl":"Confirm password",            
             "AddFeatureBtn":"Add feature",
+            "AddRestaurantFeatureBtn":"Add restaurant feature",
             "newFeatureLbl":"New Feature",
             "UpdateFeatureLbl":"Update Feature",
             "hasDetailsLbl":"Has details?",
@@ -417,8 +435,58 @@ angular.module('core')
             "TelmplateErrorCount":"Template should have",
 
 
-            "selectRestaurantLbl":"Select restaurants"
-            
+            "selectRestaurantLbl":"Select restaurants",
+            "itemlbl":"item",
+            "likelbl":"Like",
+            "dislike":"Dislike",
+            "feedBacksBtn":"feedBacks",
+            "Comment":"Comment",
+            "createdate":"date",
+            "Rate":"Rate",
+            "Guest":"Guest",
+            "NoFeedBacksAvailable":"there is no feedback",
+            "BuildingLbl":"Building",
+            "AddBuildingBtn":"Add building",
+            "NoBuildingLbl":"there is no buildings",
+            "NewBuildingLbl":"New building",
+            "BuildingAddSuccess":"Building added successfuly",
+            "BuildingUpdateSuccess":"Building updated successfuly",
+            "FloorLbl":"Floor",
+            "AddFloorBtn":"Add floor",
+            "NoFloorLbl":"there is no floors",
+            "NewFloorLbl":"New floor",
+            "FloorAddSuccess":"Floor added successfuly",
+            "FloorUpdateSuccess":"Floor updated successfuly",
+            "buildingName":"building name",
+            "floorName":"floor name",
+            "selectControlLbl":"Select control",
+            "orderControlLbl":"Order control",
+            "detailLbl":"Details",
+            "ListOfText":"List of text",
+            "ListOfImage":"List of image",
+            "ListOfTextAndImage":"List of text and image",
+            "Videos":"Videos",
+            "Available":"Available",
+            "Time":"Time",
+            "ListOfAvailable":"List Of availability",
+            "ManageFeatureLbl":"Manage feature",
+            "Add":"Add",
+            "NoData":"No data",
+            "singleSelect":"Single select",
+            "multiSelect":"Multi select",
+            "NoActionForFeature":"No action for this feature",
+
+            "Sunday":"Sunday",
+            "Monday":"Monday",
+            "Tuesday":"Tuesday",
+            "Wednesday":"Wednesday",
+            "Thursday":"Thursday",
+            "Friday":"Friday",
+            "Saturday":"Saturday",
+            "From":"From",
+            "To":"To",
+            "EditBtn":"Edit",
+            "applyFilterBtn":"apply filter"
         }
         
         var ar_translations = {
@@ -464,6 +532,7 @@ angular.module('core')
             "maximumMsg":"الحد الاقصي",
             "MinimumMsg":"علي الاقل",
             "AddFeatureBtn":"اضف خدمة",
+            "AddRestaurantFeatureBtn":"اضف خدمة المطعم",
             "newFeatureLbl":"خدمة جديده",
             "UpdateFeatureLbl":"تحديث خدمة",
             "hasDetailsLbl":"هل لديه تفاصيل؟",
@@ -706,7 +775,58 @@ angular.module('core')
             "MinimumMsg":"علي الاقل",
             "TelmplateErrorCount":"النموذج يجب يحتوي علي ",
 
-            "selectRestaurantLbl":"اخنار مطاعم"
+            "selectRestaurantLbl":"اخنار مطاعم",
+            "itemlbl":"منتج",
+            "likelbl":"Like",
+            "dislike":"لم يعجبنى",
+            "feedBacksBtn":"تقييمات",
+            "Comment":"تعليق",
+            "createdate":"تاريخ",
+            "Rate":"تقيم",
+            "Guest":"زائر",
+            "NoFeedBacksAvailable":"لا يوجد تقييمات",
+            "BuildingLbl":"مبنى",
+            "AddBuildingBtn":"اضف مبنى",
+            "NoBuildingLbl":"لا يوجد مباني",
+            "NewBuildingLbl":"مبنى جديد",
+            "BuildingAddSuccess":"تم اضافة المبنى بنجاح",
+            "BuildingUpdateSuccess":"تم تحديث المبنى بنجاح",
+            "FloorLbl":"دور",
+            "AddFloorBtn":"اضف دور",
+            "NoFloorLbl":"لا يوجد ادوار",
+            "NewFloorLbl":"دور جديد",
+            "FloorAddSuccess":"تم اضافة الدور بنجاح",
+            "FloorUpdateSuccess":"تم تحديث الدور بنجاح",
+            "buildingName":"اسم المبنى",
+            "floorName":"اسم الدور",
+            "selectControlLbl":"اختار التحكم",
+            "orderControlLbl":"ترتيب التحكم",
+            "detailLbl":"تفاصيل",
+            "ListOfText":"قائمة النص",
+            "ListOfImage":"قائمة الصورة",
+            "ListOfTextAndImage":"قائمة النص والصورة",
+            "Videos":"فيديو",
+            "Available":"متاح",
+            "Time":"وقت",
+            "ListOfAvailable":"قائمة التوافر",
+            "ManageFeatureLbl":"إدارة الخدمة",
+            "Add":"أضف",
+            "NoData":"لا يوجد بيانات",
+            "singleSelect":"اختيار واحد",
+            "multiSelect":"اختيار متعدد",
+            "NoActionForFeature":"لا يوجد نشاط لهذة الخدمة ",
+
+            "Sunday":"الأحد",
+            "Monday":"الإثنين",
+            "Tuesday":"الثلاثاء",
+            "Wednesday":"الأربعاء",
+            "Thursday":"الخميس",
+            "Friday":"الجمعة",
+            "Saturday":"السبت",
+            "From":"من",
+            "To":"الي",
+            "EditBtn":"تحديث",
+            "applyFilterBtn":"تطبيق التصفية"
         }
         
         $translateProvider.translations('en-us',en_translations);
@@ -839,14 +959,18 @@ angular.module('core')
 			if ($localStorage.authInfo.Role  == "Admin") {
 				$state.go('features');
 
-			} else if ($localStorage.authInfo.Role == "Room") {
-                $state.go('clientFeatures');
+			// } else if ($localStorage.authInfo.Role == "Room") {
+            //     $state.go('clientFeatures');
 
             } else if ($scope.user.role == "Supervisor") {
                 $state.go('adminRequests');
 
             } 
             else if ($scope.user.role == "Receptionist") {
+                $state.go('adminRequests');
+
+            }
+            else if ($scope.user.role == "Waiter") {
                 $state.go('adminRequests');
 
             } else if ($localStorage.authInfo.Role  == "RestaurantAdmin") {
@@ -945,15 +1069,19 @@ angular.module('core')
                 $state.go('features');
 
             } 
-            else if ($scope.user.role == "Room") {
-                $state.go('clientFeatures');
+            // else if ($scope.user.role == "Room") {
+            //     $state.go('clientFeatures');
 
-            }
+            // }
             else if ($scope.user.role == "Supervisor") {
                 $state.go('adminRequests');
 
             } 
             else if ($scope.user.role == "Receptionist") {
+                $state.go('adminRequests');
+
+            } 
+            else if ($scope.user.role == "Waiter") {
                 $state.go('adminRequests');
 
             }  else if ($scope.user.role  == "RestaurantAdmin") {

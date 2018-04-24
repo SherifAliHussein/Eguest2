@@ -1,5 +1,5 @@
-<div class="new_title_page" ng-class="{page1:(selectedLanguage == 'en-us' && (pageitems.pageNumber % 2) === 0) || (selectedLanguage == 'ar-eg' && (pageitems.pageNumber % 2) !== 0)
-, page2:(selectedLanguage == 'en-us' && (pageitems.pageNumber % 2) !== 0) || (selectedLanguage == 'ar-eg' && (pageitems.pageNumber % 2) === 0)}">
+<div class="new_title_page" ng-class="{page2:(selectedLanguage == 'en-us' && (pageitems.pageNumber % 2) === 0) || (selectedLanguage == 'ar-eg' && (pageitems.pageNumber % 2) !== 0)
+, page1:(selectedLanguage == 'en-us' && (pageitems.pageNumber % 2) !== 0) || (selectedLanguage == 'ar-eg' && (pageitems.pageNumber % 2) === 0)}">
 
     <div class="img_header">
         <img ng-src="{{pageitems.itemModels[0].imageURL}}" style="max-height: 139px" />
@@ -30,7 +30,7 @@
         </div>
         <div class="new_data" ng-repeat="item in pageitems.itemModels">
             <div class="col-sm-6 col-xs-6 col-md-6" ng-class="{'no_left':$index%2===0,'no_right':$index%2!==0}">
-                <div class="col-sm-10 col-xs-10 col-md-10 no_padding main_margin">
+                <div class="col-sm-10 col-xs-10 col-md-10 no_padding main_margin" style="margin-top: 2px;margin-bottom: 2px;">
                     <h3 class="new_title">
                         {{item.itemNameDictionary[selectedLanguage] < 20 ? 'item.itemNameDictionary[selectedLanguage]' : item.itemNameDictionary[selectedLanguage] | limitTo:20}}
                     </h3>

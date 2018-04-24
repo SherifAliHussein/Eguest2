@@ -63,7 +63,11 @@ namespace E_Guest.API
                 .RegisterType<ISideItemFacade, SideItemFacade>(new PerResolveLifetimeManager())
                 .RegisterType<IBackgroundFacade, BackgroundFacade>(new PerResolveLifetimeManager())
                 .RegisterType<ITemplateFacade, TemplateFacade>(new PerResolveLifetimeManager())
-                .RegisterType<IBranchFacade, BranchFacade>(new PerResolveLifetimeManager());
+                .RegisterType<IBranchFacade, BranchFacade>(new PerResolveLifetimeManager())
+                .RegisterType<IFeedBackFacade, FeedBackFacade>(new PerResolveLifetimeManager())
+                .RegisterType<IBuildingFacade, BuildingFacade>(new PerResolveLifetimeManager())
+                .RegisterType<IFloorFacade, FloorFacade>(new PerResolveLifetimeManager())
+                .RegisterType<IFeaturesBackgroundFacade, FeaturesBackgroundFacade>(new PerResolveLifetimeManager());
              
 
             EGuestBLLConfig.RegisterTypes(container);

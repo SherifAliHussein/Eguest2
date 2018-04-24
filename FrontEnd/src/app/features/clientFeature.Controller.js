@@ -3,14 +3,16 @@
 	
     angular
         .module('home')
-        .controller('clientFeatureController', ['$scope','$uibModal','$translate', 'appCONSTANTS', 'FeatureResource','featuresPrepService','RequestResource','ToastService',  clientFeatureController])
+        .controller('clientFeatureController', ['$scope','$uibModal','$translate', 'appCONSTANTS', 'FeatureResource','featuresPrepService','featureBackgroundPrepService','RequestResource','ToastService','totalCartService',  clientFeatureController])
 
-    function clientFeatureController($scope,$uibModal ,$translate , appCONSTANTS, FeatureResource,featuresPrepService,RequestResource,ToastService){
+    function clientFeatureController($scope,$uibModal ,$translate , appCONSTANTS, FeatureResource,featuresPrepService,featureBackgroundPrepService,RequestResource,ToastService,totalCartService){
 
         var vm = this;
         vm.features = featuresPrepService;
-		//vm.Now = $scope.getCurrentTime();
-		
+        //vm.Now = $scope.getCurrentTime();
+        $scope.$parent.featureBackground = featureBackgroundPrepService;
+        localStorage.removeItem('checkOut');
+        totalCartService.homeTotalNo = 0;
         vm.featureMode = true;
         $scope.$parent.globalInfo= {};
         $scope.$parent.globalInfo.featureMode = true;

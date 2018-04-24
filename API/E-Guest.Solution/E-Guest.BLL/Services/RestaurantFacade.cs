@@ -33,12 +33,13 @@ namespace E_Guest.BLL.Services
         private IAdminService _globalAdminService;
         private IPackageService _packageService;
         private IMenuService _menuService;
+        private IFeedBackService _feedBackService;
 
         public RestaurantFacade(IRestaurantTypeService restaurantTypeService,
             IRestaurantTypeTranslationService restaurantTypeTranslationService
             , IRestaurantService restaurantService, IRestaurantTranslationService restaurantTranslationService,
             IUserService userService, IRestaurantAdminService restaurantAdminService
-            , IManageStorage manageStorage,IRestaurantWaiterService restaurantWaiterService, IAdminService globalAdminService, IUnitOfWorkAsync unitOfWork, IPackageService packageService, IMenuService menuService) : base(unitOfWork)
+            , IManageStorage manageStorage,IRestaurantWaiterService restaurantWaiterService, IAdminService globalAdminService, IUnitOfWorkAsync unitOfWork, IPackageService packageService, IMenuService menuService, IFeedBackService feedBackService) : base(unitOfWork)
         {
             _restaurantTypeService = restaurantTypeService;
             _restaurantTypeTranslationService = restaurantTypeTranslationService;
@@ -51,12 +52,13 @@ namespace E_Guest.BLL.Services
             _globalAdminService = globalAdminService;
             _packageService = packageService;
             _menuService = menuService;
+            _feedBackService = feedBackService;
         }
 
         public RestaurantFacade(IRestaurantTypeService restaurantTypeService,
             IRestaurantTypeTranslationService restaurantTypeTranslationService,
             IRestaurantService restaurantService, IRestaurantTranslationService restaurantTranslationService,
-            IUserService userService, IRestaurantAdminService restaurantAdminService, IManageStorage manageStorage, IPackageService packageService, IMenuService menuService)
+            IUserService userService, IRestaurantAdminService restaurantAdminService, IManageStorage manageStorage, IPackageService packageService, IMenuService menuService, IFeedBackService feedBackService)
         {
             _restaurantTypeService = restaurantTypeService;
             _restaurantTypeTranslationService = restaurantTypeTranslationService;
@@ -67,6 +69,7 @@ namespace E_Guest.BLL.Services
             _manageStorage = manageStorage;
             _packageService = packageService;
             _menuService = menuService;
+            _feedBackService = feedBackService;
         }
 
         public List<RestaurantTypeDto> GetAllRestaurantType(string language, long userId)
@@ -326,6 +329,14 @@ namespace E_Guest.BLL.Services
             var restaurant = _restaurantService.Find(restaurantId);
             if (restaurant == null) throw new NotFoundException(ErrorCodes.RestaurantNotFound);
             restaurant.IsActive = false;
+            if (restaurant.FeatureId.HasValue)
+            {
+                var count = restaurant.Feature.Restaurants.Count(x => x.IsActive && !x.IsDeleted);
+                if (count <= 0 )
+                {
+                    restaurant.Feature.IsActive = false;
+                }
+            }
             _restaurantService.Update(restaurant);
             SaveChanges();
         }
@@ -345,6 +356,14 @@ namespace E_Guest.BLL.Services
             //{
             //    UpdateSubscription(globalAdmin, package.PackageGuid, package.Waiters.Count(x => !x.IsDeleted));
             //});
+            if (restaurant.FeatureId.HasValue)
+            {
+                var count = restaurant.Feature.Restaurants.Count(x => x.IsActive && !x.IsDeleted);
+                if (count < 0)
+                {
+                    restaurant.Feature.IsActive = false;
+                }
+            }
             _restaurantService.Update(restaurant);
             
 
@@ -439,7 +458,9 @@ namespace E_Guest.BLL.Services
             {
                 ResturentId = restaurant.RestaurantId,
                 BackgroundId = restaurant.BackgroundId,
-                RestaurantName = restaurant.RestaurantTranslations.FirstOrDefault(x=>x.Language.ToLower() == language.ToLower()).RestaurantName
+                RestaurantName = restaurant.RestaurantTranslations.FirstOrDefault(x=>x.Language.ToLower() == language.ToLower()).RestaurantName,
+                Rate = _feedBackService.GetRestaurantRate(restaurantId)
+
             };
             return restaurantdto;
         }

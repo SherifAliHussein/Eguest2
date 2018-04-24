@@ -19,21 +19,21 @@ namespace E_Guest.DAL.Entities.Model
 
         [ForeignKey("Creater")]
         public long CreationBy { get; set; }
-        public virtual Admin Creater { get; set; }
+        public virtual Supervisor Creater { get; set; }
         [Column(TypeName = "datetime2")]
         public DateTime CreateTime { get; set; }
 
 
         [ForeignKey("Modifier")]
         public long? ModifiedBy { get; set; }
-        public virtual Admin Modifier { get; set; }
+        public virtual Supervisor Modifier { get; set; }
         [Column(TypeName = "datetime2")]
         public DateTime ModifyTime { get; set; }
 
 
         [ForeignKey("Deleter")]
         public long? DeletedBy { get; set; }
-        public virtual Admin Deleter { get; set; }
+        public virtual Supervisor Deleter { get; set; }
         [Column(TypeName = "datetime2")]
         public DateTime DeleteTime { get; set; }
 
@@ -41,12 +41,15 @@ namespace E_Guest.DAL.Entities.Model
         public decimal Price { get; set; }
         public bool IsDeleted { get; set; }
 
-        [ForeignKey("Feature")]
-        public long FeatureId { get; set; }
-        public virtual Feature Feature { get; set; }
+        [ForeignKey("FeatureControl")]
+        public long FeatureControlId { get; set; }
+        public virtual FeatureControl FeatureControl { get; set; }
 
         public virtual List<FeatureDetailTranslation> FeatureDetailTranslations { get; set; }
         public virtual List<RequestDetail> RequestDetails { get; set; }
+        public virtual List<Available> Availables { get; set; }
+        public string Link { get; set; }
+
 
     }
 }

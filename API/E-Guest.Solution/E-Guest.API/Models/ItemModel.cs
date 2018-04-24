@@ -24,5 +24,7 @@ namespace E_Guest.API.Models
         public bool IsImage3Change { get; set; }
         public int MaxSideItemValue { get; set; }
         public bool IsActive { get; set; }
+        public int Like { get; set; }
+        public int Dislike { get; set; }
     }
 }

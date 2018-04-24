@@ -24,10 +24,12 @@ namespace E_Guest.API.Controllers
     public class FeaturesController : BaseApiController
     {
         public IFeatureFacade _FeatureFacade { get; set; }
+        public IRequestFacade _RequestFacade { get; set; }
 
-        public FeaturesController(IFeatureFacade featureFacade)
+        public FeaturesController(IFeatureFacade featureFacade,IRequestFacade requestFacade)
         {
             _FeatureFacade = featureFacade;
+            _RequestFacade = requestFacade;
         }
 
         [AuthorizeRoles(Enums.RoleType.Admin)]
@@ -67,19 +69,36 @@ namespace E_Guest.API.Controllers
         }
 
 
-        [AuthorizeRoles(Enums.RoleType.Admin)]
+        [AuthorizeRoles(Enums.RoleType.Admin,Enums.RoleType.Supervisor)]
         [Route("api/Features/", Name = "GetAllFeatures")]
         [HttpGet]
         [ResponseType(typeof(List<FeatureModel>))]
         public IHttpActionResult GetAllFeatures(int page = Page, int pagesize = PageSize)
         {
-            PagedResultsDto features = _FeatureFacade.GetAllFeatures(UserId, page, pagesize);
-            var data = Mapper.Map<List<FeatureModel>>(features.Data);
-            foreach(var feature in data)
+            if (UserRole == Enums.RoleType.Admin.ToString())
             {
-                feature.ImageURL = Url.Link("FeatureImage", new { feature.FeatureId });
+                PagedResultsDto features = _FeatureFacade.GetAllFeatures(UserId, page, pagesize);
+                var data = Mapper.Map<List<FeatureModel>>(features.Data);
+                foreach (var feature in data)
+                {
+                    feature.ImageURL = Url.Link("FeatureImage", new {feature.FeatureId});
+                }
+                return PagedResponse("GetAllFeatures", page, pagesize, features.TotalCount, data);
             }
-            return PagedResponse("GetAllFeatures", page, pagesize, features.TotalCount, data);
+            else
+            {
+                var feature =Mapper.Map<List<FeatureModel>>(_FeatureFacade.GetAllFeatureForSupervisor(UserId));
+                return Ok(feature);
+            }
+        }
+        [AuthorizeRoles(Enums.RoleType.Admin, Enums.RoleType.Supervisor, Enums.RoleType.Receptionist,Enums.RoleType.Waiter)]
+        [Route("api/Features/Name", Name = "GetAllFeatureName")]
+        [HttpGet]
+        [ResponseType(typeof(List<FeatureNameModel>))]
+        public IHttpActionResult GetAllFeatureName()
+        {
+            var feature = Mapper.Map<List<FeatureNameModel>>(_FeatureFacade.GetAllFeatureName(UserId,UserRole));
+            return Ok(feature);
         }
         [AuthorizeRoles(Enums.RoleType.Admin,Enums.RoleType.Room)]
         [Route("api/Features/Activated", Name = "GetAllActiveFeatures")]
@@ -102,7 +121,7 @@ namespace E_Guest.API.Controllers
             }
             return PagedResponse("GetAllActiveFeatures", page, pagesize, features.TotalCount, data);
         }
-        [AuthorizeRoles(Enums.RoleType.Admin,Enums.RoleType.Supervisor)]
+        [AuthorizeRoles(Enums.RoleType.Admin, Enums.RoleType.Supervisor, Enums.RoleType.Waiter)]
         [Route("api/Features/{featureId:long}", Name = "GetFeature")]
         [HttpGet]
         [ResponseType(typeof(FeatureModel))]
@@ -207,6 +226,217 @@ namespace E_Guest.API.Controllers
         public IHttpActionResult CheckFeatureAsRestaurant()
         {
             return Ok(Mapper.Map<FeatureModel>(_FeatureFacade.CheckFeatureAsRestaurant(UserId)));
+        }
+
+        [AuthorizeRoles(Enums.RoleType.Supervisor)]
+        [Route("api/Features/Detail/{featureControlId:long}", Name = "GeFeatureDetails")]
+        [HttpGet]
+        [ResponseType(typeof(List<FeatureDetailModel>))]
+        public IHttpActionResult GeFeatureDetails(long featureControlId, int page = Page, int pagesize = PageSize)
+        {
+
+            var featureDetail = _FeatureFacade.GeFeatureDetails(featureControlId, page, pagesize);
+            var data = Mapper.Map<List<FeatureDetailModel>>(featureDetail.Data);
+            foreach (var featureDetailModel in data)
+            {
+                featureDetailModel.ImageURL = Url.Link("FeatureDetailImage",
+                    new
+                    {
+                        featureId = featureDetailModel.FeatureId,
+                        featureDetailId = featureDetailModel.FeatureDetailId
+                    });
+            }
+            return PagedResponse("GeFeatureDetails", page, pagesize, featureDetail.TotalCount, data);
+
+        }
+
+        [Route("api/Features/{featureId:long}/Detail/{featureDetailId:long}/Image", Name = "FeatureDetailImage")]
+        public HttpResponseMessage GetFeatureDetailImage(long featureId, long featureDetailId, string type = "orignal")
+        {
+            try
+            {
+                string filePath = type == "orignal"
+                    ? Directory.GetFiles(HostingEnvironment.MapPath("~/Images/") + "\\" + "Feature-" + featureId + "\\Detail-" + featureDetailId)
+                        .FirstOrDefault(x => Path.GetFileName(x).Contains(featureDetailId.ToString()) && !Path.GetFileName(x).Contains("thumb"))
+                    : Directory.GetFiles(HostingEnvironment.MapPath("~/Images/") + "\\" + "Feature-" + featureId + "\\Detail-" + featureDetailId)
+                        .FirstOrDefault(x => Path.GetFileName(x).Contains(featureDetailId.ToString()) && Path.GetFileName(x).Contains("thumb"));
+
+
+                HttpResponseMessage Response = new HttpResponseMessage(HttpStatusCode.OK);
+
+                byte[] fileData = File.ReadAllBytes(filePath);
+
+                Response.Content = new ByteArrayContent(fileData);
+                Response.Content.Headers.ContentType = new MediaTypeHeaderValue("image/png");
+
+                return Response;
+            }
+            catch (Exception e)
+            {
+                return new HttpResponseMessage();
+            }
+        }
+        [AuthorizeRoles(Enums.RoleType.Supervisor)]
+        [Route("api/Features/Detail", Name = "AddFeatureDetail")]
+        [HttpPost]
+        public IHttpActionResult AddFeatureDetail()
+        {
+            HttpPostedFile httpPostedFile = null;
+            if (HttpContext.Current.Request.Files.AllKeys.Any())
+            {
+                httpPostedFile = HttpContext.Current.Request.Files[0];
+                if (httpPostedFile == null)
+                    throw new ValidationException(ErrorCodes.EmptyImage);
+
+                if (httpPostedFile.ContentLength > 2 * 1024 * 1000)
+                    throw new ValidationException(ErrorCodes.ImageExceedSize);
+
+
+                if (Path.GetExtension(httpPostedFile.FileName).ToLower() != ".jpg" &&
+                    Path.GetExtension(httpPostedFile.FileName).ToLower() != ".png" &&
+                    Path.GetExtension(httpPostedFile.FileName).ToLower() != ".jpeg")
+
+                    throw new ValidationException(ErrorCodes.InvalidImageType);
+            }
+            var featureDetailModel = new JavaScriptSerializer().Deserialize<FeatureDetailModel>(HttpContext.Current.Request.Form.Get(0));
+
+            
+
+            var featureDetailDto = Mapper.Map<FeatureDetailDto>(featureDetailModel);
+            //restaurantDto.Image = (MemoryStream) restaurant.Image.InputStream;
+            featureDetailDto.Image = new MemoryStream();
+            if (httpPostedFile != null) httpPostedFile.InputStream.CopyTo(featureDetailDto.Image);
+
+            _FeatureFacade.AddFeatureDetail(featureDetailDto, UserId, HostingEnvironment.MapPath("~/Images/"));
+            return Ok();
+        }
+        [AuthorizeRoles(Enums.RoleType.Supervisor)]
+        [Route("api/Features/Detail", Name = "UpdateFeatureDetail")]
+        [HttpPut]
+        public IHttpActionResult UpdateFeatureDetail()
+        {
+            HttpPostedFile httpPostedFile = null;
+            if (HttpContext.Current.Request.Files.AllKeys.Any())
+            {
+                httpPostedFile = HttpContext.Current.Request.Files[0];
+                if (httpPostedFile == null)
+                    throw new ValidationException(ErrorCodes.EmptyImage);
+
+                if (httpPostedFile.ContentLength > 2 * 1024 * 1000)
+                    throw new ValidationException(ErrorCodes.ImageExceedSize);
+
+
+                if (Path.GetExtension(httpPostedFile.FileName).ToLower() != ".jpg" &&
+                    Path.GetExtension(httpPostedFile.FileName).ToLower() != ".png" &&
+                    Path.GetExtension(httpPostedFile.FileName).ToLower() != ".jpeg")
+
+                    throw new ValidationException(ErrorCodes.InvalidImageType);
+            }
+            var featureDetailModel = new JavaScriptSerializer().Deserialize<FeatureDetailModel>(HttpContext.Current.Request.Form.Get(0));
+
+
+
+            var featureDetailDto = Mapper.Map<FeatureDetailDto>(featureDetailModel);
+            //restaurantDto.Image = (MemoryStream) restaurant.Image.InputStream;
+            featureDetailDto.Image = new MemoryStream();
+            if (httpPostedFile != null) httpPostedFile.InputStream.CopyTo(featureDetailDto.Image);
+
+            _FeatureFacade.UpdateFeatureDetail(featureDetailDto, UserId, HostingEnvironment.MapPath("~/Images/"));
+            return Ok();
+        }
+
+        [AuthorizeRoles(Enums.RoleType.Supervisor)]
+        [Route("api/Features/Detail/{featureDetailId:long}", Name = "DeleteFeatureDetail")]
+        [HttpDelete]
+        public IHttpActionResult DeleteFeatureDetail(long featureDetailId)
+        {
+            _FeatureFacade.DeleteFeatureDetail(featureDetailId, UserId);
+            return Ok();
+        }
+
+        [AuthorizeRoles(Enums.RoleType.Supervisor)]
+        [Route("api/Features/Control/{featureControlId:long}/Switch", Name = "SwitchFeatureControlType")]
+        [HttpGet]
+        public IHttpActionResult SwitchFeatureControlType(long featureControlId)
+        {
+            _FeatureFacade.SwitchFeatureControlType(featureControlId);
+            return Ok();
+        }
+
+        [AuthorizeRoles(Enums.RoleType.Room)]
+        [Route("api/Features/{featureId:long}/Info", Name = "GetFeatureInfo")]
+        [HttpGet]
+        [ResponseType(typeof(FeatureInfoModel))]
+        public IHttpActionResult GetFeatureInfo(long featureId)
+        {
+            var featureInfo = Mapper.Map<FeatureInfoModel>(_FeatureFacade.GetAllFeatureControlDetailDtos(featureId));
+            featureInfo.ImageURL = Url.Link("FeatureImage", new { featureInfo.FeatureId });
+            foreach (var controlDetailModel in featureInfo.FeatureControl)
+            {
+                foreach (var featureDetailModel in controlDetailModel.FeatureDetails)
+                {
+                    featureDetailModel.ImageURL = Url.Link("FeatureDetailImage",
+                        new
+                        {
+                            featureId = featureDetailModel.FeatureId,
+                            featureDetailId = featureDetailModel.FeatureDetailId
+                        });
+                }
+            }
+
+            return Ok(featureInfo);
+        }
+
+        [AuthorizeRoles(Enums.RoleType.Supervisor)]
+        [Route("api/Features/Detail/Available", Name = "AddFeatureDetailAvailability")]
+        [HttpPost]
+        public IHttpActionResult AddFeatureDetailAvailability([FromBody] FeatureDetailModel featureDetailModel)
+        {
+            var featureDetailDto = Mapper.Map<FeatureDetailDto>(featureDetailModel);
+
+            _FeatureFacade.AddFeatureDetailAvailability(featureDetailDto, UserId);
+            return Ok();
+        }
+        [AuthorizeRoles(Enums.RoleType.Supervisor)]
+        [Route("api/Features/Detail/Available", Name = "UpdateFeatureDetailAvailability")]
+        [HttpPut]
+        public IHttpActionResult UpdateFeatureDetailAvailability([FromBody] FeatureDetailModel featureDetailModel)
+        {
+            var featureDetailDto = Mapper.Map<FeatureDetailDto>(featureDetailModel);
+            
+            _FeatureFacade.UpdateFeatureDetailAvailability(featureDetailDto, UserId);
+            return Ok();
+        }
+
+        [AuthorizeRoles(Enums.RoleType.Supervisor)]
+        [Route("api/Features/Detail/Available/{availableId:long}", Name = "DeleteAvailable")]
+        [HttpDelete]
+        public IHttpActionResult DeleteAvailable(long availableId)
+        {
+            _FeatureFacade.DeleteAvailable(availableId, UserId);
+            return Ok();
+        }
+
+        [AuthorizeRoles(Enums.RoleType.Room)]
+        [Route("api/Features/{featureId:long}/Requests/", Name = "GetAllRequestsByFeatureId")]
+        [HttpGet]
+        [ResponseType(typeof(List<RequestDetailModel>))]
+        public IHttpActionResult GetAllRequestsByFeatureId(long featureId)
+        {
+            var data = Mapper.Map<List<RequestDetailModel>>(_RequestFacade.GetAllRequestDetailByFeatureId(featureId));
+
+            return Ok(data);
+        }
+
+
+        [AuthorizeRoles(Enums.RoleType.Room)]
+        [Route("api/Features/{featureId:long}/LastRequest/", Name = "GetLastRequestByFeaturedId")]
+        [HttpGet]
+        [ResponseType(typeof(List<RequestDetailModel>))]
+        public IHttpActionResult GetLastRequestByFeaturedId(long featureId)
+        {
+            var data = Mapper.Map<RequestStatusModel>(_RequestFacade.GetLastRequestByFeaturedId(featureId,UserId));
+            return Ok(data);
         }
     }
 }

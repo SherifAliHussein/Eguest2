@@ -33,7 +33,10 @@
                             only: ['admin'],
                            redirectTo: 'root'
                         }
-                    }
+                    },
+                    // resolve: {
+                    //   controlsPrepService: controlsPrepService
+                    // }
                  
                 })
                 .state('editFeature', {
@@ -48,7 +51,8 @@
                           }
                       },
                       resolve: {
-                        featurePrepService: featurePrepService
+                        featurePrepService: featurePrepService,
+                      //  controlsPrepService: controlsPrepService                        
                       }
                   })               
                   .state('newFeatureRestaurant', {
@@ -105,5 +109,10 @@
         restaurantsNamePrepService.$inject = ['RestaurantResource']
         function restaurantsNamePrepService(RestaurantResource) {
             return RestaurantResource.getAllRestaurantsName().$promise;
+        }
+
+        controlsPrepService.$inject = ['ControlResource']
+        function controlsPrepService(ControlResource) {
+            return ControlResource.GetAllControls().$promise;
         }
 }());

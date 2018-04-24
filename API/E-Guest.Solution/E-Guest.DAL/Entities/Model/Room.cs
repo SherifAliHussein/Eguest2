@@ -13,6 +13,7 @@ namespace E_Guest.DAL.Entities.Model
         public Room()
         {
             Requests = new List<Request>();
+            FeedBacks = new List<FeedBack>();
         }
 
         [ForeignKey("Admin")]
@@ -20,8 +21,17 @@ namespace E_Guest.DAL.Entities.Model
         public virtual Admin Admin { get; set; }
 
         public virtual List<Request> Requests { get; set; }
+        public virtual List<FeedBack> FeedBacks { get; set; }
         [ForeignKey("Package")]
         public long PackageId { get; set; }
         public virtual Package Package { get; set; }
+
+        [ForeignKey("Building")]
+        public long? BuildingId { get; set; }
+        public virtual Building Building { get; set; }
+
+        [ForeignKey("Floor")]
+        public long? FloorId { get; set; }
+        public virtual Floor Floor { get; set; }
     }
 }

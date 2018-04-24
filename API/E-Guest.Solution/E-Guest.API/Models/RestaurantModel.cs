@@ -15,6 +15,7 @@ namespace E_Guest.API.Models
         public string RestaurantDescription { get; set; }
         public Dictionary<string, string> RestaurantDescriptionDictionary { get; set; }
         public string RestaurantTypeName { get; set; }
+        public Dictionary<string, string> RestaurantTypeNameDictionary { get; set; }
         public long RestaurantTypeId { get; set; }
         public bool IsActive { get; set; }
 

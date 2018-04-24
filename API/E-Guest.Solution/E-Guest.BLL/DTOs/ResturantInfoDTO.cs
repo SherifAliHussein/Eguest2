@@ -15,5 +15,7 @@ namespace E_Guest.BLL.DTOs
         public long ResturentId { get; set; }
         public string LogoUrl { get; set; }
         public string RestaurantName { get; set; }
+        public int Rate { get; set; }
+
     }
 }

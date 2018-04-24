@@ -14,6 +14,6 @@
       'ngProgressLite',
     'ui.bootstrap',
     'pascalprecht.translate',
-    //'ui.sortable',
+    'ui.sortable',
     ]);
 }());

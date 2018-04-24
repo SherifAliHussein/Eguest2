@@ -27,6 +27,6 @@ namespace E_Guest.DAL.Entities.Model
         public virtual Admin Admin { get; set; }
         public int MaxNumberOfRooms { get; set; }
 
-        public ICollection<Room> Rooms { get; set; }
+        public virtual ICollection<Room> Rooms { get; set; }
     }
 }

@@ -41,10 +41,6 @@ angular.module('home').directive('flipbook', function($timeout){
                when: {
                 turned: function(event, page, pageObj) {
                   console.log("aa0")
-                  console.log(event)
-                  console.log(page)
-                  console.log(pageObj)
-                 // return self.activate(event, page, pageObj);
                 },
                 turning: function(event, page, pageObj) {
                   console.log("aa1") 
@@ -54,14 +50,10 @@ angular.module('home').directive('flipbook', function($timeout){
                 }
               }
              }).bind("start", function(event, pageObject, corner) {
-              // console.log("aa2")
-              // console.log(event)
+              
               if(pageObject.next == 1) {
                 event.preventDefault();
             }
-              // if (corner != null) {
-              //   return event.preventDefault();
-              // }
             })
 
 

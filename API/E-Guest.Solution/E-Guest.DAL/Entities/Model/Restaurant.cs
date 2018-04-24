@@ -19,6 +19,7 @@ namespace E_Guest.DAL.Entities.Model
 
             RestaurantWaiters = new List<RestaurantWaiter>();
             Branches = new List<Branch>();
+            FeedBacks = new List<FeedBack>();
         }
         public long RestaurantId { get; set; }
         public bool IsActive { get; set; }
@@ -54,5 +55,7 @@ namespace E_Guest.DAL.Entities.Model
         [ForeignKey("Feature")]
         public long? FeatureId { get; set; }
         public virtual Feature Feature { get; set; }
+        public virtual ICollection<FeedBack> FeedBacks { get; set; }
+
     }
 }

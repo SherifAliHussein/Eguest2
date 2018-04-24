@@ -9,6 +9,7 @@
       function RoomResource($resource, appCONSTANTS) {
         return $resource(appCONSTANTS.API_URL + 'Rooms/:roomId', {}, {
           getAllRooms: { method: 'GET', useToken: true },
+          getAllRoomsName: {url:appCONSTANTS.API_URL + 'Rooms/Name', method: 'GET', useToken: true,isArray:true },
           getRoom: { method: 'GET', useToken: true },
           create: { method: 'POST', useToken: true },
           deleteRoom: { method: 'DELETE', useToken: true },

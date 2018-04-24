@@ -12,7 +12,7 @@
 		vm.Now = $scope.getCurrentTime();
 		vm.waitersLimit = waitersLimitPrepService;
 		$('.pmd-sidebar-nav>li>a').removeClass("active")
-		$($('.pmd-sidebar-nav').children()[1].children[0]).addClass("active")
+		$($('.pmd-sidebar-nav').children()[5].children[0]).addClass("active")
 		
 		var allRestaurantType;
 		RestaurantTypeResource.getAllRestaurantType().$promise.then(function(results) {

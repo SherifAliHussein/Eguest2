@@ -70,7 +70,7 @@ angular.module('home').run(['$templateCache', function($templateCache) {
     '                        <!-- <th >{{\'Pricelbl\' | translate}}</th> -->\n' +
     '                        <th >{{\'size\' | translate}}</th>\n' +
     '                        <!-- <th >{{\'sideItem\' | translate}}</th> -->\n' +
-    '                        <!-- <th >{{\'MaxValueLbl\' | translate}}</th> -->\n' +
+    '                        <th >{{\'Review\' | translate}}</th>\n' +
     '                        <th >{{\'status\' | translate}}</th>\n' +
     '                        <th ></th>\n' +
     '                    </tr>\n' +
@@ -103,7 +103,7 @@ angular.module('home').run(['$templateCache', function($templateCache) {
     '                                </div>\n' +
     '                            </div>\n' +
     '                        </td>          -->\n' +
-    '                        <!-- <td data-title="Description"  width="5%">{{item.maxSideItemValue}}</td>                                        -->\n' +
+    '                        <td  >{{item.like}} {{\'likelbl\' |translate}} / {{item.dislike}} {{\'dislike\'|translate}}</td>\n' +
     '                        <td>\n' +
     '                            <a ng-show="!item.isActive" ng-click="itemCtrl.Activate(item)" class="cursorPointer">{{\'ActivateBtn\' | translate}}</a>\n' +
     '                            <a ng-show="item.isActive" ng-click="itemCtrl.Deactivate(item)" class="cursorPointer">{{\'DeActivateBtn\' | translate}}</a>\n' +
@@ -908,6 +908,48 @@ angular.module('home').run(['$templateCache', function($templateCache) {
     '    \n' +
     '        \n' +
     '    ');
+}]);
+
+angular.module('home').run(['$templateCache', function($templateCache) {
+  $templateCache.put('./app/RestaurantAdmin/templates/feedbacks.html',
+    '<div >\n' +
+    '    \n' +
+    '    <div ng-if="feedBackCtrl.feedBacks.results.length == 0">\n' +
+    '            <span>{{\'NoFeedBacksAvailable\' | translate}}</span>\n' +
+    '    </div>\n' +
+    '    <div class="pmd-card pmd-z-depth pmd-card-custom-view" ng-if="feedBackCtrl.feedBacks.results.length > 0">\n' +
+    '        <div class="table-responsive">\n' +
+    '            <table class="table pmd-table table-hover">\n' +
+    '                <thead>\n' +
+    '                    <tr>\n' +
+    '                        <th >{{\'Name\' | translate}}</th>\n' +
+    '                        <th>{{\'RoomLbl\' |translate}}</th>\n' +
+    '                        <th >{{\'Comment\' | translate}}</th>\n' +
+    '                        <th >{{\'createdate\' | translate}}</th>\n' +
+    '                        <th >{{\'Rate\' | translate}}</th>\n' +
+    '                        <th ></th>\n' +
+    '                    </tr>\n' +
+    '                </thead>\n' +
+    '                <tbody>\n' +
+    '                    <tr ng-repeat="feedback in feedBackCtrl.feedBacks.results">\n' +
+    '                        <td data-title="Name"  ><span ng-if=" feedback.createBy ==\'\'">{{\'Guest\' | translate}}</span>{{feedback.createBy}}</td>\n' +
+    '                        <td>{{feedback.roomName}}</td>\n' +
+    '                        <td ><span ng-if=" feedback.comment ==\'\'">-</span>{{feedback.comment}}</td>\n' +
+    '                        <td data-title="Description">{{feedback.createTime}}</td>                        \n' +
+    '                        <td data-title="Description"><span ng-if=" feedback.rate == 0">-</span><span ng-if=" feedback.rate >0">{{feedback.rate}} / 5</span></td>                        \n' +
+    '                        \n' +
+    '                    </tr>\n' +
+    '                </tbody>\n' +
+    '            </table>\n' +
+    '        </div>\n' +
+    '        <div style="text-align:center;" paging page="1" page-size="10" total="feedBackCtrl.feedBacks.totalCount" paging-action="feedBackCtrl.changePage( page)"\n' +
+    '        flex="nogrow" show-prev-next="true" show-first-last="true" hide-if-empty="true" disabled-class="hide">\n' +
+    '           </div>\n' +
+    '    </div> \n' +
+    '\n' +
+    '\n' +
+    '</div>					\n' +
+    '');
 }]);
 
 angular.module('home').run(['$templateCache', function($templateCache) {
@@ -1924,6 +1966,48 @@ angular.module('home').run(['$templateCache', function($templateCache) {
 
 angular.module('home').run(['$templateCache', function($templateCache) {
   $templateCache.put('./app/admin/features/templates/editFeature.html',
+    '<script type="text/javascript">\n' +
+    '	$(document).ready(function() {\n' +
+    '		// <!-- Select Multiple Tags -->\n' +
+    '		$(".select-tags").select2({\n' +
+    '			tags: false,\n' +
+    '			theme: "bootstrap",\n' +
+    '		})\n' +
+    '	});\n' +
+    '</script>\n' +
+    '<style>\n' +
+    '        .container {\n' +
+    '        width: 750px;\n' +
+    '        margin: auto;\n' +
+    '    }\n' +
+    '    \n' +
+    '    .apps-container {\n' +
+    '      border: 2px dotted blue;\n' +
+    '      margin: 10px 10px 0 0;\n' +
+    '      padding: 5px;\n' +
+    '      /* min-width:200px; */\n' +
+    '      width: 20%;\n' +
+    '      min-height:50px;\n' +
+    '    }\n' +
+    '    \n' +
+    '    .app {\n' +
+    '        width: 170px;\n' +
+    '        padding: 5px 10px;\n' +
+    '        margin: 5px 0;\n' +
+    '        border: 2px solid #444;\n' +
+    '        border-radius: 5px;\n' +
+    '        background-color: #EA8A8A;\n' +
+    '    /* \n' +
+    '        font-size: 1.1em;\n' +
+    '        font-weight: bold; */\n' +
+    '        text-align: center;\n' +
+    '        cursor: move;\n' +
+    '        font-size: 15px;\n' +
+    '        background-color: #4285f4;\n' +
+    '        color: white;\n' +
+    '    }\n' +
+    '    \n' +
+    '    </style>\n' +
     '<div class="modal-content">\n' +
     '    <div class="modal-header bordered">\n' +
     '        <h2 class="pmd-card-title-text">{{\'UpdateFeatureLbl\' | translate}}</h2>\n' +
@@ -1966,113 +2050,37 @@ angular.module('home').run(['$templateCache', function($templateCache) {
     '                    </div>\n' +
     '                </div>\n' +
     '\n' +
-    '                <div class="group-fields clearfix row">\n' +
-    '                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">\n' +
-    '                        <div class="checkbox pmd-default-theme">\n' +
-    '                            <label class=" checkbox-pmd-ripple-effect">\n' +
-    '                                <input type="checkbox" ng-model="editFeatureDlCtrl.feature.hasDetails" ng-change="editFeatureDlCtrl.changeFeatureDetail()">\n' +
-    '                                <span>{{\'hasDetailsLbl\' | translate}}</span>\n' +
-    '                            </label>\n' +
-    '                        </div>\n' +
+    '                <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed"  >\n' +
+    '                    <label>{{\'selectControlLbl\' | translate}}</label>\n' +
+    '                    <!-- <select  class="form-control select-tags pmd-select2-tags" multiple ng-model="editFeatureDlCtrl.SelectedControl" name="SelectedControl">\n' +
+    '                        <option ng-repeat="control in editFeatureDlCtrl.controls"  ng-value="{{control}}">{{control.nameDictionary[selectedLanguage]}}</option>                    \n' +
+    '                    </select> -->\n' +
+    '                    <select required class="form-control select-tags pmd-select2-tags" multiple\n' +
+    '                    ng-change="editFeatureDlCtrl.controlChange()" ng-model="editFeatureDlCtrl.SelectedControlId" name="SelectedControl">\n' +
+    '                        <option ng-repeat="control in editFeatureDlCtrl.controls" \n' +
+    '                        ng-value="{{control.id}}">\n' +
+    '                            {{control.text | translate}}\n' +
+    '                        </option>                    \n' +
+    '                    </select>\n' +
+    '                    <div ng-if="editFeatureForm.SelectedControl.$error.required && !editFeatureForm.SelectedControl.$pristine">{{\'requiredErr\' | translate}}</div>\n' +
+    '                </div>\n' +
+    '                <label>{{\'orderControlLbl\' | translate}}</label>                \n' +
+    '                <div ui-sortable="editFeatureDlCtrl.sortableOptions" class="apps-container screen floatleft"  ng-model="editFeatureDlCtrl.SelectedControl">\n' +
+    '                    <div class="app" ng-repeat="item in editFeatureDlCtrl.SelectedControl" >\n' +
+    '                        <!-- {{item}} -->\n' +
+    '                        <span ng-repeat="controlEnum in editFeatureDlCtrl.controls|filter: {id: item}"> {{controlEnum.text | translate}} </span>\n' +
     '                    </div>\n' +
     '                </div>\n' +
     '            </div>\n' +
     '\n' +
     '        </form>\n' +
     '\n' +
-    '        <div ng-show="editFeatureDlCtrl.feature.hasDetails">\n' +
-    '\n' +
-    '            <div class="pmd-card pmd-z-depth pmd-card-custom-view" ng-if="editFeatureDlCtrl.feature.featureDetails.length > 0">\n' +
-    '                <div class="table-responsive">\n' +
-    '                    <table class="table pmd-table table-hover">\n' +
-    '                        <thead>\n' +
-    '                            <tr>\n' +
-    '                                <th>{{\'DescriptionLbl\' | translate}}</th>\n' +
-    '                                <!-- <th>{{\'IsFreeLbl\' | translate}}</th> -->\n' +
-    '                                <th>{{\'priceLbl\' | translate}}</th>\n' +
-    '                                <th></th>\n' +
-    '                            </tr>\n' +
-    '                        </thead>\n' +
-    '                        <tbody>\n' +
-    '                            <tr ng-repeat="featureDetail in (editFeatureDlCtrl.feature.featureDetails   |filter: {isDeleted: false}) | limitTo : 10 : editFeatureDlCtrl.currentPage*10"\n' +
-    '                             >\n' +
-    '                                <td data-title="Name">{{featureDetail.descriptionDictionary[selectedLanguage]}}</td>\n' +
-    '                                <!-- <td data-title="Name" >{{featureDetail.isFree}}</td> -->\n' +
-    '                                <td data-title="Name">\n' +
-    '                                    <span ng-if="featureDetail.isFree">{{\'freelbl\' |translate}}</span>\n' +
-    '                                    <span ng-if="!featureDetail.isFree">{{featureDetail.price}}</span>\n' +
-    '                                </td>\n' +
-    '                                <td width="30%">\n' +
-    '                                    <i class="material-icons md-dark pmd-md cursorPointer font25" ng-click="editFeatureDlCtrl.edit(featureDetail)">mode_edit</i>\n' +
-    '                                    <i class="material-icons pmd-md deleteButton cursorPointer font25" ng-click="editFeatureDlCtrl.remove(featureDetail)">delete</i>\n' +
-    '                                </td>\n' +
-    '                            </tr>\n' +
-    '                        </tbody>\n' +
-    '                    </table>\n' +
-    '                </div>\n' +
-    '                \n' +
-    '                <div style="text-align:center;" paging page="1" page-size="10" total="(editFeatureDlCtrl.feature.featureDetails |filter: {isDeleted: false}).length"\n' +
-    '                paging-action="editFeatureDlCtrl.changePage(page)" flex="nogrow" show-prev-next="true" show-first-last="true" hide-if-empty="true" disabled-class="hide">\n' +
-    '                  </div>\n' +
-    '            </div>\n' +
-    '            <button ng-show="!editFeatureDlCtrl.moreDetail" class="btn pmd-ripple-effect btn-primary" type="button" ng-click="editFeatureDlCtrl.enableMoreDetail()">{{\'AddMoreDetailBtn\' | translate}}</button>\n' +
-    '\n' +
-    '            <form class="form-horizontal" name="newFeatureDetailForm" ng-show="editFeatureDlCtrl.moreDetail">\n' +
-    '                <div>\n' +
-    '                    <!-- Nav tabs -->\n' +
-    '                    <ul class="nav nav-tabs" role="tablist">\n' +
-    '                        <li role="presentation" ng-class="{\'active\':$index == 0}" ng-repeat="lang in editFeatureDlCtrl.language">\n' +
-    '                            <a href="javascript:void(0);" data-target="#{{lang.value}}-detail-form" aria-controls="home" role="tab" data-toggle="tab">\n' +
-    '                                {{lang.value | translate}}\n' +
-    '                            </a>\n' +
-    '                        </li>\n' +
-    '                        <!-- <li role="presentation">\n' +
-    '                            <a href="javascript:void(0);" data-target="#arabic-form" aria-controls="about" role="tab" data-toggle="tab">{{\'arabic\' | translate}}</a>\n' +
-    '                        </li> -->\n' +
-    '                    </ul>\n' +
-    '                    <div class="pmd-card">\n' +
-    '                        <div class="pmd-card-body">\n' +
-    '                            <!-- Tab panes -->\n' +
-    '                            <div class="tab-content">\n' +
-    '                                <div role="tablist" class="tab-pane" ng-class="{\'active\':$index == 0}" ng-repeat="lang in editFeatureDlCtrl.language" id="{{lang.value}}-detail-form">\n' +
-    '                                    <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed">\n' +
-    '                                        <label for="first-name"> {{ lang.value+\'DescriptionLbl\' | translate}} </label>\n' +
-    '                                        <input required type="text" class="mat-input form-control" name="featureDetailDescDictionary{{lang.value+\'Name\'}}" \n' +
-    '                                        ng-model="editFeatureDlCtrl.featureDetailDescDictionary[lang.key]" ng-change="editFeatureDlCtrl.checkFeatureDetail()" ng-minlength="3" ng-maxlength="40">\n' +
-    '                                        <div ng-messages="newFeatureDetailForm.featureDetailDescDictionary{{lang.value+\'Name\'}}.$error">\n' +
-    '                                            <div ng-show="newFeatureDetailForm.featureDetailDescDictionary{{lang.value+\'Name\'}}.$error.required && !newFeatureDetailForm.featureDetailDescDictionary{{lang.value+\'Name\'}}.$pristine">{{\'requiredErr\' | translate}}</div>\n' +
-    '                                            <div ng-show="(newFeatureDetailForm.featureDetailDescDictionary{{lang.value+\'Name\'}}.$error.minlength || newFeatureDetailForm.featureDetailDescDictionary{{lang.value+\'Name\'}}.$error.maxlength) && !newFeatureDetailForm.featureDetailDescDictionary{{lang.value+\'Name\'}}.$error.required">{{\'NameLengthError\' | translate}}</div>\n' +
-    '                                        </div>\n' +
-    '                                        <div ng-show="editFeatureDlCtrl.featureDetailExist">{{\'FeatureDetailExist\' | translate}}</div>                                        \n' +
-    '                                    </div>\n' +
-    '                                </div>\n' +
-    '                            </div>\n' +
-    '                        </div>\n' +
-    '                    </div>\n' +
-    '                    <div class="group-fields clearfix row">\n' +
-    '                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">\n' +
-    '                            <div class="checkbox pmd-default-theme">\n' +
-    '                                <label class=" checkbox-pmd-ripple-effect">\n' +
-    '                                    <input type="checkbox" ng-model="editFeatureDlCtrl.isFree">\n' +
-    '                                    <span>{{\'IsFreeLbl\' | translate}}</span>\n' +
-    '                                </label>\n' +
-    '                            </div>\n' +
-    '                        </div>\n' +
-    '                    </div>\n' +
-    '                    <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed" ng-if="!editFeatureDlCtrl.isFree">\n' +
-    '                        <label for="first-name"> {{ \'priceLbl\' | translate}} </label>\n' +
-    '                        <input required type="number" class="mat-input form-control" name="price" ng-model="editFeatureDlCtrl.price" ng-min="1">\n' +
-    '\n' +
-    '                    </div>\n' +
-    '                    <button ng-disabled="editFeatureDlCtrl.featureDetailExist || newFeatureDetailForm.$invalid || (!editFeatureDlCtrl.isFree && editFeatureDlCtrl.price <=0)" class="btn pmd-ripple-effect btn-primary" type="button" ng-click="editFeatureDlCtrl.AddFeatureDetail()">{{\'AddMoreBtn\' | translate}}</button>\n' +
-    '            </form>\n' +
-    '\n' +
-    '        </div>\n' +
+    '       \n' +
     '    </div>\n' +
     '</div>\n' +
     '<div class="pmd-modal-action text-right">\n' +
     '    <button ng-disabled="editFeatureDlCtrl.featureDetailExist || editFeatureForm.$invalid \n' +
-    '    || (editFeatureDlCtrl.moreDetail && editFeatureDlCtrl.feature.hasDetails && newFeatureCtrl.featureDetails.length <= 0)" class="btn pmd-ripple-effect btn-primary" type="button" ng-click="editFeatureDlCtrl.updateFeature()">{{\'saveChangesBtn\' | translate}}</button>\n' +
+    '    || editFeatureDlCtrl.SelectedControl.length <= 0 " class="btn pmd-ripple-effect btn-primary" type="button" ng-click="editFeatureDlCtrl.updateFeature()">{{\'saveChangesBtn\' | translate}}</button>\n' +
     '    <button class="btn pmd-ripple-effect btn-default" type="button" ng-click="editFeatureDlCtrl.close()">{{\'DiscardBtn\' | translate}}</button>\n' +
     '</div>\n' +
     '</div>\n' +
@@ -2170,8 +2178,7 @@ angular.module('home').run(['$templateCache', function($templateCache) {
     '<div >\n' +
     '    <div style="margin-bottom:10px">\n' +
     '        <button  ng-click="$state.go(\'newFeature\');" class="btn pmd-ripple-effect btn-primary pmd-z-depth" type="button">{{\'AddFeatureBtn\' | translate}}</button>\n' +
-    '        \n' +
-    '        <button ng-disabled="featureCtrl.featureAsRestaurant != null"  ng-click="$state.go(\'newFeatureRestaurant\');" class="btn pmd-ripple-effect btn-primary pmd-z-depth" type="button">{{\'AddFeatureBtn\' | translate}}</button>\n' +
+    '        <button ng-disabled="featureCtrl.featureAsRestaurant.featureId != null"  ng-click="$state.go(\'newFeatureRestaurant\');" class="btn pmd-ripple-effect btn-primary pmd-z-depth" type="button">{{\'AddRestaurantFeatureBtn\' | translate}}</button>\n' +
     '        \n' +
     '    </div>\n' +
     '    \n' +
@@ -2185,7 +2192,7 @@ angular.module('home').run(['$templateCache', function($templateCache) {
     '                    <tr>\n' +
     '                        <th >{{\'Name\' | translate}}</th>\n' +
     '                        <th >{{\'Imagelbl\' | translate}}</th>                        \n' +
-    '                        <th>{{\'hasDetailsLbl\' | translate}}</th>\n' +
+    '                        <th>{{\'detailLbl\' | translate}}</th>\n' +
     '                        <th >{{\'status\' | translate}}</th>\n' +
     '                        <th ></th>\n' +
     '                    </tr>\n' +
@@ -2194,7 +2201,15 @@ angular.module('home').run(['$templateCache', function($templateCache) {
     '                    <tr ng-repeat="feature in featureCtrl.features.results">\n' +
     '                        <td data-title="Name" >{{feature.featureNameDictionary[selectedLanguage]}}</td>\n' +
     '                        <td data-title="logo" ><img ng-src="{{feature.imageURL}}?type=\'thumbnail\'&date={{featureCtrl.Now}}"  ng-alt="{{restaurant.restaurantName}}" style="max-height: 200px;max-width: 200px;"/></td>                        \n' +
-    '                        <td data-title="Name" >{{feature.hasDetails}}</td>\n' +
+    '                        <td data-title="Name" >\n' +
+    '                            <span ng-if="feature.type==\'Normal\'" ng-repeat="control in feature.featureControl">\n' +
+    '                                <span ng-repeat="controlEnum in featureCtrl.control|filter: {id: control.control}"> {{controlEnum.text | translate}} </span>\n' +
+    '                                <span ng-if="!$last">,</span> \n' +
+    '                            </span>\n' +
+    '                            <span ng-if="feature.type==\'Restaurant\'" ng-repeat="restaurant in feature.restaurants">{{restaurant.restaurantNameDictionary[selectedLanguage]}}\n' +
+    '                                    <span ng-if="!$last">,</span>                                     \n' +
+    '                            </span>\n' +
+    '                        </td>\n' +
     '                \n' +
     '                        <!-- <td></td> -->\n' +
     '                        <td>\n' +
@@ -2222,6 +2237,48 @@ angular.module('home').run(['$templateCache', function($templateCache) {
 
 angular.module('home').run(['$templateCache', function($templateCache) {
   $templateCache.put('./app/admin/features/templates/newFeature.html',
+    '<script type="text/javascript">\n' +
+    '	$(document).ready(function() {\n' +
+    '		// <!-- Select Multiple Tags -->\n' +
+    '		$(".select-tags").select2({\n' +
+    '			tags: false,\n' +
+    '			theme: "bootstrap",\n' +
+    '		})\n' +
+    '	});\n' +
+    '</script>\n' +
+    '<style>\n' +
+    '    .container {\n' +
+    '	width: 750px;\n' +
+    '	margin: auto;\n' +
+    '}\n' +
+    '\n' +
+    '.apps-container {\n' +
+    '  border: 2px dotted blue;\n' +
+    '  margin: 10px 10px 0 0;\n' +
+    '  padding: 5px;\n' +
+    '  /* min-width:200px; */\n' +
+    '  width: 20%;\n' +
+    '  min-height:50px;\n' +
+    '}\n' +
+    '\n' +
+    '.app {\n' +
+    '	width: 170px;\n' +
+    '	padding: 5px 10px;\n' +
+    '	margin: 5px 0;\n' +
+    '	border: 2px solid #444;\n' +
+    '	border-radius: 5px;\n' +
+    '	background-color: #EA8A8A;\n' +
+    '/* \n' +
+    '	font-size: 1.1em;\n' +
+    '	font-weight: bold; */\n' +
+    '	text-align: center;\n' +
+    '	cursor: move;\n' +
+    '    font-size: 15px;\n' +
+    '    background-color: #4285f4;\n' +
+    '    color: white;\n' +
+    '}\n' +
+    '\n' +
+    '</style>\n' +
     '<div class="modal-content">\n' +
     '    <div class="modal-header bordered">\n' +
     '        <h2 class="pmd-card-title-text">{{\'newFeatureLbl\' | translate}}</h2>\n' +
@@ -2266,7 +2323,7 @@ angular.module('home').run(['$templateCache', function($templateCache) {
     '                        </div>\n' +
     '                </div>\n' +
     '\n' +
-    '                <div class="group-fields clearfix row">\n' +
+    '                <!-- <div class="group-fields clearfix row">\n' +
     '                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">\n' +
     '                        <div class="checkbox pmd-default-theme">\n' +
     '                            <label class=" checkbox-pmd-ripple-effect">\n' +
@@ -2275,102 +2332,26 @@ angular.module('home').run(['$templateCache', function($templateCache) {
     '                            </label>\n' +
     '                        </div>\n' +
     '                    </div>\n' +
+    '                </div> -->\n' +
+    '\n' +
+    '                <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed"  >\n' +
+    '                    <label>{{\'selectControlLbl\' | translate}}</label>\n' +
+    '                    <select  class="form-control select-tags pmd-select2-tags" multiple ng-model="newFeatureCtrl.SelectedControl" name="SelectedControl">\n' +
+    '                        <option ng-repeat="control in newFeatureCtrl.controls"  ng-value="{{control}}">{{control.text | translate}}</option>                    \n' +
+    '                    </select>\n' +
+    '                    <div ng-if="newFeatureForm.SelectedControl.$error.required && !newFeatureForm.SelectedControl.$pristine">{{\'requiredErr\' | translate}}</div>\n' +
     '                </div>\n' +
-    '\n' +
-    '            </div>\n' +
-    '        </form>\n' +
-    '        <form class="form-horizontal" name="newFeatureDetailForm">\n' +
-    '\n' +
-    '            <div ng-if="newFeatureCtrl.hasDetails">\n' +
-    '\n' +
-    '                <div class="pmd-card pmd-z-depth pmd-card-custom-view" ng-if="newFeatureCtrl.featureDetails.length > 0">\n' +
-    '                    <div class="table-responsive">\n' +
-    '                        <table class="table pmd-table table-hover">\n' +
-    '                            <thead>\n' +
-    '                                <tr>\n' +
-    '                                    <th>{{\'DescriptionLbl\' | translate}}</th>\n' +
-    '                                    <!-- <th>{{\'IsFreeLbl\' | translate}}</th> -->\n' +
-    '                                    <th>{{\'priceLbl\' | translate}}</th>\n' +
-    '                                    <th ></th>                                    \n' +
-    '                                </tr>\n' +
-    '                            </thead>\n' +
-    '                            <tbody>\n' +
-    '                                <tr ng-repeat="featureDetail in newFeatureCtrl.featureDetails | limitTo : 10 : newFeatureCtrl.currentPage*10">\n' +
-    '                                    <td data-title="Name">{{featureDetail.descriptionDictionary[selectedLanguage]}}</td>\n' +
-    '                                    <!-- <td data-title="Name" >{{featureDetail.isFree}}</td> -->\n' +
-    '                                    <td data-title="Name">\n' +
-    '                                        <span ng-if="featureDetail.isFree">{{\'freelbl\' |translate}}</span>\n' +
-    '                                        <span ng-if="!featureDetail.isFree">{{featureDetail.price}}</span>\n' +
-    '                                    </td>\n' +
-    '                                    <td width="30%">\n' +
-    '                                        <i class="material-icons md-dark pmd-md cursorPointer font25" ng-click="newFeatureCtrl.edit(featureDetail,$index)">mode_edit</i> \n' +
-    '                                        <i class="material-icons pmd-md deleteButton cursorPointer font25" ng-click="newFeatureCtrl.remove($index)">delete</i>\n' +
-    '                                    </td>\n' +
-    '                                </tr>\n' +
-    '                            </tbody>\n' +
-    '                        </table>\n' +
-    '                    </div>\n' +
-    '                    <div style="text-align:center;" paging page="1" page-size="10" total="newFeatureCtrl.featureDetails.length"\n' +
-    '                     paging-action="newFeatureCtrl.changePage(page)" flex="nogrow" show-prev-next="true" show-first-last="true" hide-if-empty="true" disabled-class="hide">\n' +
-    '                       </div>\n' +
-    '                </div>\n' +
-    '\n' +
-    '                <div>\n' +
-    '                    <!-- Nav tabs -->\n' +
-    '                    <ul class="nav nav-tabs" role="tablist">\n' +
-    '                        <li role="presentation" ng-class="{\'active\':$index == 0}" ng-repeat="lang in newFeatureCtrl.language">\n' +
-    '                            <a href="javascript:void(0);" data-target="#{{lang.value}}-detail-form" aria-controls="home" role="tab" data-toggle="tab">\n' +
-    '                                {{lang.value | translate}}\n' +
-    '                            </a>\n' +
-    '                        </li>\n' +
-    '                        <!-- <li role="presentation">\n' +
-    '                            <a href="javascript:void(0);" data-target="#arabic-form" aria-controls="about" role="tab" data-toggle="tab">{{\'arabic\' | translate}}</a>\n' +
-    '                        </li> -->\n' +
-    '                    </ul>\n' +
-    '                    <div class="pmd-card">\n' +
-    '                        <div class="pmd-card-body">\n' +
-    '                            <!-- Tab panes -->\n' +
-    '                            <div class="tab-content">\n' +
-    '                                <div role="tablist" class="tab-pane" ng-class="{\'active\':$index == 0}" ng-repeat="lang in newFeatureCtrl.language" id="{{lang.value}}-detail-form">\n' +
-    '                                    <div class="form-group pmd-textfield pmd-textfield-floating-label">\n' +
-    '                                        <label for="first-name"> {{ lang.value+\'DescriptionLbl\' | translate}} </label>\n' +
-    '                                        <input required type="text" class="mat-input form-control" name="featureDetailDescDictionary{{lang.value+\'Name\'}}"\n' +
-    '                                         ng-model="newFeatureCtrl.featureDetailDescDictionary[lang.key]" ng-change="newFeatureCtrl.checkFeatureDetail()" ng-minlength="3" ng-maxlength="40">\n' +
-    '                                         <div ng-messages="newFeatureDetailForm.featureDetailDescDictionary{{lang.value+\'Name\'}}.$error">\n' +
-    '                                            <div ng-show="newFeatureDetailForm.featureDetailDescDictionary{{lang.value+\'Name\'}}.$error.required && !newFeatureDetailForm.featureDetailDescDictionary{{lang.value+\'Name\'}}.$pristine">{{\'requiredErr\' | translate}}</div>\n' +
-    '                                            <div ng-show="(newFeatureDetailForm.featureDetailDescDictionary{{lang.value+\'Name\'}}.$error.minlength || newFeatureDetailForm.featureDetailDescDictionary{{lang.value+\'Name\'}}.$error.maxlength) && !newFeatureDetailForm.featureDetailDescDictionary{{lang.value+\'Name\'}}.$error.required">{{\'NameLengthError\' | translate}}</div>\n' +
-    '                                        </div>\n' +
-    '                                        <div ng-show="newFeatureCtrl.featureDetailExist">{{\'FeatureDetailExist\' | translate}}</div>\n' +
-    '                                    </div>\n' +
-    '                                </div>\n' +
-    '                            </div>\n' +
-    '                        </div>\n' +
-    '                    </div>\n' +
-    '                    <div class="group-fields clearfix row">\n' +
-    '                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">\n' +
-    '                            <div class="checkbox pmd-default-theme">\n' +
-    '                                <label class=" checkbox-pmd-ripple-effect">\n' +
-    '                                    <input type="checkbox" ng-model="newFeatureCtrl.isFree">\n' +
-    '                                    <span>{{\'IsFreeLbl\' | translate}}</span>\n' +
-    '                                </label>\n' +
-    '                            </div>\n' +
-    '                        </div>\n' +
-    '                    </div>\n' +
-    '                    <div class="form-group pmd-textfield pmd-textfield-floating-label" ng-if="!newFeatureCtrl.isFree">\n' +
-    '                        <label for="first-name"> {{ \'priceLbl\' | translate}} </label>\n' +
-    '                        <input required type="number" class="mat-input form-control" name="price" ng-model="newFeatureCtrl.price" ng-min="1">\n' +
-    '\n' +
-    '                    </div>\n' +
-    '                    <button ng-disabled="newFeatureCtrl.featureDetailExist || newFeatureDetailForm.$invalid || (!newFeatureCtrl.isFree && newFeatureCtrl.price <=0)" class="btn pmd-ripple-effect btn-primary" type="button" ng-click="newFeatureCtrl.AddFeatureDetail()">{{\'AddMoreBtn\' | translate}}</button>\n' +
-    '\n' +
+    '                <label>{{\'orderControlLbl\' | translate}}</label>                \n' +
+    '                <div ui-sortable="newFeatureCtrl.sortableOptions" class="apps-container screen floatleft"  ng-model="newFeatureCtrl.SelectedControl">\n' +
+    '                    <div class="app" ng-repeat="item in newFeatureCtrl.SelectedControl" >{{item.text| translate}}</div>\n' +
     '                </div>\n' +
     '            </div>\n' +
     '        </form>\n' +
+    '       \n' +
     '    </div>\n' +
     '    <div class="pmd-modal-action text-right">\n' +
-    '        <button ng-disabled="newFeatureCtrl.featureDetailExist || newFeatureForm.$invalid || newFeatureCtrl.featureImage == null ||\n' +
-    '        (newFeatureCtrl.hasDetails && newFeatureCtrl.featureDetails.length <= 0)\n' +
-    '          || newFeatureCtrl.isChanged" class="btn pmd-ripple-effect btn-primary" type="button" ng-click="newFeatureCtrl.AddNewFeature()">{{\'saveChangesBtn\' | translate}}</button>\n' +
+    '        <button ng-disabled=" newFeatureForm.$invalid || newFeatureCtrl.featureImage == null ||\n' +
+    '        newFeatureCtrl.SelectedControl.length <= 0 || newFeatureCtrl.isChanged" class="btn pmd-ripple-effect btn-primary" type="button" ng-click="newFeatureCtrl.AddNewFeature()">{{\'saveChangesBtn\' | translate}}</button>\n' +
     '        <button class="btn pmd-ripple-effect btn-default" type="button" ng-click="newFeatureCtrl.close()">{{\'DiscardBtn\' | translate}}</button>\n' +
     '    </div>\n' +
     '</div>\n' +
@@ -2458,6 +2439,81 @@ angular.module('home').run(['$templateCache', function($templateCache) {
 }]);
 
 angular.module('home').run(['$templateCache', function($templateCache) {
+  $templateCache.put('./app/admin/featuresbackground/templates/background.html',
+    '<div >\n' +
+    '       \n' +
+    '    <div style="margin-bottom:10px">\n' +
+    '            <button  ng-click="backgroundCtrl.openbackgroundDialog()" class="btn pmd-ripple-effect btn-primary pmd-z-depth" type="button">{{\'AddbackgroundBtn\' | translate}}</button>\n' +
+    '            <!-- <span ng-if="!backgroundCtrl.Backgrounds.isParentTranslated"> <i class="material-icons md-dark pmd-md warrningIcon">warning</i> {{\'MenuNotTranslated\' | translate}}</span> -->\n' +
+    '        </div> \n' +
+    '        <div ng-if="backgroundCtrl.Backgrounds.results.length == 0">\n' +
+    '                <span>{{\'NoBackgroundAvailable\' | translate}}</span>\n' +
+    '        </div>\n' +
+    '        <div class="pmd-card pmd-z-depth pmd-card-custom-view" ng-if="backgroundCtrl.Backgrounds.results.length > 0">\n' +
+    '            <div class="table-responsive">\n' +
+    '                <table class="table pmd-table table-hover">\n' +
+    '                    <thead>\n' +
+    '                        <tr> \n' +
+    '                            <th >{{\'Imagelbl\' | translate}}</th>\n' +
+    '                            <th >{{\'status\' | translate}}</th>\n' +
+    '                            <th ></th>\n' +
+    '                        </tr>\n' +
+    '                    </thead>\n' +
+    '                    <tbody>\n' +
+    '                        <tr ng-class="{\'red-text\': Background.isSelected == true }" ng-repeat="Background in backgroundCtrl.Backgrounds.results"> \n' +
+    '                            <td data-title="Image" ><img ng-src="{{Background.imageUrl}}" ng-alt="{{Background.BackgroundName}}" style="max-height: 200px;max-width: 200px;"/></td>\n' +
+    '                            <!-- <td></td> -->\n' +
+    '                            <td>\n' +
+    '                                 <a ng-show="Background.isSelected"   class="cursorPointer" style="color: white;">{{\'CurrentBtn\' | translate}}</a>\n' +
+    '                                 <a ng-show="!Background.isSelected" ng-click="backgroundCtrl.Activate(Background)" class="cursorPointer">{{\'NotCurrentBtn\' | translate}}</a>\n' +
+    '                            </td>\n' +
+    '                          \n' +
+    '                        </tr>\n' +
+    '                    </tbody>\n' +
+    '                </table>\n' +
+    '            </div>\n' +
+    '            <div style="text-align:center;" paging page="1" page-size="10" total="backgroundCtrl.Backgrounds.totalCount" paging-action="backgroundCtrl.changePage( page)"\n' +
+    '            flex="nogrow" show-prev-next="true" show-first-last="true" hide-if-empty="true" disabled-class="hide">\n' +
+    '               </div>\n' +
+    '        </div> \n' +
+    '    \n' +
+    '    \n' +
+    '    </div>					\n' +
+    '    ');
+}]);
+
+angular.module('home').run(['$templateCache', function($templateCache) {
+  $templateCache.put('./app/admin/featuresbackground/templates/newBackground.html',
+    '<div class="modal-content">\n' +
+    '        <div class="modal-header bordered">\n' +
+    '            <button class="close" type="button" ng-click="backgroundCtrl.close()">×</button>\n' +
+    '            <h2 class="pmd-card-title-text">{{\'NewbackgroundLbl\' | translate}}</h2>\n' +
+    '        </div>\n' +
+    '        <div class="modal-body">\n' +
+    '            <form class="form-horizontal" name="newbackgroundForm">\n' +
+    '           \n' +
+    '                <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed" >       \n' +
+    '                        <input id="backgroundImage" name="backgroundImage" style="display: none;" onchange="angular.element(this).scope().AddbackgroundImage(this.files)" type="file" required>\n' +
+    '                        <button ng-click="backgroundCtrl.LoadUploadImage()" >{{\'UploadImageBtn\' | translate}}</button>\n' +
+    '                        <img ng-src="{{backgroundCtrl.backgroundImage}}" style="max-height: 200px;max-width: 200px;">\n' +
+    '                        <span > <i class="material-icons md-dark pmd-md warrningIcon">warning</i> {{\'RecommendedBackgroundImage\' | translate}}</span>\n' +
+    '                          <div ng-messages="newbackgroundForm.backgroundImage.$error" >\n' +
+    '                            <div ng-if="newbackgroundForm.backgroundImage.$error.required">{{\'requiredErr\' | translate}}</div>\n' +
+    '                        </div>\n' +
+    '                </div>\n' +
+    '            </form>\n' +
+    '        </div>\n' +
+    '        <div class="pmd-modal-action text-right">\n' +
+    '            <button ng-disabled="newbackgroundForm.$invalid  || backgroundCtrl.backgroundImage== null" class="btn pmd-ripple-effect btn-primary" type="button" ng-click="backgroundCtrl.AddNewbackground()">{{\'saveChangesBtn\' | translate}}</button>\n' +
+    '            <button class="btn pmd-ripple-effect btn-default" type="button" ng-click="backgroundCtrl.close()">{{\'DiscardBtn\' | translate}}</button>\n' +
+    '        </div>\n' +
+    '    </div>\n' +
+    '    \n' +
+    '        \n' +
+    '    ');
+}]);
+
+angular.module('home').run(['$templateCache', function($templateCache) {
   $templateCache.put('./app/admin/requests/templates/requestDetail.html',
     '<div class="modal-content">\n' +
     '        <div class="modal-header bordered">\n' +
@@ -2508,11 +2564,68 @@ angular.module('home').run(['$templateCache', function($templateCache) {
     '        });\n' +
     '    });\n' +
     '    </script> -->\n' +
-    '<div >    \n' +
-    '    <div ng-if="adminRequestCtrl.requests.results.length == 0">\n' +
+    '    <script>\n' +
+    '        // Linked date and time picker \n' +
+    '        // start date date and time picker \n' +
+    '        $(\'#datepicker-start\').datetimepicker();\n' +
+    '\n' +
+    '        // End date date and time picker \n' +
+    '        $(\'#datepicker-end\').datetimepicker({\n' +
+    '            useCurrent: false \n' +
+    '        });\n' +
+    '        \n' +
+    '        // start date picke on chagne event [select minimun date for end date datepicker]\n' +
+    '        $("#datepicker-start").on("dp.change", function (e) {\n' +
+    '            $(\'#datepicker-end\').data("DateTimePicker").minDate(e.date);\n' +
+    '        });\n' +
+    '        // Start date picke on chagne event [select maxmimum date for start date datepicker]\n' +
+    '        $("#datepicker-end").on("dp.change", function (e) {\n' +
+    '            $(\'#datepicker-start\').data("DateTimePicker").maxDate(e.date);\n' +
+    '        });\n' +
+    '    </script>\n' +
+    '<div >\n' +
+    '    <div class="row">\n' +
+    '    <div  class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed col-md-2" >\n' +
+    '        <label>{{\'Rooms\' | translate}}</label>\n' +
+    '        <select class="select-simple form-control pmd-select2" \n' +
+    '            ng-options="room.roomName for room in adminRequestCtrl.rooms" \n' +
+    '            ng-model="adminRequestCtrl.selectedRoom">\n' +
+    '        </select>\n' +
+    '    </div>\n' +
+    '    <div  ng-if="user.role !== \'Waiter\'"  class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed col-md-2" >\n' +
+    '        <label>{{\'Featureslbl\' | translate}}</label>\n' +
+    '        <select class="select-simple form-control pmd-select2" \n' +
+    '            ng-options="feature.featureNameDictionary[selectedLanguage] for feature in adminRequestCtrl.features" \n' +
+    '            ng-model="adminRequestCtrl.selectedFeature">\n' +
+    '        </select>\n' +
+    '    </div>\n' +
+    '    \n' +
+    '    <div class="col-md-2"> \n' +
+    '		<div class="form-group pmd-textfield pmd-textfield-floating-label">\n' +
+    '			<label class="control-label" for="regular1">{{\'From\'|translate}}</label>\n' +
+    '			<input type="text" class="form-control" id="datepicker-start">\n' +
+    '		</div>\n' +
+    '	</div>\n' +
+    '	<div class="col-md-2"> \n' +
+    '		<div class="form-group pmd-textfield pmd-textfield-floating-label">\n' +
+    '			<label class="control-label" for="regular1">{{\'To\'|translate}}</label>\n' +
+    '			<input type="text" class="form-control" id="datepicker-end">\n' +
+    '		</div>\n' +
+    '    </div>\n' +
+    '    <div class="pmd-modal-action text-right">\n' +
+    '            <button class="btn pmd-ripple-effect btn-primary" type="button" ng-click="adminRequestCtrl.changePage(1)">\n' +
+    '                {{\'applyFilterBtn\' | translate}}\n' +
+    '            </button>\n' +
+    '    </div>\n' +
+    '</div>\n' +
+    '    <div ng-show="adminRequestCtrl.requests.results.length == 0 && !adminRequestCtrl.isLoading">\n' +
     '            <span>{{\'NorequestsAvailable\' | translate}}</span>\n' +
     '    </div>\n' +
-    '    <div class="pmd-card pmd-z-depth pmd-card-custom-view" ng-if="adminRequestCtrl.requests.results.length > 0">\n' +
+    '    <div  style="text-align: center;">\n' +
+    '        <img ng-show="adminRequestCtrl.isLoading" src="assets/img/loading.gif" style="height: 80px;">\n' +
+    '    </div>\n' +
+    '   \n' +
+    '    <div class="pmd-card pmd-z-depth pmd-card-custom-view" ng-show="adminRequestCtrl.requests.results.length > 0 && !adminRequestCtrl.isLoading">\n' +
     '        <div class="table-responsive pmd-card pmd-z-depth">\n' +
     '            <table class="table table-mc-red pmd-table">\n' +
     '                <thead>\n' +
@@ -2525,27 +2638,37 @@ angular.module('home').run(['$templateCache', function($templateCache) {
     '                    </tr>\n' +
     '                </thead>\n' +
     '                <tbody>\n' +
-    '                    <tr ng-repeat-start="request in adminRequestCtrl.requests.results">\n' +
+    '                    <tr ng-repeat-start="request in adminRequestCtrl.requests.results" ng-style="{\'background-color\': request.status==\'Pending\'?\'#f5f58a\':\'\'}">\n' +
     '                        <td data-title="Name" >{{request.roomName}}</td>\n' +
     '                        <td data-title="Name" >{{request.featureNameDictionary[selectedLanguage]}}</td>\n' +
     '                        <td data-title="Name" >{{request.createTime}}</td>\n' +
     '                        <td data-title="Name" >{{request.status|translate}} <span ng-if="request.status!=\'Pending\'"> {{request.modifier}} {{request.modifyTime}}</span> </td>\n' +
     '                       \n' +
-    '                        <td ng-if="user.role === \'Supervisor\' && request.status ==\'Pending\'">\n' +
+    '                        <td ng-if="user.role === \'Supervisor\' && request.status ==\'Pending\' && request.type==\'Normal\'">\n' +
     '                            <a ng-click="adminRequestCtrl.Approve(request.featureId,request.requestId)" class="cursorPointer">{{\'ApproveBtn\' | translate}}</a>\n' +
     '                            <a ng-click="adminRequestCtrl.Reject(request.requestId)" class="cursorPointer">{{\'RejectBtn\' | translate}}</a>\n' +
     '                        </td>\n' +
-    '                        <td class="pmd-table-row-action" ng-if="request.requestDetails.length >0">\n' +
-    '                            <span href="javascript:void(0);" ng-click="request.show=!request.show;adminRequestCtrl.showMore($event)" class="btn pmd-btn-fab pmd-btn-flat pmd-ripple-effect btn-default btn-sm child-table-expand direct-expand"><i class="material-icons md-dark pmd-sm"></i></span>\n' +
+    '                        <td ng-if="user.role === \'Waiter\' && request.status ==\'Pending\' && request.type==\'Restaurant\'">\n' +
+    '                                <a ng-click="adminRequestCtrl.Approve(request.featureId,request.requestId)" class="cursorPointer">{{\'ApproveBtn\' | translate}}</a>\n' +
+    '                                <a ng-click="adminRequestCtrl.Reject(request.requestId)" class="cursorPointer">{{\'RejectBtn\' | translate}}</a>\n' +
+    '                            </td>\n' +
+    '                        <td class="pmd-table-row-action" >\n' +
+    '                            <span href="javascript:void(0);" ng-if="request.requestDetails.length >0 || request.comment !== null || request.requestTime !== null" ng-click="request.show=!request.show;adminRequestCtrl.showMore($event)" class="btn pmd-btn-fab pmd-btn-flat pmd-ripple-effect btn-default btn-sm child-table-expand direct-expand"><i class="material-icons md-dark pmd-sm"></i></span>\n' +
     '                        </td>\n' +
     '                    </tr>\n' +
-    '                    <tr ng-repeat-end class="child-table" ng-if="request.requestDetails.length >0" ng-show="request.show">\n' +
+    '                    <tr ng-repeat-end class="child-table"  ng-show="request.show">\n' +
     '                            <td colspan="12">\n' +
-    '                                <div class="direct-child-table" >\n' +
+    '                                <div class="direct-child-table" ng-if="request.requestDetails.length >0">\n' +
     '                                    <table class="table pmd-table table-striped table-sm">\n' +
     '                                        <thead>\n' +
     '                                            <tr>\n' +
-    '                                                <th>{{\'DescriptionLbl\' | translate}}</th>\n' +
+    '                                                <th colspan="4" style="text-align: center;">\n' +
+    '                                                    {{request.restaurantName[selectedLanguage]}}\n' +
+    '                                                </th>\n' +
+    '                                            </tr>\n' +
+    '                                            <tr>\n' +
+    '                                                <th ng-if="request.type==\'Normal\'">{{\'DescriptionLbl\' | translate}}</th>\n' +
+    '                                                <th ng-if="request.type==\'Restaurant\'">{{\'itemlbl\' | translate}}</th>\n' +
     '                                                <th>{{\'NumberLbl\' | translate}}</th>\n' +
     '                                                <th>{{\'priceLbl\' |translate}}</th>\n' +
     '                                                <th>{{\'totalpriceLbl\'|translate}}</th>\n' +
@@ -2553,7 +2676,12 @@ angular.module('home').run(['$templateCache', function($templateCache) {
     '                                        </thead>\n' +
     '                                        <tbody>\n' +
     '                                        <tr ng-repeat="requestDetail in request.requestDetails">\n' +
-    '                                            <td>{{requestDetail.descriptionDictionary[selectedLanguage]}} </td>\n' +
+    '                                            <td>{{requestDetail.descriptionDictionary[selectedLanguage]}}\n' +
+    '                                                    <div ng-show="requestDetail.from != null">{{\'from\'|translate}}: {{requestDetail.from}}</div>\n' +
+    '                                                    \n' +
+    '                                                    <div ng-show="requestDetail.to != null">{{\'to\'|translate}}:\n' +
+    '                                                        {{requestDetail.to}}                                    \n' +
+    '                                                    </div>  </td>\n' +
     '                                            <td>{{requestDetail.number}}</td>\n' +
     '                                            <td>\n' +
     '                                                <span ng-if="requestDetail.price <= 0">{{\'freelbl\' |translate}}</span>\n' +
@@ -2568,12 +2696,22 @@ angular.module('home').run(['$templateCache', function($templateCache) {
     '                                    </tbody>\n' +
     '                                </table>\n' +
     '                            </div>\n' +
+    '                            \n' +
+    '                            <div style="background: white;padding: 5px;" ng-if="request.comment !== null"> \n' +
+    '                                <h2>{{\'Comment\'|translate}}: </h2>\n' +
+    '                                <span>{{request.comment}}</span>\n' +
+    '                            </div>\n' +
+    '                            <div style="background: white;padding: 5px;" ng-if="request.requestTime !== null"> \n' +
+    '                                <!-- <h2 style="float: left;">{{\'Time\'|translate}}: </h2> -->\n' +
+    '                                <h2 >{{\'Time\'|translate}}: </h2>\n' +
+    '                                <span> {{request.requestTime}}</span>\n' +
+    '                            </div>\n' +
     '                        </td>\n' +
     '                    </tr>\n' +
     '                </tbody>\n' +
     '            </table>\n' +
     '        </div>\n' +
-    '        <div style="text-align:center;" paging page="1" page-size="10" total="adminRequestCtrl.requests.totalCount" paging-action="adminRequestCtrl.changePage( page)"\n' +
+    '        <div style="text-align:center;" paging page="adminRequestCtrl.currentPage" page-size="10" total="adminRequestCtrl.requests.totalCount" paging-action="adminRequestCtrl.changePage( page)"\n' +
     '        flex="nogrow" show-prev-next="true" show-first-last="true" hide-if-empty="true" disabled-class="hide">\n' +
     '            </div>\n' +
     '    </div> \n' +
@@ -3010,7 +3148,7 @@ angular.module('home').run(['$templateCache', function($templateCache) {
     '						<td data-title="logo" ><img ng-src="{{restaurant.logoURL}}?type=\'thumbnail\'&date={{restaurantCtrl.Now}}"  ng-alt="{{restaurant.restaurantName}}" style="max-height: 200px;max-width: 200px;"/></td>\n' +
     '						<td data-title="Description" >{{restaurant.restaurantDescriptionDictionary[selectedLanguage]}}</td>\n' +
     '						<td data-title="Admin user" width="15%" >{{restaurant.restaurantAdminUserName}}</td>\n' +
-    '						<td data-title="Type" width="10%" >{{restaurant.restaurantTypeName}}</td>\n' +
+    '						<td data-title="Type" width="10%" >{{restaurant.restaurantTypeNameDictionary[selectedLanguage]}}</td>\n' +
     '						<!-- <td data-title="Type" width="5%" >{{restaurant.consumedWaiters}}/{{restaurant.waitersLimit}}</td> -->\n' +
     '						<!-- <td width="5%">{{restaurant.isReady}}</td> -->\n' +
     '						<td width="15%" >\n' +
@@ -3071,6 +3209,62 @@ angular.module('home').run(['$templateCache', function($templateCache) {
 }]);
 
 angular.module('home').run(['$templateCache', function($templateCache) {
+  $templateCache.put('./app/admin/room/templates/editBuilding.html',
+    '<div class="modal-content">\n' +
+    '    <div class="modal-header bordered">\n' +
+    '        <button class="close" type="button" ng-click="editBuildingDlCtrl.close()">×</button>\n' +
+    '        <h2 class="pmd-card-title-text">{{\'UpdateBuildingLbl\' | translate}}</h2>\n' +
+    '    </div>\n' +
+    '    <div class="modal-body">\n' +
+    '        <form class="form-horizontal" name="updateBuildingForm">\n' +
+    '            <div class="form-group pmd-textfield pmd-textfield-floating-label  pmd-textfield-floating-label-completed">\n' +
+    '                <label for="first-name">{{\'roomName\' | translate}}</label>\n' +
+    '                <input required type="text" class="mat-input form-control" name="buildingName" ng-model="editBuildingDlCtrl.Building.buildingName"  ng-maxlength="20">\n' +
+    '                <div ng-messages="updateBuildingForm.buildingName.$error" >\n' +
+    '                    <div ng-if="updateBuildingForm.buildingName.$error.required && !updateBuildingForm.buildingName.$pristine">{{\'requiredErr\' | translate}}</div>\n' +
+    '                    <div ng-if="(updateBuildingForm.buildingName.$error.maxlength) && !updateBuildingForm.roomName.$error.required">{{\'maximumMsg\' | translate}}20</div>\n' +
+    '                </div>\n' +
+    '            </div>\n' +
+    '        </form>\n' +
+    '    </div>\n' +
+    '    <div class="pmd-modal-action text-right">\n' +
+    '        <button ng-disabled="updateBuildingForm.$invalid" class="btn pmd-ripple-effect btn-primary" type="button" ng-click="editBuildingDlCtrl.updateBuilding()">{{\'saveChangesBtn\' | translate}}</button>\n' +
+    '        <button class="btn pmd-ripple-effect btn-default" type="button" ng-click="editBuildingDlCtrl.close()">{{\'DiscardBtn\' | translate}}</button>\n' +
+    '    </div>\n' +
+    '</div>\n' +
+    '\n' +
+    '    \n' +
+    '');
+}]);
+
+angular.module('home').run(['$templateCache', function($templateCache) {
+  $templateCache.put('./app/admin/room/templates/editFloor.html',
+    '<div class="modal-content">\n' +
+    '    <div class="modal-header bordered">\n' +
+    '        <button class="close" type="button" ng-click="editFloorDlCtrl.close()">×</button>\n' +
+    '        <h2 class="pmd-card-title-text">{{\'UpdateFloorLbl\' | translate}}</h2>\n' +
+    '    </div>\n' +
+    '    <div class="modal-body">\n' +
+    '        <form class="form-horizontal" name="updateFloorForm">\n' +
+    '            <div class="form-group pmd-textfield pmd-textfield-floating-label  pmd-textfield-floating-label-completed">\n' +
+    '                <label for="first-name">{{\'roomName\' | translate}}</label>\n' +
+    '                <input required type="text" class="mat-input form-control" name="floorName" ng-model="editFloorDlCtrl.Floor.floorName" ng-maxlength="20">\n' +
+    '                <div ng-messages="updateFloorForm.floorName.$error" >\n' +
+    '                    <div ng-if="updateFloorForm.floorName.$error.required && !updateFloorForm.floorName.$pristine">{{\'requiredErr\' | translate}}</div>\n' +
+    '                    <div ng-if="(updateFloorForm.floorName.$error.maxlength) && !updateFloorForm.roomName.$error.required">{{\'maximumMsg\' | translate}} 20</div>\n' +
+    '                </div>\n' +
+    '            </div>\n' +
+    '        </form>\n' +
+    '    </div>\n' +
+    '    <div class="pmd-modal-action text-right">\n' +
+    '        <button ng-disabled="updateFloorForm.$invalid" class="btn pmd-ripple-effect btn-primary" type="button" ng-click="editFloorDlCtrl.updateFloor()">{{\'saveChangesBtn\' | translate}}</button>\n' +
+    '        <button class="btn pmd-ripple-effect btn-default" type="button" ng-click="editFloorDlCtrl.close()">{{\'DiscardBtn\' | translate}}</button>\n' +
+    '    </div>\n' +
+    '</div>\n' +
+    '');
+}]);
+
+angular.module('home').run(['$templateCache', function($templateCache) {
   $templateCache.put('./app/admin/room/templates/editRoom.html',
     '<div class="modal-content">\n' +
     '        <div class="modal-header bordered">\n' +
@@ -3103,16 +3297,93 @@ angular.module('home').run(['$templateCache', function($templateCache) {
     '                            <div ng-if="updateRoomForm.confirmPassword.$error.equalto && !updateRoomForm.confirmPassword.$error.required">Passwords don\'t match.</div>\n' +
     '                        </div>\n' +
     '                    </div>\n' +
+    '                    <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed">       \n' +
+    '                        <label>{{\'BuildingLbl\' | translate}}</label>\n' +
+    '                        <select required class="select-simple form-control pmd-select2" ng-model="editRoomDlCtrl.Room.buildingId">\n' +
+    '                            <option ng-selected="editRoomDlCtrl.Room.buildingId == item.buildingId" \n' +
+    '                                ng-repeat="item in editRoomDlCtrl.Buildings" \n' +
+    '                                ng-value="{{item.buildingId}}">{{item.buildingName}}</option>\n' +
+    '                        </select>\n' +
+    '                        <div ng-if="editRoomDlCtrl.RestaurantType.length <=0">{{\'NoBuildingLbl\' | translate}} </div>\n' +
+    '                    </div>\n' +
+    '                    <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed">       \n' +
+    '                        <label>{{\'FloorLbl\' | translate}}</label>\n' +
+    '                        <select required class="select-simple form-control pmd-select2" ng-model="editRoomDlCtrl.Room.floorId">\n' +
+    '                            <option ng-selected="editRoomDlCtrl.Room.floorId == item.floorId" \n' +
+    '                                ng-repeat="item in editRoomDlCtrl.Floors" \n' +
+    '                                ng-value="{{item.floorId}}">{{item.floorName}}</option>\n' +
+    '                        </select>\n' +
+    '                        <div ng-if="editRoomDlCtrl.RestaurantType.length <=0">{{\'NoFloorLbl\' | translate}} </div>\n' +
+    '                    </div> \n' +
+    '\n' +
     '            </form>\n' +
     '        </div>\n' +
     '        <div class="pmd-modal-action text-right">\n' +
-    '            <button ng-disabled="updateRoomForm.$invalid" class="btn pmd-ripple-effect btn-primary" type="button" ng-click="editRoomDlCtrl.updateRoom()">{{\'saveChangesBtn\' | translate}}</button>\n' +
+    '            <button ng-disabled="updateRoomForm.$invalid || editRoomDlCtrl.Room.buildingId <= 0 || editRoomDlCtrl.Room.floorId <= 0" class="btn pmd-ripple-effect btn-primary" type="button" ng-click="editRoomDlCtrl.updateRoom()">{{\'saveChangesBtn\' | translate}}</button>\n' +
     '            <button class="btn pmd-ripple-effect btn-default" type="button" ng-click="editRoomDlCtrl.close()">{{\'DiscardBtn\' | translate}}</button>\n' +
     '        </div>\n' +
     '    </div>\n' +
     '    \n' +
     '        \n' +
     '    ');
+}]);
+
+angular.module('home').run(['$templateCache', function($templateCache) {
+  $templateCache.put('./app/admin/room/templates/newBuilding.html',
+    '<div class="modal-content">\n' +
+    '    <div class="modal-header bordered">\n' +
+    '        <button class="close" type="button" ng-click="buildingDlCtrl.close()">×</button>\n' +
+    '        <h2 class="pmd-card-title-text">{{\'NewBuildingLbl\' | translate}}</h2>\n' +
+    '    </div>\n' +
+    '    <div class="modal-body">\n' +
+    '        <form class="form-horizontal" name="newBuildingForm">\n' +
+    '            <div class="form-group pmd-textfield pmd-textfield-floating-label">\n' +
+    '                <label for="first-name">{{\'buildingName\' | translate}}</label>\n' +
+    '                <input required type="text" class="mat-input form-control" name="buildingName" ng-model="buildingDlCtrl.buildingName" ng-maxlength="20">\n' +
+    '                <div ng-messages="newBuildingForm.buildingName.$error" >\n' +
+    '                    <div ng-if="newBuildingForm.buildingName.$error.required && !newBuildingForm.buildingName.$pristine">{{\'requiredErr\' | translate}}</div>\n' +
+    '                    <div ng-if="(newBuildingForm.buildingName.$error.maxlength) && !newBuildingForm.buildingName.$error.required">{{\'maximumMsg\' | translate}} 20</div>\n' +
+    '                </div>\n' +
+    '            </div>\n' +
+    '        </form>\n' +
+    '    </div>\n' +
+    '    <div class="pmd-modal-action text-right">\n' +
+    '        <button ng-disabled="newBuildingForm.$invalid" class="btn pmd-ripple-effect btn-primary" type="button" ng-click="buildingDlCtrl.AddNewBuilding()">{{\'saveChangesBtn\' | translate}}</button>\n' +
+    '        <button class="btn pmd-ripple-effect btn-default" type="button" ng-click="buildingDlCtrl.close()">{{\'DiscardBtn\' | translate}}</button>\n' +
+    '    </div>\n' +
+    '</div>\n' +
+    '\n' +
+    '    \n' +
+    '');
+}]);
+
+angular.module('home').run(['$templateCache', function($templateCache) {
+  $templateCache.put('./app/admin/room/templates/newFloor.html',
+    '<div class="modal-content">\n' +
+    '    <div class="modal-header bordered">\n' +
+    '        <button class="close" type="button" ng-click="floorDlCtrl.close()">×</button>\n' +
+    '        <h2 class="pmd-card-title-text">{{\'NewFloorLbl\' | translate}}</h2>\n' +
+    '    </div>\n' +
+    '    <div class="modal-body">\n' +
+    '        <form class="form-horizontal" name="newFloorForm">\n' +
+    '            <div class="form-group pmd-textfield pmd-textfield-floating-label">\n' +
+    '                <label for="first-name">{{\'floorName\' | translate}}</label>\n' +
+    '                <input required type="text" class="mat-input form-control" name="floorName" ng-model="floorDlCtrl.floorName"  ng-maxlength="20">\n' +
+    '                <div ng-messages="newFloorForm.floorName.$error" >\n' +
+    '                    <div ng-if="newFloorForm.floorName.$error.required && !newFloorForm.floorName.$pristine">{{\'requiredErr\' | translate}}</div>\n' +
+    '                    <div ng-if="(newFloorForm.floorName.$error.maxlength) && !newFloorForm.floorName.$error.required">{{\'maximumMsg\' | translate}} 20</div>\n' +
+    '                </div>\n' +
+    '            </div>\n' +
+    '        </form>\n' +
+    '    </div>\n' +
+    '    <div class="pmd-modal-action text-right">\n' +
+    '        <button ng-disabled="newFloorForm.$invalid" class="btn pmd-ripple-effect btn-primary" type="button" ng-click="floorDlCtrl.AddNewFloor()">{{\'saveChangesBtn\' | translate}}</button>\n' +
+    '        <button class="btn pmd-ripple-effect btn-default" type="button" ng-click="floorDlCtrl.close()">{{\'DiscardBtn\' | translate}}</button>\n' +
+    '    </div>\n' +
+    '</div>\n' +
+    '\n' +
+    '    \n' +
+    '');
 }]);
 
 angular.module('home').run(['$templateCache', function($templateCache) {
@@ -3148,10 +3419,24 @@ angular.module('home').run(['$templateCache', function($templateCache) {
     '                            <div ng-if="newRoomForm.confirmPassword.$error.equalto && !newRoomForm.confirmPassword.$error.required">Passwords don\'t match.</div>\n' +
     '                        </div>\n' +
     '                    </div>\n' +
+    '                    <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed" >\n' +
+    '                        <label>{{\'BuildingLbl\' | translate}}</label>\n' +
+    '                        <select class="select-simple form-control pmd-select2" \n' +
+    '                            ng-options="building.buildingName for building in roomDlCtrl.Buildings"  \n' +
+    '                            ng-model="roomDlCtrl.selectedBuilding">\n' +
+    '                        </select>\n' +
+    '                    </div>\n' +
+    '                    <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed" >\n' +
+    '                        <label>{{\'FloorLbl\' | translate}}</label>\n' +
+    '                        <select class="select-simple form-control pmd-select2" \n' +
+    '                            ng-options="floor.floorName for floor in roomDlCtrl.Floors"  \n' +
+    '                            ng-model="roomDlCtrl.selectedFloor">\n' +
+    '                        </select>\n' +
+    '                    </div>\n' +
     '            </form>\n' +
     '        </div>\n' +
     '        <div class="pmd-modal-action text-right">\n' +
-    '            <button ng-disabled="newRoomForm.$invalid" class="btn pmd-ripple-effect btn-primary" type="button" ng-click="roomDlCtrl.AddNewRoom()">{{\'saveChangesBtn\' | translate}}</button>\n' +
+    '            <button ng-disabled="newRoomForm.$invalid || roomDlCtrl.selectedBuilding == NULL || roomDlCtrl.selectedFloor == NULL" class="btn pmd-ripple-effect btn-primary" type="button" ng-click="roomDlCtrl.AddNewRoom()">{{\'saveChangesBtn\' | translate}}</button>\n' +
     '            <button class="btn pmd-ripple-effect btn-default" type="button" ng-click="roomDlCtrl.close()">{{\'DiscardBtn\' | translate}}</button>\n' +
     '        </div>\n' +
     '    </div>\n' +
@@ -3162,50 +3447,164 @@ angular.module('home').run(['$templateCache', function($templateCache) {
 
 angular.module('home').run(['$templateCache', function($templateCache) {
   $templateCache.put('./app/admin/room/templates/rooms.html',
-    '<div >\n' +
-    '    <div style="margin-bottom:10px">\n' +
-    '        <button ng-disabled="roomsCtrl.roomsLimit.consumedUsers == roomsCtrl.roomsLimit.maxNumUsers" ng-click="roomsCtrl.openRoomDialog()" class="btn pmd-ripple-effect btn-primary pmd-z-depth" type="button">{{\'AddRoomBtn\' | translate}}</button>\n' +
+    '<div class="row">        \n' +
+    '    <div class="pmd-card pmd-z-depth" style="margin: 10px">\n' +
+    '        <div class="pmd-card-title">\n' +
+    '            <div class="media-body media-middle">\n' +
+    '                <span>\n' +
+    '                    {{\'Rooms\'|translate}}\n' +
+    '                </span>\n' +
+    '                <br>\n' +
+    '                <span>\n' +
+    '                    {{roomsCtrl.roomsLimit.consumedUsers}} / {{roomsCtrl.roomsLimit.maxNumUsers}} ({{\'roomsLimitConsumedLbl\'|translate}})\n' +
+    '                </span>\n' +
+    '            </div>\n' +
+    '            <!-- <div class="media-body media-middle">\n' +
+    '            </div> -->\n' +
+    '            <div class="media-right datetimepicker">\n' +
+    '            <button ng-disabled="roomsCtrl.roomsLimit.consumedUsers == roomsCtrl.roomsLimit.maxNumUsers" ng-click="roomsCtrl.openRoomDialog()" class="btn pmd-ripple-effect btn-primary pmd-z-depth" type="button">{{\'AddRoomBtn\' | translate}}</button>\n' +
+    '\n' +
+    '            </div>\n' +
+    '        </div>\n' +
+    '        \n' +
+    '        <div ng-if="roomsCtrl.rooms.results.length == 0">\n' +
+    '                <span>{{\'NoroomsAvailable\' | translate}}</span>\n' +
+    '        </div>\n' +
+    '       \n' +
+    '        <div class="pmd-card-body" ng-if="roomsCtrl.rooms.results.length > 0">\n' +
+    '            <div class="table-responsive">\n' +
+    '                <table class="table pmd-table table-hover">\n' +
+    '                    <thead>\n' +
+    '                        <tr>\n' +
+    '                            <th >{{\'Name\' | translate}}</th>\n' +
+    '                            <th >{{\'BuildingLbl\' | translate}}</th>\n' +
+    '                            <th >{{\'FloorLbl\' | translate}}</th>\n' +
+    '                            <th ></th>\n' +
+    '                        </tr>\n' +
+    '                    </thead>\n' +
+    '                    <tbody>\n' +
+    '                        <tr ng-repeat="room in roomsCtrl.rooms.results">\n' +
+    '                            <td data-title="Name" >{{room.roomName}}</td>\n' +
+    '                            <td data-title="Name" >{{room.buildingName}}</td>\n' +
+    '                            <td data-title="Name" >{{room.floorName}}</td>\n' +
+    '                            \n' +
+    '                            <td>\n' +
+    '                                <a ng-show="!room.isActive" ng-click="roomsCtrl.ActivateRoom(room)" class="cursorPointer">{{\'ActivateBtn\' | translate}}</a>\n' +
+    '                                <a ng-show="room.isActive" ng-click="roomsCtrl.DeactivateRoom(room)" class="cursorPointer">{{\'DeActivateBtn\' | translate}}</a>\n' +
+    '                            </td>\n' +
+    '                            <td >\n' +
+    '                                <i class="material-icons md-dark pmd-md cursorPointer font25" ng-click="roomsCtrl.openEditRoomDialog($index);">mode_edit</i>\n' +
+    '                                <i class="material-icons pmd-md deleteButton cursorPointer font25" ng-click="roomsCtrl.openDeleteRoomDialog(room.roomName,room.roomId)">delete</i>\n' +
+    '                            </td>\n' +
+    '                        </tr>\n' +
+    '                    </tbody>\n' +
+    '                </table>\n' +
+    '            </div>\n' +
+    '            <div style="text-align:center;" paging page="1" page-size="10" total="roomsCtrl.rooms.totalCount" paging-action="roomsCtrl.changePageRooms( page)"\n' +
+    '            flex="nogrow" show-prev-next="true" show-first-last="true" hide-if-empty="true" disabled-class="hide">\n' +
+    '                </div>\n' +
+    '        </div> \n' +
     '        \n' +
     '    </div>\n' +
-    '    \n' +
-    '    <div ng-if="roomsCtrl.rooms.results.length == 0">\n' +
-    '            <span>{{\'NoroomsAvailable\' | translate}}</span>\n' +
-    '    </div>\n' +
-    '    <span>\n' +
-    '        {{roomsCtrl.roomsLimit.consumedUsers}} / {{roomsCtrl.roomsLimit.maxNumUsers}} ({{\'roomsLimitConsumedLbl\'|translate}})\n' +
-    '    </span>\n' +
-    '    <div class="pmd-card pmd-z-depth pmd-card-custom-view" ng-if="roomsCtrl.rooms.results.length > 0">\n' +
-    '        <div class="table-responsive">\n' +
-    '            <table class="table pmd-table table-hover">\n' +
-    '                <thead>\n' +
-    '                    <tr>\n' +
-    '                        <th >{{\'Name\' | translate}}</th>\n' +
-    '                        <th ></th>\n' +
-    '                    </tr>\n' +
-    '                </thead>\n' +
-    '                <tbody>\n' +
-    '                    <tr ng-repeat="room in roomsCtrl.rooms.results">\n' +
-    '                        <td data-title="Name" >{{room.roomName}}</td>\n' +
-    '                        \n' +
-    '                        <td>\n' +
-    '                            <a ng-show="!room.isActive" ng-click="roomsCtrl.ActivateRoom(room)" class="cursorPointer">{{\'ActivateBtn\' | translate}}</a>\n' +
-    '                            <a ng-show="room.isActive" ng-click="roomsCtrl.DeactivateRoom(room)" class="cursorPointer">{{\'DeActivateBtn\' | translate}}</a>\n' +
-    '                        </td>\n' +
-    '                        <td width="30%">\n' +
-    '                            <i class="material-icons md-dark pmd-md cursorPointer font25" ng-click="roomsCtrl.openEditRoomDialog($index);">mode_edit</i>\n' +
-    '                            <i class="material-icons pmd-md deleteButton cursorPointer font25" ng-click="roomsCtrl.openDeleteRoomDialog(room.roomName,room.roomId)">delete</i>\n' +
-    '                        </td>\n' +
-    '                    </tr>\n' +
-    '                </tbody>\n' +
-    '            </table>\n' +
-    '        </div>\n' +
-    '        <div style="text-align:center;" paging page="1" page-size="10" total="roomsCtrl.rooms.totalCount" paging-action="roomsCtrl.changePageRooms( page)"\n' +
-    '        flex="nogrow" show-prev-next="true" show-first-last="true" hide-if-empty="true" disabled-class="hide">\n' +
+    '    <div class="col-xs-10 col-sm-10 col-md-4">\n' +
+    '        <div class="pmd-card pmd-z-depth">\n' +
+    '            <div class="pmd-card-title">\n' +
+    '                <div class="media-body media-middle">\n' +
+    '                    <span>\n' +
+    '                        {{\'BuildingLbl\'|translate}}\n' +
+    '                    </span>\n' +
+    '                </div>\n' +
+    '                <!-- <div class="media-body media-middle">\n' +
+    '                </div> -->\n' +
+    '                <div class="media-right datetimepicker">\n' +
+    '                    <button ng-click="roomsCtrl.openBuildingDialog()" class="btn pmd-ripple-effect btn-primary pmd-z-depth" type="button">{{\'AddBuildingBtn\' | translate}}</button>\n' +
+    '\n' +
+    '                </div>\n' +
     '            </div>\n' +
-    '    </div> \n' +
-    '    \n' +
-    '</div>					\n' +
-    '    ');
+    '            <div class="pmd-card-body">\n' +
+    '                <div class="total-sales" ng-if="roomsCtrl.buildings.results.length > 0">\n' +
+    '                    <div class="table-responsive">\n' +
+    '                        <table class="table pmd-table table-hover">\n' +
+    '                            <thead>\n' +
+    '                                <tr>\n' +
+    '                                    <th>{{\'Name\' | translate}}</th>\n' +
+    '                                    <th></th>\n' +
+    '                                </tr>\n' +
+    '                            </thead>\n' +
+    '                            <tbody>\n' +
+    '                                <tr ng-repeat="building in roomsCtrl.buildings.results">\n' +
+    '                                    <td data-title="Name">{{building.buildingName}}</td>\n' +
+    '\n' +
+    '                                    <td width="30%">\n' +
+    '                                        <i class="material-icons md-dark pmd-md cursorPointer font25" ng-click="roomsCtrl.openEditBuildingDialog($index);">mode_edit</i>\n' +
+    '                                        <!-- <i class="material-icons pmd-md deleteButton cursorPointer font25" ng-click="roomsCtrl.openDeleteBuildingDialog(building.buildingName,building.buildingId)">delete</i> -->\n' +
+    '                                    </td>\n' +
+    '                                </tr>\n' +
+    '                            </tbody>\n' +
+    '                        </table>\n' +
+    '                    </div>\n' +
+    '                    <div style="text-align:center;" paging page="1" page-size="10" total="roomsCtrl.buildings.totalCount" paging-action="roomsCtrl.changePageBuilding( page)"\n' +
+    '                        flex="nogrow" show-prev-next="true" show-first-last="true" hide-if-empty="true" disabled-class="hide">\n' +
+    '                    </div>\n' +
+    '                </div>\n' +
+    '                <div  class="total-sales" ng-if="roomsCtrl.buildings.results.length <= 0">\n' +
+    '                        {{\'NoBuildingLbl\'|translate}}                        \n' +
+    '                </div>\n' +
+    '            </div>\n' +
+    '        </div>\n' +
+    '    </div>\n' +
+    '\n' +
+    '\n' +
+    '    <div class="col-xs-10 col-sm-10 col-md-4">\n' +
+    '            <div class="pmd-card pmd-z-depth">\n' +
+    '                <div class="pmd-card-title">\n' +
+    '                    <div class="media-body media-middle">\n' +
+    '                        <span>\n' +
+    '                            {{\'FloorLbl\'|translate}}\n' +
+    '                        </span>\n' +
+    '                    </div>\n' +
+    '                    <!-- <div class="media-body media-middle">\n' +
+    '                    </div> -->\n' +
+    '                    <div class="media-right datetimepicker">\n' +
+    '                        <button ng-click="roomsCtrl.openFloorDialog()" class="btn pmd-ripple-effect btn-primary pmd-z-depth" type="button">{{\'AddFloorBtn\' | translate}}</button>\n' +
+    '\n' +
+    '                    </div>\n' +
+    '                </div>\n' +
+    '                <div class="pmd-card-body">\n' +
+    '                    <div class="total-sales" ng-if="roomsCtrl.floors.results.length > 0">\n' +
+    '                        <div class="table-responsive">\n' +
+    '                            <table class="table pmd-table table-hover">\n' +
+    '                                <thead>\n' +
+    '                                    <tr>\n' +
+    '                                        <th>{{\'Name\' | translate}}</th>\n' +
+    '                                        <th></th>\n' +
+    '                                    </tr>\n' +
+    '                                </thead>\n' +
+    '                                <tbody>\n' +
+    '                                    <tr ng-repeat="floor in roomsCtrl.floors.results">\n' +
+    '                                        <td data-title="Name">{{floor.floorName}}</td>\n' +
+    '                                        \n' +
+    '                                        <td width="30%">\n' +
+    '                                            <i class="material-icons md-dark pmd-md cursorPointer font25" ng-click="roomsCtrl.openEditFloorDialog($index);">mode_edit</i>\n' +
+    '                                            <!-- <i class="material-icons pmd-md deleteButton cursorPointer font25" ng-click="roomsCtrl.openDeleteFloorDialog(floor.floorName,floor.floorId)">delete</i> -->\n' +
+    '                                        </td>\n' +
+    '                                    </tr>\n' +
+    '                                </tbody>\n' +
+    '                            </table>\n' +
+    '                        </div>\n' +
+    '                        <div style="text-align:center;" paging page="1" page-size="10" total="roomsCtrl.floors.totalCount" paging-action="roomsCtrl.changePageFloor( page)"\n' +
+    '                            flex="nogrow" show-prev-next="true" show-first-last="true" hide-if-empty="true" disabled-class="hide">\n' +
+    '                        </div>\n' +
+    '                    </div>\n' +
+    '                    <div  class="total-sales" ng-if="roomsCtrl.floors.results.length <= 0">\n' +
+    '                            {{\'NoFloorLbl\'|translate}}                        \n' +
+    '                    </div>\n' +
+    '                </div>\n' +
+    '            </div>\n' +
+    '    </div>\n' +
+    '\n' +
+    '   \n' +
+    '</div>');
 }]);
 
 angular.module('home').run(['$templateCache', function($templateCache) {
@@ -3597,4 +3996,1014 @@ angular.module('home').run(['$templateCache', function($templateCache) {
     '	</div>\n' +
     '</div>\n' +
     '');
+}]);
+
+angular.module('home').run(['$templateCache', function($templateCache) {
+  $templateCache.put('./app/supervisor/Reports/templates/supervisorReports.html',
+    '<!-- <script type="text/javascript">\n' +
+    '    $(document).ready(function () {\n' +
+    '        $(".direct-expand").click(function(){\n' +
+    '            debugger;\n' +
+    '         //   $(".direct-child-table").slideToggle(300);\n' +
+    '            $(this).toggleClass( "child-table-collapse" );\n' +
+    '        });\n' +
+    '    });\n' +
+    '    </script> -->\n' +
+    '    <script>\n' +
+    '            // Linked date and time picker \n' +
+    '            // start date date and time picker \n' +
+    '            $(\'#datepicker-start\').datetimepicker();\n' +
+    '    \n' +
+    '            // End date date and time picker \n' +
+    '            $(\'#datepicker-end\').datetimepicker({\n' +
+    '                useCurrent: false \n' +
+    '            });\n' +
+    '            \n' +
+    '            // start date picke on chagne event [select minimun date for end date datepicker]\n' +
+    '            $("#datepicker-start").on("dp.change", function (e) {\n' +
+    '                $(\'#datepicker-end\').data("DateTimePicker").minDate(e.date);\n' +
+    '            });\n' +
+    '            // Start date picke on chagne event [select maxmimum date for start date datepicker]\n' +
+    '            $("#datepicker-end").on("dp.change", function (e) {\n' +
+    '                $(\'#datepicker-start\').data("DateTimePicker").maxDate(e.date);\n' +
+    '            });\n' +
+    '        </script>\n' +
+    '    <div >\n' +
+    '        <div class="row">\n' +
+    '        <div  class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed col-md-2" >\n' +
+    '            <label>{{\'Rooms\' | translate}}</label>\n' +
+    '            <select class="select-simple form-control pmd-select2" \n' +
+    '                ng-options="room.roomName for room in reportsCtrl.rooms" \n' +
+    '                ng-model="reportsCtrl.selectedRoom">\n' +
+    '            </select>\n' +
+    '        </div>\n' +
+    '        <div  ng-if="user.role !== \'Waiter\'"  class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed col-md-2" >\n' +
+    '            <label>{{\'Featureslbl\' | translate}}</label>\n' +
+    '            <select class="select-simple form-control pmd-select2" \n' +
+    '                ng-options="feature.featureNameDictionary[selectedLanguage] for feature in reportsCtrl.features" \n' +
+    '                ng-model="reportsCtrl.selectedFeature">\n' +
+    '            </select>\n' +
+    '        </div>\n' +
+    '        \n' +
+    '        <div class="col-md-2"> \n' +
+    '            <div class="form-group pmd-textfield pmd-textfield-floating-label">\n' +
+    '                <label class="control-label" for="regular1">{{\'From\'|translate}}</label>\n' +
+    '                <input type="text" class="form-control" id="datepicker-start">\n' +
+    '            </div>\n' +
+    '        </div>\n' +
+    '        <div class="col-md-2"> \n' +
+    '            <div class="form-group pmd-textfield pmd-textfield-floating-label">\n' +
+    '                <label class="control-label" for="regular1">{{\'To\'|translate}}</label>\n' +
+    '                <input type="text" class="form-control" id="datepicker-end">\n' +
+    '            </div>\n' +
+    '        </div>\n' +
+    '        <div class="pmd-modal-action text-right">\n' +
+    '                <button class="btn pmd-ripple-effect btn-primary" type="button" ng-click="reportsCtrl.changePage(1)">\n' +
+    '                    {{\'applyFilterBtn\' | translate}}\n' +
+    '                </button>\n' +
+    '        </div>\n' +
+    '    </div>\n' +
+    '        <div ng-show="reportsCtrl.requests.results.length == 0 && !reportsCtrl.isLoading">\n' +
+    '                <span>{{\'NorequestsAvailable\' | translate}}</span>\n' +
+    '        </div>\n' +
+    '        <div  style="text-align: center;">\n' +
+    '            <img ng-show="reportsCtrl.isLoading" src="assets/img/loading.gif" style="height: 80px;">\n' +
+    '        </div>\n' +
+    '       \n' +
+    '        <div class="pmd-card pmd-z-depth pmd-card-custom-view" ng-show="reportsCtrl.requests.results.length > 0 && !reportsCtrl.isLoading">\n' +
+    '            <div class="table-responsive pmd-card pmd-z-depth">\n' +
+    '                <table class="table table-mc-red pmd-table">\n' +
+    '                    <thead>\n' +
+    '                        <tr>\n' +
+    '                            <th >{{\'RoomLbl\' | translate}}</th>\n' +
+    '                            <th >{{\'Featurelbl\' | translate}}</th>\n' +
+    '                            <th >{{\'CreateTime\' | translate}}</th>\n' +
+    '                            <th >{{\'StatusLbl\' | translate}}</th>\n' +
+    '                            <th></th>                        \n' +
+    '                        </tr>\n' +
+    '                    </thead>\n' +
+    '                    <tbody>\n' +
+    '                        <tr ng-repeat-start="request in reportsCtrl.requests.results" ng-style="{\'background-color\': request.status==\'Pending\'?\'#f5f58a\':\'\'}">\n' +
+    '                            <td data-title="Name" >{{request.roomName}}</td>\n' +
+    '                            <td data-title="Name" >{{request.featureNameDictionary[selectedLanguage]}}</td>\n' +
+    '                            <td data-title="Name" >{{request.createTime}}</td>\n' +
+    '                            <td data-title="Name" >{{request.status|translate}} <span ng-if="request.status!=\'Pending\'"> {{request.modifier}} {{request.modifyTime}}</span> </td>\n' +
+    '                           \n' +
+    '                            <!-- <td ng-if="user.role === \'Supervisor\' && request.status ==\'Pending\' && request.type==\'Normal\'">\n' +
+    '                                <a ng-click="reportsCtrl.Approve(request.featureId,request.requestId)" class="cursorPointer">{{\'ApproveBtn\' | translate}}</a>\n' +
+    '                                <a ng-click="reportsCtrl.Reject(request.requestId)" class="cursorPointer">{{\'RejectBtn\' | translate}}</a>\n' +
+    '                            </td> -->\n' +
+    '                            <!-- <td ng-if="user.role === \'Waiter\' && request.status ==\'Pending\' && request.type==\'Restaurant\'">\n' +
+    '                                    <a ng-click="reportsCtrl.Approve(request.featureId,request.requestId)" class="cursorPointer">{{\'ApproveBtn\' | translate}}</a>\n' +
+    '                                    <a ng-click="reportsCtrl.Reject(request.requestId)" class="cursorPointer">{{\'RejectBtn\' | translate}}</a>\n' +
+    '                                </td> -->\n' +
+    '                            <td class="pmd-table-row-action" >\n' +
+    '                                <span href="javascript:void(0);" ng-if="request.requestDetails.length >0 || request.comment !== null || request.requestTime !== null" ng-click="request.show=!request.show;reportsCtrl.showMore($event)" class="btn pmd-btn-fab pmd-btn-flat pmd-ripple-effect btn-default btn-sm child-table-expand direct-expand"><i class="material-icons md-dark pmd-sm"></i></span>\n' +
+    '                            </td>\n' +
+    '                        </tr>\n' +
+    '                        <tr ng-repeat-end class="child-table"  ng-show="request.show">\n' +
+    '                                <td colspan="12">\n' +
+    '                                    <div class="direct-child-table" ng-if="request.requestDetails.length >0">\n' +
+    '                                        <table class="table pmd-table table-striped table-sm">\n' +
+    '                                            <thead>\n' +
+    '                                                <tr>\n' +
+    '                                                    <th colspan="4" style="text-align: center;">\n' +
+    '                                                        {{request.restaurantName[selectedLanguage]}}\n' +
+    '                                                    </th>\n' +
+    '                                                </tr>\n' +
+    '                                                <tr>\n' +
+    '                                                    <th ng-if="request.type==\'Normal\'">{{\'DescriptionLbl\' | translate}}</th>\n' +
+    '                                                    <th ng-if="request.type==\'Restaurant\'">{{\'itemlbl\' | translate}}</th>\n' +
+    '                                                    <th>{{\'NumberLbl\' | translate}}</th>\n' +
+    '                                                    <th>{{\'priceLbl\' |translate}}</th>\n' +
+    '                                                    <th>{{\'totalpriceLbl\'|translate}}</th>\n' +
+    '                                                </tr>\n' +
+    '                                            </thead>\n' +
+    '                                            <tbody>\n' +
+    '                                            <tr ng-repeat="requestDetail in request.requestDetails">\n' +
+    '                                                <td>{{requestDetail.descriptionDictionary[selectedLanguage]}}\n' +
+    '                                                        <div ng-show="requestDetail.from != null">{{\'from\'|translate}}: {{requestDetail.from}}</div>\n' +
+    '                                                        \n' +
+    '                                                        <div ng-show="requestDetail.to != null">{{\'to\'|translate}}:\n' +
+    '                                                            {{requestDetail.to}}                                    \n' +
+    '                                                        </div>  </td>\n' +
+    '                                                <td>{{requestDetail.number}}</td>\n' +
+    '                                                <td>\n' +
+    '                                                    <span ng-if="requestDetail.price <= 0">{{\'freelbl\' |translate}}</span>\n' +
+    '                                                    <span ng-if="requestDetail.price > 0">{{requestDetail.price}}</span>\n' +
+    '                                                </td>\n' +
+    '                                                <td>\n' +
+    '                                                    <span ng-if="requestDetail.price <= 0">{{\'freelbl\' |translate}}</span>\n' +
+    '                                                    <span ng-if="requestDetail.price > 0">{{requestDetail.price * requestDetail.number}} </span>\n' +
+    '                                                </td>\n' +
+    '                                            </tr>\n' +
+    '                                            \n' +
+    '                                        </tbody>\n' +
+    '                                    </table>\n' +
+    '                                </div>\n' +
+    '                                \n' +
+    '                                <div style="background: white;padding: 5px;" ng-if="request.comment !== null"> \n' +
+    '                                    <h2>{{\'Comment\'|translate}}: </h2>\n' +
+    '                                    <span>{{request.comment}}</span>\n' +
+    '                                </div>\n' +
+    '                                <div style="background: white;padding: 5px;" ng-if="request.requestTime !== null"> \n' +
+    '                                    <!-- <h2 style="float: left;">{{\'Time\'|translate}}: </h2> -->\n' +
+    '                                    <h2 >{{\'Time\'|translate}}: </h2>\n' +
+    '                                    <span> {{request.requestTime}}</span>\n' +
+    '                                </div>\n' +
+    '                            </td>\n' +
+    '                        </tr>\n' +
+    '                    </tbody>\n' +
+    '                </table>\n' +
+    '            </div>\n' +
+    '            <div style="text-align:center;" paging page="reportsCtrl.currentPage" page-size="10" total="reportsCtrl.requests.totalCount" paging-action="reportsCtrl.changePage( page)"\n' +
+    '            flex="nogrow" show-prev-next="true" show-first-last="true" hide-if-empty="true" disabled-class="hide">\n' +
+    '                </div>\n' +
+    '        </div> \n' +
+    '        \n' +
+    '    </div>					\n' +
+    '        ');
+}]);
+
+angular.module('home').run(['$templateCache', function($templateCache) {
+  $templateCache.put('./app/supervisor/features/templates/features.html',
+    '<div >    \n' +
+    '    \n' +
+    '    <!-- <div class="pmd-card pmd-z-depth" > -->\n' +
+    '        <ul class="nav nav-tabs" role="tablist" ng-show="!manageFeaturesCtrl.isAvailable && !manageFeaturesCtrl.islistAvailable">\n' +
+    '            <li role="presentation" ng-class="{\'active\':$index == 0}" ng-repeat="feature in manageFeaturesCtrl.features">\n' +
+    '                <a href="javascript:void(0);" data-target="#{{feature.featureId}}-form" aria-controls="home" role="tab" data-toggle="tab">\n' +
+    '                    {{feature.featureNameDictionary[selectedLanguage]}}\n' +
+    '                </a>\n' +
+    '            </li>\n' +
+    '        </ul>\n' +
+    '        <div class="pmd-card" ng-show="!manageFeaturesCtrl.isAvailable && !manageFeaturesCtrl.islistAvailable">\n' +
+    '            <div class="pmd-card-body">\n' +
+    '                <!-- Tab panes -->\n' +
+    '                <div class="tab-content">\n' +
+    '                    <div role="tablist" class="tab-pane" ng-class="{\'active\':$index == 0}" ng-repeat="feature in manageFeaturesCtrl.features" id="{{feature.featureId}}-form">\n' +
+    '                        <div ng-repeat="featureControl in feature.featureControl">\n' +
+    '                            <!-- <div ng-if="featureControl.control == 0"> -->\n' +
+    '                                <!-- <div class="pmd-card pmd-z-depth">\n' +
+    '                                    <div class="pmd-card-title">\n' +
+    '                                        <div class="media-body media-middle">\n' +
+    '                                            <span ng-repeat="controlEnum in manageFeaturesCtrl.controls|filter: {id: featureControl.control}"> {{controlEnum.text | translate}} </span>\n' +
+    '                                        </div>\n' +
+    '                                        <div class="media-right datetimepicker">\n' +
+    '                                            <button  ng-click="roomsCtrl.openRoomDialog()" class="btn pmd-ripple-effect btn-primary pmd-z-depth" type="button">{{\'AddRoomBtn\' | translate}}</button>\n' +
+    '                                        </div>\n' +
+    '                                    </div>\n' +
+    '                                    <div class="pmd-card-body">\n' +
+    '                                        <div class="table-responsive" ng-if="featureControl.featureDetails.length > 0">\n' +
+    '                                            <table class="table pmd-table table-hover">\n' +
+    '                                                <thead>\n' +
+    '                                                    <tr>\n' +
+    '                                                        <th >{{\'Name\' | translate}}</th>\n' +
+    '                                                        <th ></th>\n' +
+    '                                                    </tr>\n' +
+    '                                                </thead>\n' +
+    '                                                <tbody>\n' +
+    '                                                    <tr ng-repeat="featureDetail in featureControl.featureDetails">\n' +
+    '                                                        <td data-title="Name" >{{featureDetail.descriptionDictionary[selectedLanguage]}}</td>\n' +
+    '                                                        <td >\n' +
+    '                                                            <i class="material-icons md-dark pmd-md cursorPointer font25" ng-click="roomsCtrl.openEditRoomDialog($index);">mode_edit</i>\n' +
+    '                                                            <i class="material-icons pmd-md deleteButton cursorPointer font25" ng-click="roomsCtrl.openDeleteRoomDialog(room.roomName,room.roomId)">delete</i>\n' +
+    '                                                        </td>\n' +
+    '                                                    </tr>\n' +
+    '                                                </tbody>\n' +
+    '                                            </table>\n' +
+    '                                        </div>\n' +
+    '                                    </div> \n' +
+    '                                <!-- </div> --\n' +
+    '                            </div> -->\n' +
+    '                            <text-Control ng-if="featureControl.control == 0" feature-Control="featureControl" selected-Language="selectedLanguage" ></text-Control>\n' +
+    '                            <video-Control ng-if="featureControl.control == 3" feature-Control="featureControl" selected-Language="selectedLanguage" ></video-Control>\n' +
+    '                            <textandimage-Control ng-if="featureControl.control == 2" feature-Control="featureControl" selected-Language="selectedLanguage" ></textandimage-Control>\n' +
+    '                            <image-Control ng-if="featureControl.control == 1" feature-Control="featureControl" selected-Language="selectedLanguage" ></image-Control>\n' +
+    '                            <available-Control ng-if="featureControl.control == 4" feature-Control="featureControl" selected-Language="selectedLanguage" is-Available="manageFeaturesCtrl.isAvailable" feature-Name="feature.featureNameDictionary" ></available-Control>\n' +
+    '                            <listofavailable-Control ng-if="featureControl.control == 6" feature-Control="featureControl" selected-Language="selectedLanguage" islist-Available="manageFeaturesCtrl.islistAvailable" feature-Name="feature.featureNameDictionary" ></listofavailable-Control>\n' +
+    '                            <hr>\n' +
+    '                        </div>\n' +
+    '                        <div style="text-align: center" ng-if="feature.type==\'Restaurant\'">{{\'NoActionForFeature\'|translate}}</div>\n' +
+    '                    </div>\n' +
+    '                </div>\n' +
+    '            </div>\n' +
+    '        </div>\n' +
+    '    <!-- </div>  -->\n' +
+    '    <available-Control-Form ng-if="manageFeaturesCtrl.isAvailable" feature-Control="featureControl" selected-Language="selectedLanguage" is-Available="manageFeaturesCtrl.isAvailable" ></available-Control-Form>\n' +
+    '    <listofavailable-Control-Form ng-if="manageFeaturesCtrl.islistAvailable" feature-Control="featureControl" selected-Language="selectedLanguage" islist-Available="manageFeaturesCtrl.islistAvailable" ></listofavailable-Control-Form>\n' +
+    '    \n' +
+    '</div>					\n' +
+    '    ');
+}]);
+
+angular.module('home').run(['$templateCache', function($templateCache) {
+  $templateCache.put('./app/supervisor/features/AvailableControl/templates/AvailableControl.html',
+    '<div class="pmd-card pmd-z-depth">\n' +
+    '    <div class="pmd-card-title">\n' +
+    '        <div class="media-body media-middle">\n' +
+    '            <span ng-repeat="controlEnum in availableControler.controls|filter: {id: availableControler.featureControl.control}"> {{controlEnum.text | translate}} </span>\n' +
+    '            <!-- <div class="pmd-switch" style="font-size: 14px;">\n' +
+    '                <label>{{\'singleSelect\' | translate}}</label>\n' +
+    '                <label style="margin-bottom: 0 !important;margin-left: 5px;margin-right: 5px;">\n' +
+    '                    <input type="checkbox"ng-model="availableControler.controlType" ng-change="availableControler.switch()"> <span class="pmd-switch-label"></span>\n' +
+    '                </label>\n' +
+    '                <label>{{\'multiSelect\' | translate}}</label>\n' +
+    '            </div> -->\n' +
+    '        </div>\n' +
+    '        <div class="media-right datetimepicker">\n' +
+    '            <button  ng-click="availableControler.addNew()" ng-show="availableControler.featureDetails.results.length <= 0 || availableControler.featureDetails.results[0].availables.length <= 0" class="btn pmd-ripple-effect btn-primary pmd-z-depth" type="button">{{\'Add\' | translate}}</button>\n' +
+    '            \n' +
+    '            <button  ng-click="availableControler.openEditDialog(0);" ng-show="availableControler.featureDetails.results.length > 0 && availableControler.featureDetails.results[0].availables.length > 0" class="btn pmd-ripple-effect btn-primary pmd-z-depth" type="button">{{\'EditBtn\' | translate}}</button>\n' +
+    '            \n' +
+    '        </div>\n' +
+    '    </div>\n' +
+    '    <div class="pmd-card-body">\n' +
+    '        <div  style="text-align: center;">\n' +
+    '            <img ng-show="availableControler.isLoading" src="assets/img/loading.gif" style="height: 80px;">\n' +
+    '            <span ng-if="availableControler.featureDetails.results.length <=0 ">{{\'NoData\'|translate}}</span>\n' +
+    '        </div>\n' +
+    '        <div class="table-responsive" ng-show="!availableControler.isLoading \n' +
+    '        && availableControler.featureDetails.results.length > 0 && availableControler.featureDetails.results[0].availables.length > 0">\n' +
+    '            <table class="table pmd-table table-hover">\n' +
+    '                <thead>\n' +
+    '                    <tr>\n' +
+    '                        <th >{{\'Name\' | translate}}</th>\n' +
+    '                        <th>{{\'From\' | translate}}</th>\n' +
+    '                        <th>{{\'To\' | translate}}</th>\n' +
+    '                        <th>{{\'NumberLbl\' | translate}}</th>\n' +
+    '                        <th ></th>\n' +
+    '                    </tr>\n' +
+    '                </thead>\n' +
+    '                <tbody>\n' +
+    '                    <tr ng-repeat="featureAvailable in availableControler.featureDetails.results[0].availables">\n' +
+    '                        <td data-title="Name" >\n' +
+    '                            <span ng-repeat="dayEnum in availableControler.days|filter: {id: featureAvailable.day}"> {{dayEnum.text | translate}} </span>\n' +
+    '                        </td>\n' +
+    '                        <td data-title="Name">\n' +
+    '                            {{featureAvailable.from}}\n' +
+    '                        </td>\n' +
+    '                        <td data-title="Name">\n' +
+    '                            {{featureAvailable.to}}\n' +
+    '                        </td>\n' +
+    '                        <td data-title="Name">\n' +
+    '                            {{featureAvailable.max}}\n' +
+    '                        </td>\n' +
+    '                        <!-- <td >\n' +
+    '                            <i class="material-icons md-dark pmd-md cursorPointer font25" ng-click="availableControler.openEditDialog($index);">mode_edit</i>\n' +
+    '                            <i class="material-icons pmd-md deleteButton cursorPointer font25" ng-click="availableControler.openDeleteDialog(\'\',featureAvailable.availableId)">delete</i>\n' +
+    '                        </td> -->\n' +
+    '                    </tr>\n' +
+    '                </tbody>\n' +
+    '            </table>\n' +
+    '        </div>\n' +
+    '        <div style="text-align:center;" paging page="1" page-size="10" total="availableControler.featureDetails.totalCount" paging-action="availableControler.changePage(page)"\n' +
+    '        flex="nogrow" show-prev-next="true" show-first-last="true" hide-if-empty="true" disabled-class="hide"></div>\n' +
+    '    </div> \n' +
+    '</div>');
+}]);
+
+angular.module('home').run(['$templateCache', function($templateCache) {
+  $templateCache.put('./app/supervisor/features/AvailableControl/templates/AvailableControlPopup.html',
+    '\n' +
+    '\n' +
+    '<div class="modal-content">\n' +
+    '        \n' +
+    '    <div class="modal-header bordered">\n' +
+    '        <div class="col-md-2">{{availableControlDlCtrl.featureName[selectedLanguage]}}</div>\n' +
+    '        <div class="group-fields clearfix row col-md-2">\n' +
+    '            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">\n' +
+    '                <div class="checkbox pmd-default-theme">\n' +
+    '                    <label class=" checkbox-pmd-ripple-effect">\n' +
+    '                        <input type="checkbox" ng-model="availableControlDlCtrl.featureDetail.isFree">\n' +
+    '                        <span>{{\'IsFreeLbl\' | translate}}</span>\n' +
+    '                    </label>\n' +
+    '                </div>\n' +
+    '            </div>\n' +
+    '        </div>\n' +
+    '        <div class="col-md-2 form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed" \n' +
+    '        ng-if="!availableControlDlCtrl.featureDetail.isFree">\n' +
+    '            <label for="first-name"> {{ \'priceLbl\' | translate}} </label>\n' +
+    '            <input type="number" class="mat-input form-control" name="price" ng-model="availableControlDlCtrl.featureDetail.price" >\n' +
+    '        </div>\n' +
+    '        <!-- <button class="close" type="button" ng-click="availableControlDlCtrl.close()">×</button> -->\n' +
+    '    </div>\n' +
+    '    \n' +
+    '    <div class="modal-body">\n' +
+    '        <form class="form-horizontal" name="newForm">\n' +
+    '            <div ng-repeat="day in availableControlDlCtrl.days" class="row">\n' +
+    '                <label  class="col-md-2">\n' +
+    '                    <input type="checkbox"ng-model="day.isSelected" ng-change="listOfAvailableControlDlCtrl.changeDay(day)">\n' +
+    '                    {{day.text|translate}}\n' +
+    '                </label>\n' +
+    '                 \n' +
+    '                <!-- <div class="row"> -->\n' +
+    '                    <div class="col-md-2"> \n' +
+    '                        <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed">\n' +
+    '                            <label class="control-label" for="regular1">Start Date</label>\n' +
+    '                            <input ng-disabled="!day.isSelected" ng-required="day.isSelected" \n' +
+    '                            name="datepicker-start{{day.id}}" datetimepicker ng-model="day.startTime" type="text" class="form-control" id="datepicker-start{{day.id}}">\n' +
+    '                        </div>\n' +
+    '                    </div>\n' +
+    '                    <div class="col-md-2"> \n' +
+    '                        <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed">\n' +
+    '                            <label class="control-label" for="regular1">End Date</label>\n' +
+    '                            <input ng-disabled="!day.isSelected" ng-required="day.isSelected" \n' +
+    '                            name="datepicker-end{{day.id}}" datetimepicker ng-min="day.startTime" ng-model="day.endTime" type="text" class="form-control" id="datepicker-end{{day.id}}">\n' +
+    '                        </div>\n' +
+    '                    </div>\n' +
+    '                <!-- </div> -->\n' +
+    '                <div  class="col-md-2 form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed">\n' +
+    '                    <label for="first-name"> {{ \'NumberLbl\' | translate}} </label>\n' +
+    '                    <input ng-disabled="!day.isSelected" type="number" ng-required="day.isSelected && newForm.max{{day.id}}.$error" \n' +
+    '                    name="max{{day.id}}"class="mat-input form-control" ng-model="day.max" ng-min="1">\n' +
+    '                </div>\n' +
+    '        </div>\n' +
+    '        </form>\n' +
+    '    </div>\n' +
+    '    <div class="pmd-modal-action text-right">\n' +
+    '        <button ng-disabled="newForm.$invalid || availableControlDlCtrl.isChanged ||\n' +
+    '        (!availableControlDlCtrl.featureDetail.isFree && availableControlDlCtrl.featureDetail.price<=0)\n' +
+    '        || (availableControlDlCtrl.days|filter:{isSelected:true}).length<=0 " class="btn pmd-ripple-effect btn-primary" type="button" ng-click="availableControlDlCtrl.save()">{{\'saveChangesBtn\' | translate}}</button>\n' +
+    '        <button class="btn pmd-ripple-effect btn-default" type="button" ng-click="availableControlDlCtrl.close()">{{\'DiscardBtn\' | translate}}</button>\n' +
+    '    </div>\n' +
+    '</div>');
+}]);
+
+angular.module('home').run(['$templateCache', function($templateCache) {
+  $templateCache.put('./app/supervisor/features/ImageControl/templates/ImageControl.html',
+    '<div class="pmd-card pmd-z-depth">\n' +
+    '    <div class="pmd-card-title">\n' +
+    '        <div class="media-body media-middle">\n' +
+    '            <span ng-repeat="controlEnum in imageControler.controls|filter: {id: imageControler.featureControl.control}"> {{controlEnum.text | translate}} </span>\n' +
+    '        </div>\n' +
+    '        <div class="media-right datetimepicker">\n' +
+    '            <button  ng-click="imageControler.addNew()" class="btn pmd-ripple-effect btn-primary pmd-z-depth" type="button">{{\'Add\' | translate}}</button>\n' +
+    '        </div>\n' +
+    '    </div>\n' +
+    '    <div class="pmd-card-body">\n' +
+    '        <div  style="text-align: center;">\n' +
+    '            <img ng-show="imageControler.isLoading" src="assets/img/loading.gif" style="height: 80px;">\n' +
+    '            <span ng-if="imageControler.featureDetails.results.length <=0 ">{{\'NoData\'|translate}}</span>\n' +
+    '        </div>\n' +
+    '        <div class="table-responsive" ng-show="!imageControler.isLoading && imageControler.featureDetails.results.length > 0">\n' +
+    '            <table class="table pmd-table table-hover">\n' +
+    '                <thead>\n' +
+    '                    <tr>\n' +
+    '                        <!-- <th >{{\'Name\' | translate}}</th> -->\n' +
+    '                        <th >{{\'Imagelbl\' | translate}}</th>                        \n' +
+    '                        <!-- <th>{{\'priceLbl\' | translate}}</th>                         -->\n' +
+    '                        <th ></th>\n' +
+    '                    </tr>\n' +
+    '                </thead>\n' +
+    '                <tbody>\n' +
+    '                    <tr ng-repeat="featureDetail in imageControler.featureDetails.results">\n' +
+    '                        <!-- <td data-title="Name" >{{featureDetail.descriptionDictionary[selectedLanguage]}}</td> -->\n' +
+    '                        <td data-title="logo" ><img ng-src="{{featureDetail.imageURL}}?type=\'thumbnail\'&date={{imageControler.Now}}" style="max-height: 200px;max-width: 200px;"/></td>\n' +
+    '                        <!-- <td data-title="Name">\n' +
+    '                                <span ng-if="featureDetail.isFree">{{\'freelbl\' |translate}}</span>\n' +
+    '                                <span ng-if="!featureDetail.isFree">{{featureDetail.price}}</span>\n' +
+    '                            </td> -->\n' +
+    '                        <td >\n' +
+    '                            <i class="material-icons md-dark pmd-md cursorPointer font25" ng-click="imageControler.openEditDialog($index);">mode_edit</i>\n' +
+    '                            <i class="material-icons pmd-md deleteButton cursorPointer font25" ng-click="imageControler.openDeleteDialog(\'\',featureDetail.featureDetailId)">delete</i>\n' +
+    '                        </td>\n' +
+    '                    </tr>\n' +
+    '                </tbody>\n' +
+    '            </table>\n' +
+    '        </div>\n' +
+    '        <div style="text-align:center;" paging page="1" page-size="10" total="imageControler.featureDetails.totalCount" paging-action="imageControler.changePage(page)"\n' +
+    '        flex="nogrow" show-prev-next="true" show-first-last="true" hide-if-empty="true" disabled-class="hide"></div>\n' +
+    '    </div> \n' +
+    '</div>');
+}]);
+
+angular.module('home').run(['$templateCache', function($templateCache) {
+  $templateCache.put('./app/supervisor/features/ImageControl/templates/ImageControlPopup.html',
+    '<div class="modal-content">\n' +
+    '    <div class="modal-header bordered">\n' +
+    '        <button class="close" type="button" ng-click="imageControlDlCtrl.close()">×</button>\n' +
+    '        <!-- <h2 class="pmd-card-title-text">{{\'NewFloorLbl\' | translate}}</h2> -->\n' +
+    '    </div>\n' +
+    '    <div class="modal-body">\n' +
+    '        <form class="form-horizontal" name="newForm">\n' +
+    '            <!-- <ul class="nav nav-tabs" role="tablist">\n' +
+    '                <li role="presentation" ng-class="{\'active\':$index == 0}" ng-repeat="lang in imageControlDlCtrl.language">\n' +
+    '                    <a href="javascript:void(0);" data-target="#{{lang.value}}-form" aria-controls="home" role="tab" data-toggle="tab">\n' +
+    '                        {{lang.value | translate}}\n' +
+    '                    </a>\n' +
+    '                </li>\n' +
+    '            </ul>\n' +
+    '            <div class="pmd-card">\n' +
+    '                <div class="pmd-card-body">\n' +
+    '                    \n' +
+    '                    <div class="tab-content">\n' +
+    '                        <div role="tablist" class="tab-pane" ng-class="{\'active\':$index == 0}" ng-repeat="lang in imageControlDlCtrl.language" id="{{lang.value}}-form">\n' +
+    '                            <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed">\n' +
+    '                                <label for="first-name"> {{ lang.value+\'Name\' | translate}} </label>\n' +
+    '                                <input required type="text" class="mat-input form-control" name="featureNameDictionary{{lang.value+\'Name\'}}" ng-model="imageControlDlCtrl.featureDetail.descriptionDictionary[lang.key]" ng-minlength="3" ng-maxlength="40">\n' +
+    '                                <div ng-messages="newForm.featureNameDictionary{{lang.value+\'Name\'}}.$error">\n' +
+    '                                    <div ng-show="newForm.featureNameDictionary{{lang.value+\'Name\'}}.$error.required && !newForm.featureNameDictionary{{lang.value+\'Name\'}}.$pristine">{{\'requiredErr\' | translate}}</div>\n' +
+    '                                    <div ng-show="(newForm.featureNameDictionary{{lang.value+\'Name\'}}.$error.minlength || newForm.featureNameDictionary{{lang.value+\'Name\'}}.$error.maxlength) && !newForm.featureNameDictionary{{lang.value+\'Name\'}}.$error.required">{{\'NameLengthError\' | translate}}</div>\n' +
+    '                                </div>\n' +
+    '                            </div>\n' +
+    '                        </div>\n' +
+    '                    </div>\n' +
+    '                </div>\n' +
+    '            </div> -->\n' +
+    '            <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed">       \n' +
+    '                    <input id="logoImage" name="logoImage" style="display: none;" onchange="angular.element(this).scope().AddImage(this.files)" type="file" required>\n' +
+    '                    <button ng-click="imageControlDlCtrl.LoadUpload()" >{{\'UploadBtn\' | translate}}</button>\n' +
+    '                    <img ng-src="{{imageControlDlCtrl.featureDetail.imageURL}}" style="max-height: 200px;max-width: 200px;">\n' +
+    '                    <div ng-messages="newForm.logoImage.$error" >\n' +
+    '                        <div ng-if="newForm.logoImage.$error.required">{{\'requiredErr\' | translate}}</div>\n' +
+    '                    </div>\n' +
+    '            </div>\n' +
+    '            <!-- <div class="group-fields clearfix row">\n' +
+    '                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">\n' +
+    '                    <div class="checkbox pmd-default-theme">\n' +
+    '                        <label class=" checkbox-pmd-ripple-effect">\n' +
+    '                            <input type="checkbox" ng-model="imageControlDlCtrl.featureDetail.isFree">\n' +
+    '                            <span>{{\'IsFreeLbl\' | translate}}</span>\n' +
+    '                        </label>\n' +
+    '                    </div>\n' +
+    '                </div>\n' +
+    '            </div>\n' +
+    '            <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed" ng-if="!imageControlDlCtrl.featureDetail.isFree">\n' +
+    '                <label for="first-name"> {{ \'priceLbl\' | translate}} </label>\n' +
+    '                <input type="number" class="mat-input form-control" name="price" ng-model="imageControlDlCtrl.featureDetail.price" ng-min="1">\n' +
+    '            </div> -->\n' +
+    '        </form>\n' +
+    '    </div>\n' +
+    '    <div class="pmd-modal-action text-right">\n' +
+    '        <button ng-disabled="newForm.$invalid || imageControlDlCtrl.isChanged || imageControlDlCtrl.featureDetail.imageURL == null" class="btn pmd-ripple-effect btn-primary" type="button" ng-click="imageControlDlCtrl.save()">{{\'saveChangesBtn\' | translate}}</button>\n' +
+    '        <button class="btn pmd-ripple-effect btn-default" type="button" ng-click="imageControlDlCtrl.close()">{{\'DiscardBtn\' | translate}}</button>\n' +
+    '    </div>\n' +
+    '</div>');
+}]);
+
+angular.module('home').run(['$templateCache', function($templateCache) {
+  $templateCache.put('./app/supervisor/features/ListOfAvailableControl/templates/ListOfAvailableControl.html',
+    '<div class="pmd-card pmd-z-depth">\n' +
+    '    <div class="pmd-card-title">\n' +
+    '        <div class="media-body media-middle">\n' +
+    '            <span ng-repeat="controlEnum in listOfAvailableControler.controls|filter: {id: listOfAvailableControler.featureControl.control}"> {{controlEnum.text | translate}} </span>\n' +
+    '            <!-- <div class="pmd-switch" style="font-size: 14px;">\n' +
+    '                <label>{{\'singleSelect\' | translate}}</label>\n' +
+    '                <label style="margin-bottom: 0 !important;margin-left: 5px;margin-right: 5px;">\n' +
+    '                    <input type="checkbox"ng-model="listOfAvailableControler.controlType" ng-change="listOfAvailableControler.switch()"> <span class="pmd-switch-label"></span>\n' +
+    '                </label>\n' +
+    '                <label>{{\'multiSelect\' | translate}}</label>\n' +
+    '            </div> -->\n' +
+    '        </div>\n' +
+    '        <div class="media-right datetimepicker">\n' +
+    '            <button  ng-click="listOfAvailableControler.addNew()"  class="btn pmd-ripple-effect btn-primary pmd-z-depth" type="button">{{\'Add\' | translate}}</button>\n' +
+    '            \n' +
+    '            <!-- <button  ng-click="listOfAvailableControler.openEditDialog(0);" ng-show="listOfAvailableControler.featureDetails.results.length > 0 && listOfAvailableControler.featureDetails.results[0].availables.length > 0" class="btn pmd-ripple-effect btn-primary pmd-z-depth" type="button">{{\'EditBtn\' | translate}}</button> -->\n' +
+    '            \n' +
+    '        </div>\n' +
+    '    </div>\n' +
+    '    <div class="pmd-card-body">\n' +
+    '        <div  style="text-align: center;">\n' +
+    '            <img ng-show="listOfAvailableControler.isLoading" src="assets/img/loading.gif" style="height: 80px;">\n' +
+    '            <span ng-if="listOfAvailableControler.featureDetails.results.length <=0 ">{{\'NoData\'|translate}}</span>\n' +
+    '        </div>\n' +
+    '        <div class="table-responsive" ng-show="!listOfAvailableControler.isLoading \n' +
+    '        && listOfAvailableControler.featureDetails.results.length > 0 ">\n' +
+    '            <table class="table pmd-table table-hover">\n' +
+    '                <thead>\n' +
+    '                    <tr>\n' +
+    '                        <th >{{\'Name\' | translate}}</th>\n' +
+    '                        <th>{{\'priceLbl\' | translate}}</th>                        \n' +
+    '                        <!-- <th>{{\'From\' | translate}}</th>\n' +
+    '                        <th>{{\'To\' | translate}}</th>\n' +
+    '                        <th>{{\'NumberLbl\' | translate}}</th> -->\n' +
+    '                        <th ></th>\n' +
+    '                    </tr>\n' +
+    '                </thead>\n' +
+    '                <tbody>\n' +
+    '                    <tr ng-repeat-start="featureDetail in listOfAvailableControler.featureDetails.results">\n' +
+    '                        <td data-title="Name" >\n' +
+    '                           {{featureDetail.descriptionDictionary[selectedLanguage]}}\n' +
+    '                        </td>\n' +
+    '                        <td data-title="Name">\n' +
+    '                            <span ng-if="featureDetail.isFree">{{\'freelbl\' |translate}}</span>\n' +
+    '                            <span ng-if="!featureDetail.isFree">{{featureDetail.price}}</span>\n' +
+    '                        </td>\n' +
+    '                        <!-- <td data-title="Name">\n' +
+    '                            {{featureDetail.from}}\n' +
+    '                        </td>\n' +
+    '                        <td data-title="Name">\n' +
+    '                            {{featureDetail.to}}\n' +
+    '                        </td>\n' +
+    '                        <td data-title="Name">\n' +
+    '                            {{featureDetail.max}}\n' +
+    '                        </td> -->\n' +
+    '                        <td >\n' +
+    '                            \n' +
+    '                            <span href="javascript:void(0);" ng-click="featureDetail.show=!featureDetail.show;listOfAvailableControler.showMore($event)" class="btn pmd-btn-fab pmd-btn-flat pmd-ripple-effect btn-default btn-sm child-table-expand direct-expand"><i class="material-icons md-dark pmd-sm"></i></span>\n' +
+    '                            <i class="material-icons md-dark pmd-md cursorPointer font25" ng-click="listOfAvailableControler.openEditDialog($index);">mode_edit</i>\n' +
+    '                            <i class="material-icons pmd-md deleteButton cursorPointer font25" ng-click="listOfAvailableControler.openDeleteDialog(featureDetail.descriptionDictionary[selectedLanguage],featureDetail.featureDetailId)">delete</i>\n' +
+    '                        </td>\n' +
+    '                    </tr>\n' +
+    '                    <tr ng-repeat-end class="child-table"  ng-show="featureDetail.show">\n' +
+    '                            <td colspan="12">\n' +
+    '                                <div class="direct-child-table" ng-if="featureDetail.availables.length >0">\n' +
+    '                                    <table class="table pmd-table table-striped table-sm">\n' +
+    '                                        <thead>\n' +
+    '                                            <tr>\n' +
+    '                                                <th >{{\'Name\' | translate}}</th>\n' +
+    '                                                <th>{{\'From\' | translate}}</th>\n' +
+    '                                                <th>{{\'To\' | translate}}</th>\n' +
+    '                                                <th>{{\'NumberLbl\' | translate}}</th>\n' +
+    '                                                <th ></th>\n' +
+    '                                            </tr>\n' +
+    '                                        </thead>\n' +
+    '                                        <tbody>\n' +
+    '                                        <tr ng-repeat="featureAvailable in featureDetail.availables">\n' +
+    '                                            <td data-title="Name" >\n' +
+    '                                                <span ng-repeat="dayEnum in listOfAvailableControler.days|filter: {id: featureAvailable.day}"> {{dayEnum.text | translate}} </span>\n' +
+    '                                            </td>\n' +
+    '                                            <td data-title="Name">\n' +
+    '                                                {{featureAvailable.from}}\n' +
+    '                                            </td>\n' +
+    '                                            <td data-title="Name">\n' +
+    '                                                {{featureAvailable.to}}\n' +
+    '                                            </td>\n' +
+    '                                            <td data-title="Name">\n' +
+    '                                                {{featureAvailable.max}}\n' +
+    '                                            </td>\n' +
+    '                                            <!-- <td >\n' +
+    '                                                <i class="material-icons md-dark pmd-md cursorPointer font25" ng-click="listOfAvailableControler.openEditDialog($index);">mode_edit</i>\n' +
+    '                                                <i class="material-icons pmd-md deleteButton cursorPointer font25" ng-click="listOfAvailableControler.openDeleteDialog(\'\',featureAvailable.availableId)">delete</i>\n' +
+    '                                            </td> -->\n' +
+    '                                        </tr>\n' +
+    '                                    </tbody>\n' +
+    '                                </table>\n' +
+    '                            </div>\n' +
+    '                            \n' +
+    '                        </td>\n' +
+    '                    </tr>\n' +
+    '                </tbody>\n' +
+    '            </table>\n' +
+    '        </div>\n' +
+    '        <div style="text-align:center;" paging page="1" page-size="10" total="listOfAvailableControler.featureDetails.totalCount" paging-action="listOfAvailableControler.changePage(page)"\n' +
+    '        flex="nogrow" show-prev-next="true" show-first-last="true" hide-if-empty="true" disabled-class="hide"></div>\n' +
+    '    </div> \n' +
+    '</div>');
+}]);
+
+angular.module('home').run(['$templateCache', function($templateCache) {
+  $templateCache.put('./app/supervisor/features/ListOfAvailableControl/templates/ListOfAvailableControlPopup.html',
+    '\n' +
+    '\n' +
+    '<div class="modal-content">\n' +
+    '        \n' +
+    '        <form class="form-horizontal" name="newForm">\n' +
+    '    <div class="modal-header bordered">\n' +
+    '        <div >{{listOfAvailableControlDlCtrl.featureName[selectedLanguage]}}</div>\n' +
+    '        <ul class="nav nav-tabs" role="tablist">\n' +
+    '            <li role="presentation" ng-class="{\'active\':$index == 0}" ng-repeat="lang in listOfAvailableControlDlCtrl.language">\n' +
+    '                <a href="javascript:void(0);" data-target="#{{lang.value}}-form" aria-controls="home" role="tab" data-toggle="tab">\n' +
+    '                    {{lang.value | translate}}\n' +
+    '                </a>\n' +
+    '            </li>\n' +
+    '        </ul>\n' +
+    '        <div class="pmd-card">\n' +
+    '            <div class="pmd-card-body">\n' +
+    '                <!-- Tab panes -->\n' +
+    '                <div class="tab-content">\n' +
+    '                    <div role="tablist" class="tab-pane" ng-class="{\'active\':$index == 0}" ng-repeat="lang in listOfAvailableControlDlCtrl.language" id="{{lang.value}}-form">\n' +
+    '                        <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed">\n' +
+    '                            <label for="first-name"> {{ lang.value+\'Name\' | translate}} </label>\n' +
+    '                            <input required type="text" class="mat-input form-control" name="featureNameDictionary{{lang.value+\'Name\'}}" ng-model="listOfAvailableControlDlCtrl.featureDetail.descriptionDictionary[lang.key]" ng-minlength="3" ng-maxlength="40">\n' +
+    '                            <div ng-messages="newForm.featureNameDictionary{{lang.value+\'Name\'}}.$error">\n' +
+    '                                <div ng-show="newForm.featureNameDictionary{{lang.value+\'Name\'}}.$error.required && !newForm.featureNameDictionary{{lang.value+\'Name\'}}.$pristine">{{\'requiredErr\' | translate}}</div>\n' +
+    '                                <div ng-show="(newForm.featureNameDictionary{{lang.value+\'Name\'}}.$error.minlength || newForm.featureNameDictionary{{lang.value+\'Name\'}}.$error.maxlength) && !newForm.featureNameDictionary{{lang.value+\'Name\'}}.$error.required">{{\'NameLengthError\' | translate}}</div>\n' +
+    '                            </div>\n' +
+    '                        </div>\n' +
+    '                    </div>\n' +
+    '                </div>\n' +
+    '            </div>\n' +
+    '        </div>\n' +
+    '        \n' +
+    '        <div class="group-fields clearfix row col-md-2">\n' +
+    '            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">\n' +
+    '                <div class="checkbox pmd-default-theme">\n' +
+    '                    <label class=" checkbox-pmd-ripple-effect">\n' +
+    '                        <input type="checkbox" ng-model="listOfAvailableControlDlCtrl.featureDetail.isFree">\n' +
+    '                        <span>{{\'IsFreeLbl\' | translate}}</span>\n' +
+    '                    </label>\n' +
+    '                </div>\n' +
+    '            </div>\n' +
+    '        </div>\n' +
+    '        <div class="col-md-2 form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed" \n' +
+    '        ng-if="!listOfAvailableControlDlCtrl.featureDetail.isFree">\n' +
+    '            <label for="first-name"> {{ \'priceLbl\' | translate}} </label>\n' +
+    '            <input type="number" class="mat-input form-control" name="price" ng-model="listOfAvailableControlDlCtrl.featureDetail.price" >\n' +
+    '        </div>\n' +
+    '        <!-- <button class="close" type="button" ng-click="listOfAvailableControlDlCtrl.close()">×</button> -->\n' +
+    '    </div>\n' +
+    '    \n' +
+    '    <div class="modal-body">\n' +
+    '        \n' +
+    '            <div ng-repeat="day in listOfAvailableControlDlCtrl.days" class="row">\n' +
+    '                <label  class="col-md-2">\n' +
+    '                    <input type="checkbox"ng-model="day.isSelected" ng-change="listOfAvailableControlDlCtrl.changeDay(day)">\n' +
+    '                    {{day.text|translate}}\n' +
+    '                </label>\n' +
+    '                 \n' +
+    '                <!-- <div class="row"> -->\n' +
+    '                    <div class="col-md-2"> \n' +
+    '                        <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed">\n' +
+    '                            <label class="control-label" for="regular1">Start Date</label>\n' +
+    '                            <input ng-disabled="!day.isSelected" ng-required="day.isSelected" \n' +
+    '                            name="datepicker-start{{day.id}}" datetimepicker ng-model="day.startTime" type="text" class="form-control" id="datepicker-start{{day.id}}">\n' +
+    '                        </div>\n' +
+    '                    </div>\n' +
+    '                    <div class="col-md-2"> \n' +
+    '                        <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed">\n' +
+    '                            <label class="control-label" for="regular1">End Date</label>\n' +
+    '                            <input ng-disabled="!day.isSelected" ng-required="day.isSelected" \n' +
+    '                            name="datepicker-end{{day.id}}" datetimepicker ng-model="day.endTime" type="text" class="form-control" id="datepicker-end{{day.id}}">\n' +
+    '                        </div>\n' +
+    '                    </div>\n' +
+    '                <!-- </div> -->\n' +
+    '                <div  class="col-md-2 form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed">\n' +
+    '                    <label for="first-name"> {{ \'NumberLbl\' | translate}} </label>\n' +
+    '                    <input ng-disabled="!day.isSelected" type="number" ng-required="day.isSelected && newForm.max{{day.id}}.$error" \n' +
+    '                    name="max{{day.id}}"class="mat-input form-control" ng-model="day.max" ng-min="1">\n' +
+    '                </div>\n' +
+    '        </div>\n' +
+    '    </div>\n' +
+    '        </form>\n' +
+    '    <div class="pmd-modal-action text-right">\n' +
+    '        <button ng-disabled="newForm.$invalid || listOfAvailableControlDlCtrl.isChanged ||\n' +
+    '        (!listOfAvailableControlDlCtrl.featureDetail.isFree && listOfAvailableControlDlCtrl.featureDetail.price<=0)\n' +
+    '        || (listOfAvailableControlDlCtrl.days|filter:{isSelected:true}).length<=0 " class="btn pmd-ripple-effect btn-primary" type="button" ng-click="listOfAvailableControlDlCtrl.save()">{{\'saveChangesBtn\' | translate}}</button>\n' +
+    '        <button class="btn pmd-ripple-effect btn-default" type="button" ng-click="listOfAvailableControlDlCtrl.close()">{{\'DiscardBtn\' | translate}}</button>\n' +
+    '    </div>\n' +
+    '</div>');
+}]);
+
+angular.module('home').run(['$templateCache', function($templateCache) {
+  $templateCache.put('./app/supervisor/features/TextAndImageControl/templates/TextAndImageControl.html',
+    '<div class="pmd-card pmd-z-depth">\n' +
+    '    <div class="pmd-card-title">\n' +
+    '        <div class="media-body media-middle">\n' +
+    '            <span ng-repeat="controlEnum in textAndImageControler.controls|filter: {id: textAndImageControler.featureControl.control}"> {{controlEnum.text | translate}} </span>\n' +
+    '            <div class="pmd-switch" style="font-size: 14px;">\n' +
+    '                <label>{{\'singleSelect\' | translate}}</label>\n' +
+    '                <label style="margin-bottom: 0 !important;margin-left: 5px;margin-right: 5px;">\n' +
+    '                    <input type="checkbox"ng-model="textAndImageControler.controlType" ng-change="textAndImageControler.switch()"> <span class="pmd-switch-label"></span>\n' +
+    '                </label>\n' +
+    '                <label>{{\'multiSelect\' | translate}}</label>\n' +
+    '            </div>\n' +
+    '        </div>\n' +
+    '        <div class="media-right datetimepicker">\n' +
+    '            <button  ng-click="textAndImageControler.addNew()" class="btn pmd-ripple-effect btn-primary pmd-z-depth" type="button">{{\'Add\' | translate}}</button>\n' +
+    '        </div>\n' +
+    '    </div>\n' +
+    '    <div class="pmd-card-body">\n' +
+    '        <div  style="text-align: center;">\n' +
+    '            <img ng-show="textAndImageControler.isLoading" src="assets/img/loading.gif" style="height: 80px;">\n' +
+    '            <span ng-if="textAndImageControler.featureDetails.results.length <=0 ">{{\'NoData\'|translate}}</span>\n' +
+    '        </div>\n' +
+    '        <div class="table-responsive" ng-show="!textAndImageControler.isLoading && textAndImageControler.featureDetails.results.length > 0">\n' +
+    '            <table class="table pmd-table table-hover">\n' +
+    '                <thead>\n' +
+    '                    <tr>\n' +
+    '                        <th >{{\'Name\' | translate}}</th>\n' +
+    '                        <th >{{\'Imagelbl\' | translate}}</th>                        \n' +
+    '                        <th>{{\'priceLbl\' | translate}}</th>                        \n' +
+    '                        <th ></th>\n' +
+    '                    </tr>\n' +
+    '                </thead>\n' +
+    '                <tbody>\n' +
+    '                    <tr ng-repeat="featureDetail in textAndImageControler.featureDetails.results">\n' +
+    '                        <td data-title="Name" >{{featureDetail.descriptionDictionary[selectedLanguage]}}</td>\n' +
+    '                        <td data-title="logo" ><img ng-src="{{featureDetail.imageURL}}?type=\'thumbnail\'&date={{textAndImageControler.Now}}" style="max-height: 200px;max-width: 200px;"/></td>\n' +
+    '                        <td data-title="Name">\n' +
+    '                                <span ng-if="featureDetail.isFree">{{\'freelbl\' |translate}}</span>\n' +
+    '                                <span ng-if="!featureDetail.isFree">{{featureDetail.price}}</span>\n' +
+    '                            </td>\n' +
+    '                        <td >\n' +
+    '                            <i class="material-icons md-dark pmd-md cursorPointer font25" ng-click="textAndImageControler.openEditDialog($index);">mode_edit</i>\n' +
+    '                            <i class="material-icons pmd-md deleteButton cursorPointer font25" ng-click="textAndImageControler.openDeleteDialog(featureDetail.descriptionDictionary[selectedLanguage],featureDetail.featureDetailId)">delete</i>\n' +
+    '                        </td>\n' +
+    '                    </tr>\n' +
+    '                </tbody>\n' +
+    '            </table>\n' +
+    '        </div>\n' +
+    '        <div style="text-align:center;" paging page="1" page-size="10" total="textAndImageControler.featureDetails.totalCount" paging-action="textAndImageControler.changePage(page)"\n' +
+    '        flex="nogrow" show-prev-next="true" show-first-last="true" hide-if-empty="true" disabled-class="hide"></div>\n' +
+    '    </div> \n' +
+    '</div>');
+}]);
+
+angular.module('home').run(['$templateCache', function($templateCache) {
+  $templateCache.put('./app/supervisor/features/TextAndImageControl/templates/TextAndImageControlPopup.html',
+    '<div class="modal-content">\n' +
+    '    <div class="modal-header bordered">\n' +
+    '        <button class="close" type="button" ng-click="textAndImageControlDlCtrl.close()">×</button>\n' +
+    '        <!-- <h2 class="pmd-card-title-text">{{\'NewFloorLbl\' | translate}}</h2> -->\n' +
+    '    </div>\n' +
+    '    <div class="modal-body">\n' +
+    '        <form class="form-horizontal" name="newForm">\n' +
+    '            <ul class="nav nav-tabs" role="tablist">\n' +
+    '                <li role="presentation" ng-class="{\'active\':$index == 0}" ng-repeat="lang in textAndImageControlDlCtrl.language">\n' +
+    '                    <a href="javascript:void(0);" data-target="#{{lang.value}}-form" aria-controls="home" role="tab" data-toggle="tab">\n' +
+    '                        {{lang.value | translate}}\n' +
+    '                    </a>\n' +
+    '                </li>\n' +
+    '            </ul>\n' +
+    '            <div class="pmd-card">\n' +
+    '                <div class="pmd-card-body">\n' +
+    '                    <!-- Tab panes -->\n' +
+    '                    <div class="tab-content">\n' +
+    '                        <div role="tablist" class="tab-pane" ng-class="{\'active\':$index == 0}" ng-repeat="lang in textAndImageControlDlCtrl.language" id="{{lang.value}}-form">\n' +
+    '                            <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed">\n' +
+    '                                <label for="first-name"> {{ lang.value+\'Name\' | translate}} </label>\n' +
+    '                                <input required type="text" class="mat-input form-control" name="featureNameDictionary{{lang.value+\'Name\'}}" ng-model="textAndImageControlDlCtrl.featureDetail.descriptionDictionary[lang.key]" ng-minlength="3" ng-maxlength="40">\n' +
+    '                                <div ng-messages="newForm.featureNameDictionary{{lang.value+\'Name\'}}.$error">\n' +
+    '                                    <div ng-show="newForm.featureNameDictionary{{lang.value+\'Name\'}}.$error.required && !newForm.featureNameDictionary{{lang.value+\'Name\'}}.$pristine">{{\'requiredErr\' | translate}}</div>\n' +
+    '                                    <div ng-show="(newForm.featureNameDictionary{{lang.value+\'Name\'}}.$error.minlength || newForm.featureNameDictionary{{lang.value+\'Name\'}}.$error.maxlength) && !newForm.featureNameDictionary{{lang.value+\'Name\'}}.$error.required">{{\'NameLengthError\' | translate}}</div>\n' +
+    '                                </div>\n' +
+    '                            </div>\n' +
+    '                        </div>\n' +
+    '                    </div>\n' +
+    '                </div>\n' +
+    '            </div>\n' +
+    '            <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed">       \n' +
+    '                    <input id="logoImage" name="logoImage" style="display: none;" onchange="angular.element(this).scope().AddImage(this.files)" type="file" required>\n' +
+    '                    <button ng-click="textAndImageControlDlCtrl.LoadUpload()" >{{\'UploadBtn\' | translate}}</button>\n' +
+    '                    <img ng-src="{{textAndImageControlDlCtrl.featureDetail.imageURL}}" style="max-height: 200px;max-width: 200px;">\n' +
+    '                    <div ng-messages="newForm.logoImage.$error" >\n' +
+    '                        <div ng-if="newForm.logoImage.$error.required">{{\'requiredErr\' | translate}}</div>\n' +
+    '                    </div>\n' +
+    '            </div>\n' +
+    '            <div class="group-fields clearfix row">\n' +
+    '                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">\n' +
+    '                    <div class="checkbox pmd-default-theme">\n' +
+    '                        <label class=" checkbox-pmd-ripple-effect">\n' +
+    '                            <input type="checkbox" ng-model="textAndImageControlDlCtrl.featureDetail.isFree">\n' +
+    '                            <span>{{\'IsFreeLbl\' | translate}}</span>\n' +
+    '                        </label>\n' +
+    '                    </div>\n' +
+    '                </div>\n' +
+    '            </div>\n' +
+    '            <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed" ng-if="!textAndImageControlDlCtrl.featureDetail.isFree">\n' +
+    '                <label for="first-name"> {{ \'priceLbl\' | translate}} </label>\n' +
+    '                <input type="number" class="mat-input form-control" name="price" ng-model="textAndImageControlDlCtrl.featureDetail.price" ng-min="1">\n' +
+    '            </div>\n' +
+    '        </form>\n' +
+    '    </div>\n' +
+    '    <div class="pmd-modal-action text-right">\n' +
+    '        <button ng-disabled="newForm.$invalid || textAndImageControlDlCtrl.isChanged || textAndImageControlDlCtrl.featureDetail.imageURL == null" class="btn pmd-ripple-effect btn-primary" type="button" ng-click="textAndImageControlDlCtrl.save()">{{\'saveChangesBtn\' | translate}}</button>\n' +
+    '        <button class="btn pmd-ripple-effect btn-default" type="button" ng-click="textAndImageControlDlCtrl.close()">{{\'DiscardBtn\' | translate}}</button>\n' +
+    '    </div>\n' +
+    '</div>');
+}]);
+
+angular.module('home').run(['$templateCache', function($templateCache) {
+  $templateCache.put('./app/supervisor/features/TextControl/templates/TextControl.html',
+    '<div class="pmd-card pmd-z-depth">\n' +
+    '    <div class="pmd-card-title">\n' +
+    '        <div class="media-body media-middle">\n' +
+    '            <span ng-repeat="controlEnum in textControler.controls|filter: {id: textControler.featureControl.control}"> {{controlEnum.text | translate}} </span>\n' +
+    '            <div class="pmd-switch" style="font-size: 14px;">\n' +
+    '                <label>{{\'singleSelect\' | translate}}</label>\n' +
+    '                <label style="margin-bottom: 0 !important;margin-left: 5px;margin-right: 5px;">\n' +
+    '                    <input type="checkbox"ng-model="textControler.controlType" ng-change="textControler.switch()"> <span class="pmd-switch-label"></span>\n' +
+    '                </label>\n' +
+    '                <label>{{\'multiSelect\' | translate}}</label>\n' +
+    '            </div>\n' +
+    '        </div>\n' +
+    '        <div class="media-right datetimepicker">\n' +
+    '            <button  ng-click="textControler.addNew()" class="btn pmd-ripple-effect btn-primary pmd-z-depth" type="button">{{\'Add\' | translate}}</button>\n' +
+    '        </div>\n' +
+    '    </div>\n' +
+    '    <div class="pmd-card-body">\n' +
+    '        <div  style="text-align: center;">\n' +
+    '            <img ng-show="textControler.isLoading" src="assets/img/loading.gif" style="height: 80px;">\n' +
+    '            <span ng-if="textControler.featureDetails.results.length <=0 ">{{\'NoData\'|translate}}</span>\n' +
+    '        </div>\n' +
+    '        <div class="table-responsive" ng-show="!textControler.isLoading && textControler.featureDetails.results.length > 0">\n' +
+    '            <table class="table pmd-table table-hover">\n' +
+    '                <thead>\n' +
+    '                    <tr>\n' +
+    '                        <th >{{\'Name\' | translate}}</th>\n' +
+    '                        <th>{{\'priceLbl\' | translate}}</th>                        \n' +
+    '                        <th ></th>\n' +
+    '                    </tr>\n' +
+    '                </thead>\n' +
+    '                <tbody>\n' +
+    '                    <tr ng-repeat="featureDetail in textControler.featureDetails.results">\n' +
+    '                        <td data-title="Name" >{{featureDetail.descriptionDictionary[selectedLanguage]}}</td>\n' +
+    '                        <td data-title="Name">\n' +
+    '                                <span ng-if="featureDetail.isFree">{{\'freelbl\' |translate}}</span>\n' +
+    '                                <span ng-if="!featureDetail.isFree">{{featureDetail.price}}</span>\n' +
+    '                            </td>\n' +
+    '                        <td >\n' +
+    '                            <i class="material-icons md-dark pmd-md cursorPointer font25" ng-click="textControler.openEditDialog($index);">mode_edit</i>\n' +
+    '                            <i class="material-icons pmd-md deleteButton cursorPointer font25" ng-click="textControler.openDeleteDialog(featureDetail.descriptionDictionary[selectedLanguage],featureDetail.featureDetailId)">delete</i>\n' +
+    '                        </td>\n' +
+    '                    </tr>\n' +
+    '                </tbody>\n' +
+    '            </table>\n' +
+    '        </div>\n' +
+    '        <div style="text-align:center;" paging page="1" page-size="10" total="textControler.featureDetails.totalCount" paging-action="textControler.changePage(page)"\n' +
+    '        flex="nogrow" show-prev-next="true" show-first-last="true" hide-if-empty="true" disabled-class="hide"></div>\n' +
+    '    </div> \n' +
+    '</div>');
+}]);
+
+angular.module('home').run(['$templateCache', function($templateCache) {
+  $templateCache.put('./app/supervisor/features/TextControl/templates/TextControlPopup.html',
+    '<div class="modal-content">\n' +
+    '    <div class="modal-header bordered">\n' +
+    '        <button class="close" type="button" ng-click="textControlDlCtrl.close()">×</button>\n' +
+    '        <!-- <h2 class="pmd-card-title-text">{{\'NewFloorLbl\' | translate}}</h2> -->\n' +
+    '    </div>\n' +
+    '    <div class="modal-body">\n' +
+    '        <form class="form-horizontal" name="newForm">\n' +
+    '            <ul class="nav nav-tabs" role="tablist">\n' +
+    '                <li role="presentation" ng-class="{\'active\':$index == 0}" ng-repeat="lang in textControlDlCtrl.language">\n' +
+    '                    <a href="javascript:void(0);" data-target="#{{lang.value}}-form" aria-controls="home" role="tab" data-toggle="tab">\n' +
+    '                        {{lang.value | translate}}\n' +
+    '                    </a>\n' +
+    '                </li>\n' +
+    '            </ul>\n' +
+    '            <div class="pmd-card">\n' +
+    '                <div class="pmd-card-body">\n' +
+    '                    <!-- Tab panes -->\n' +
+    '                    <div class="tab-content">\n' +
+    '                        <div role="tablist" class="tab-pane" ng-class="{\'active\':$index == 0}" ng-repeat="lang in textControlDlCtrl.language" id="{{lang.value}}-form">\n' +
+    '                            <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed">\n' +
+    '                                <label for="first-name"> {{ lang.value+\'Name\' | translate}} </label>\n' +
+    '                                <input required type="text" class="mat-input form-control" name="featureNameDictionary{{lang.value+\'Name\'}}" ng-model="textControlDlCtrl.featureDetail.descriptionDictionary[lang.key]" ng-minlength="3" ng-maxlength="40">\n' +
+    '                                <div ng-messages="newForm.featureNameDictionary{{lang.value+\'Name\'}}.$error">\n' +
+    '                                    <div ng-show="newForm.featureNameDictionary{{lang.value+\'Name\'}}.$error.required && !newForm.featureNameDictionary{{lang.value+\'Name\'}}.$pristine">{{\'requiredErr\' | translate}}</div>\n' +
+    '                                    <div ng-show="(newForm.featureNameDictionary{{lang.value+\'Name\'}}.$error.minlength || newForm.featureNameDictionary{{lang.value+\'Name\'}}.$error.maxlength) && !newForm.featureNameDictionary{{lang.value+\'Name\'}}.$error.required">{{\'NameLengthError\' | translate}}</div>\n' +
+    '                                </div>\n' +
+    '                            </div>\n' +
+    '                        </div>\n' +
+    '                    </div>\n' +
+    '                </div>\n' +
+    '            </div>\n' +
+    '            <div class="group-fields clearfix row">\n' +
+    '                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">\n' +
+    '                    <div class="checkbox pmd-default-theme">\n' +
+    '                        <label class=" checkbox-pmd-ripple-effect">\n' +
+    '                            <input type="checkbox" ng-model="textControlDlCtrl.featureDetail.isFree">\n' +
+    '                            <span>{{\'IsFreeLbl\' | translate}}</span>\n' +
+    '                        </label>\n' +
+    '                    </div>\n' +
+    '                </div>\n' +
+    '            </div>\n' +
+    '            <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed" ng-if="!textControlDlCtrl.featureDetail.isFree">\n' +
+    '                <label for="first-name"> {{ \'priceLbl\' | translate}} </label>\n' +
+    '                <input type="number" class="mat-input form-control" name="price" ng-model="textControlDlCtrl.featureDetail.price" ng-min="1">\n' +
+    '            </div>\n' +
+    '        </form>\n' +
+    '    </div>\n' +
+    '    <div class="pmd-modal-action text-right">\n' +
+    '        <button ng-disabled="newForm.$invalid || textControlDlCtrl.isChanged" class="btn pmd-ripple-effect btn-primary" type="button" ng-click="textControlDlCtrl.save()">{{\'saveChangesBtn\' | translate}}</button>\n' +
+    '        <button class="btn pmd-ripple-effect btn-default" type="button" ng-click="textControlDlCtrl.close()">{{\'DiscardBtn\' | translate}}</button>\n' +
+    '    </div>\n' +
+    '</div>');
+}]);
+
+angular.module('home').run(['$templateCache', function($templateCache) {
+  $templateCache.put('./app/supervisor/features/VideoControl/templates/VideoControl.html',
+    '<div class="pmd-card pmd-z-depth">\n' +
+    '    <div class="pmd-card-title">\n' +
+    '        <div class="media-body media-middle">\n' +
+    '            <span ng-repeat="controlEnum in videoControler.controls|filter: {id: videoControler.featureControl.control}"> {{controlEnum.text | translate}} </span>\n' +
+    '        </div>\n' +
+    '        <div class="media-right datetimepicker">\n' +
+    '            <button  ng-click="videoControler.addNew()" class="btn pmd-ripple-effect btn-primary pmd-z-depth" type="button">{{\'Add\' | translate}}</button>\n' +
+    '        </div>\n' +
+    '    </div>\n' +
+    '    <div class="pmd-card-body" >\n' +
+    '        <div  style="text-align: center;">\n' +
+    '            <img ng-show="videoControler.isLoading" src="assets/img/loading.gif" style="height: 80px;">\n' +
+    '            <span ng-if="videoControler.featureDetails.results.length <=0 ">{{\'NoData\'|translate}}</span>\n' +
+    '        </div>\n' +
+    '        <div class="table-responsive" ng-show="!videoControler.isLoading && videoControler.featureDetails.results.length > 0">\n' +
+    '            <table class="table pmd-table table-hover">\n' +
+    '                <thead>\n' +
+    '                    <tr>\n' +
+    '                        <th >{{\'Name\' | translate}}</th>                   \n' +
+    '                        <th ></th>\n' +
+    '                    </tr>\n' +
+    '                </thead>\n' +
+    '                <tbody>\n' +
+    '                    <tr ng-repeat="featureDetail in videoControler.featureDetails.results">\n' +
+    '                        <td data-title="Name" >{{featureDetail.link}}</td>\n' +
+    '                        <!-- <td data-title="Name">\n' +
+    '                                <span ng-if="featureDetail.isFree">{{\'freelbl\' |translate}}</span>\n' +
+    '                                <span ng-if="!featureDetail.isFree">{{featureDetail.price}}</span>\n' +
+    '                            </td> -->\n' +
+    '                        <td >\n' +
+    '                            <i class="material-icons md-dark pmd-md cursorPointer font25" ng-click="videoControler.openEditDialog($index);">mode_edit</i>\n' +
+    '                            <i class="material-icons pmd-md deleteButton cursorPointer font25" ng-click="videoControler.openDeleteDialog(featureDetail.link,featureDetail.featureDetailId)">delete</i>\n' +
+    '                        </td>\n' +
+    '                    </tr>\n' +
+    '                </tbody>\n' +
+    '            </table>\n' +
+    '        </div>\n' +
+    '        <div style="text-align:center;" paging page="1" page-size="10" total="textControler.featureDetails.totalCount" paging-action="textControler.changePage(page)"\n' +
+    '        flex="nogrow" show-prev-next="true" show-first-last="true" hide-if-empty="true" disabled-class="hide"></div>\n' +
+    '    </div> \n' +
+    '</div>');
+}]);
+
+angular.module('home').run(['$templateCache', function($templateCache) {
+  $templateCache.put('./app/supervisor/features/VideoControl/templates/VideoControlPopup.html',
+    '<div class="modal-content">\n' +
+    '    <div class="modal-header bordered">\n' +
+    '        <button class="close" type="button" ng-click="videoControlDlCtrl.close()">×</button>\n' +
+    '        <!-- <h2 class="pmd-card-title-text">{{\'NewFloorLbl\' | translate}}</h2> -->\n' +
+    '    </div>\n' +
+    '    <div class="modal-body">\n' +
+    '        <form class="form-horizontal" name="newForm">\n' +
+    '            <!-- <ul class="nav nav-tabs" role="tablist">\n' +
+    '                <li role="presentation" ng-class="{\'active\':$index == 0}" ng-repeat="lang in videoControlDlCtrl.language">\n' +
+    '                    <a href="javascript:void(0);" data-target="#{{lang.value}}-form" aria-controls="home" role="tab" data-toggle="tab">\n' +
+    '                        {{lang.value | translate}}\n' +
+    '                    </a>\n' +
+    '                </li>\n' +
+    '            </ul>\n' +
+    '            <div class="pmd-card">\n' +
+    '                <div class="pmd-card-body">\n' +
+    '                    <!-- Tab panes --\n' +
+    '                    <div class="tab-content">\n' +
+    '                        <div role="tablist" class="tab-pane" ng-class="{\'active\':$index == 0}" ng-repeat="lang in videoControlDlCtrl.language" id="{{lang.value}}-form">\n' +
+    '                            <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed">\n' +
+    '                                <label for="first-name"> {{ lang.value+\'Name\' | translate}} </label>\n' +
+    '                                <input required type="text" class="mat-input form-control" name="featureNameDictionary{{lang.value+\'Name\'}}" ng-model="videoControlDlCtrl.featureDetail.descriptionDictionary[lang.key]" ng-minlength="3" ng-maxlength="40">\n' +
+    '                                <div ng-messages="newForm.featureNameDictionary{{lang.value+\'Name\'}}.$error">\n' +
+    '                                    <div ng-show="newForm.featureNameDictionary{{lang.value+\'Name\'}}.$error.required && !newForm.featureNameDictionary{{lang.value+\'Name\'}}.$pristine">{{\'requiredErr\' | translate}}</div>\n' +
+    '                                    <div ng-show="(newForm.featureNameDictionary{{lang.value+\'Name\'}}.$error.minlength || newForm.featureNameDictionary{{lang.value+\'Name\'}}.$error.maxlength) && !newForm.featureNameDictionary{{lang.value+\'Name\'}}.$error.required">{{\'NameLengthError\' | translate}}</div>\n' +
+    '                                </div>\n' +
+    '                            </div>\n' +
+    '                        </div>\n' +
+    '                    </div>\n' +
+    '                </div>\n' +
+    '            </div> -->\n' +
+    '            <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed">\n' +
+    '                    <label for="first-name"> {{ lang.value+\'Name\' | translate}} </label>\n' +
+    '                    <input required type="text" ng-pattern="/^(http[s]?:\\/\\/){0,1}(www\\.){0,1}[a-zA-Z0-9\\.\\-]+\\.[a-zA-Z]{2,5}[\\.]{0,1}/" class="mat-input form-control" name="link" ng-model="videoControlDlCtrl.featureDetail.link" >\n' +
+    '                    <div ng-messages="newForm.link.$error">\n' +
+    '                        <div ng-show="newForm.link.$error.required && !newForm.link.$pristine">{{\'requiredErr\' | translate}}</div>\n' +
+    '                    </div>\n' +
+    '                </div>\n' +
+    '        </form>\n' +
+    '    </div>\n' +
+    '    <div class="pmd-modal-action text-right">\n' +
+    '        <button ng-disabled="newForm.$invalid || videoControlDlCtrl.isChanged" class="btn pmd-ripple-effect btn-primary" type="button" ng-click="videoControlDlCtrl.save()">{{\'saveChangesBtn\' | translate}}</button>\n' +
+    '        <button class="btn pmd-ripple-effect btn-default" type="button" ng-click="videoControlDlCtrl.close()">{{\'DiscardBtn\' | translate}}</button>\n' +
+    '    </div>\n' +
+    '</div>');
 }]);

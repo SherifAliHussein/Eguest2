@@ -3,13 +3,24 @@
 	
     angular
         .module('home')
-        .controller('editFeatureController', ['$scope','$state','$http','$translate','appCONSTANTS', 'FeatureResource','ToastService','featurePrepService',  editFeatureController])
+        .controller('editFeatureController', ['$scope','$state','$http','$translate','appCONSTANTS', 'controlEnum', 'FeatureResource','ToastService','featurePrepService',  editFeatureController])
 
-	function editFeatureController($scope, $state ,$http, $translate,appCONSTANTS, FeatureResource,ToastService, featurePrepService,callBackFunction){
+	function editFeatureController($scope, $state ,$http, $translate,appCONSTANTS, controlEnum, FeatureResource,ToastService, featurePrepService){
 		var vm = this;
 		vm.language = appCONSTANTS.supportedLanguage;
 		
-		vm.feature = featurePrepService;
+        vm.feature = featurePrepService;
+        vm.controls= controlEnum;
+        vm.SelectedControlId=[];
+        vm.SelectedControl = [];
+        vm.feature.featureControl.forEach(function(element) {
+			var kk = vm.controls.filter(function(item){
+				return (item.id ===  element.control);
+              })[0];
+              
+			vm.SelectedControlId.push(element.control)
+			vm.SelectedControl.push(element.control)
+        }, this);
 		vm.moreDetail = false;
 		vm.editmode = false;		
 		vm.enableMoreDetail = function(){
@@ -80,30 +91,46 @@
         vm.remove = function(featureDetail){
 			// index = index + ((vm.currentPage) *10);
 			featureDetail.isDeleted = true;
+        }
+        
+        vm.controlChange = function(){
+			vm.SelectedControl = []
+			for(var i=0;i<vm.SelectedControlId.length;i++){
+				var control = vm.controls.filter(function(item){
+					return (item.id ===  vm.SelectedControlId[i]);
+				})[0]
+				vm.SelectedControl.push(control.id)  
+			}
 		}
 		vm.updateFeature = function(){
             var updateFeature = new FeatureResource();
             updateFeature.featureNameDictionary = vm.feature.featureNameDictionary;
-            updateFeature.hasDetails = vm.feature.hasDetails;
+           // updateFeature.hasDetails = vm.feature.hasDetails;
+           var count = 1;
+           updateFeature.featureControl =[]
+           vm.SelectedControl.forEach(function(element) {
+            updateFeature.featureControl.push({control:element,order:count})
+               count++;
+           }, this);
 			updateFeature.featureId = vm.feature.featureId;
 			updateFeature.isImageChange = isImageChange;
 			updateFeature.type = "0";
-			if(vm.feature.hasDetails){
-                updateFeature.featureDetails = vm.feature.featureDetails
-                // if(vm.editmode){
-                //     updateFeature.featureDetails[vm.editIndex].descriptionDictionary=vm.featureDetailDescDictionary;
-                //     updateFeature.featureDetails[vm.editIndex].price = vm.isFree?0:vm.price;
-                //     updateFeature.featureDetails[vm.editIndex].isFree = vm.isFree;
-                // }
-                // else{
-                //     if(vm.featureDetailDescDictionary !=null && (vm.price >0 || vm.isFree))
-                //     updateFeature.featureDetails.push({
-                //         descriptionDictionary:vm.featureDetailDescDictionary,
-                //         price:vm.isFree?0:vm.price,
-                //         isFree:vm.isFree
-                //     })
-                // }
-			}
+			// if(vm.feature.hasDetails){
+            //     updateFeature.featureDetails = vm.feature.featureDetails
+            //     // if(vm.editmode){
+            //     //     updateFeature.featureDetails[vm.editIndex].descriptionDictionary=vm.featureDetailDescDictionary;
+            //     //     updateFeature.featureDetails[vm.editIndex].price = vm.isFree?0:vm.price;
+            //     //     updateFeature.featureDetails[vm.editIndex].isFree = vm.isFree;
+            //     // }
+            //     // else{
+            //     //     if(vm.featureDetailDescDictionary !=null && (vm.price >0 || vm.isFree))
+            //     //     updateFeature.featureDetails.push({
+            //     //         descriptionDictionary:vm.featureDetailDescDictionary,
+            //     //         price:vm.isFree?0:vm.price,
+            //     //         isFree:vm.isFree
+            //     //     })
+            //     // }
+			// }
 			var model = new FormData();
 			model.append('data', JSON.stringify(updateFeature));
 			model.append('file', featureImage);

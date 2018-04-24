@@ -33,7 +33,7 @@
 						<td data-title="logo" ><img ng-src="{{restaurant.logoURL}}?type='thumbnail'&date={{restaurantCtrl.Now}}"  ng-alt="{{restaurant.restaurantName}}" style="max-height: 200px;max-width: 200px;"/></td>
 						<td data-title="Description" >{{restaurant.restaurantDescriptionDictionary[selectedLanguage]}}</td>
 						<td data-title="Admin user" width="15%" >{{restaurant.restaurantAdminUserName}}</td>
-						<td data-title="Type" width="10%" >{{restaurant.restaurantTypeName}}</td>
+						<td data-title="Type" width="10%" >{{restaurant.restaurantTypeNameDictionary[selectedLanguage]}}</td>
 						<!-- <td data-title="Type" width="5%" >{{restaurant.consumedWaiters}}/{{restaurant.waitersLimit}}</td> -->
 						<!-- <td width="5%">{{restaurant.isReady}}</td> -->
 						<td width="15%" >

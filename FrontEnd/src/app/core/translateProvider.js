@@ -136,7 +136,22 @@
             "requestConfirmationLbl":"Are you sure you want request ",
             "ApproveBtn":"Approve",
             "RequestSuccess":"Request successfuly",
-            "BackToFeatures":"Back to features page"
+            "BackToFeatures":"Back to features page",
+            "feedbackbtn":"FeedBack",
+            "Guest":"Guest",
+            "yourComment":"Write your comment",
+            "SumbitReviewBtn":"Submit review",
+            "morereviewsbtn":"View more reviews",
+            "optinal":"optional",
+            "requestbtn":"Request",
+            "SelectMulti":"Select at least one",
+            "SelectSingle":"Select one",
+            "from":"From",
+            "to":"To",
+            "Pending":"Pending",
+            "Approved":"Approved on",
+            "Rejected":"Rejected on",
+            "lastrequestStatus":"last request create on"
             
         }
         
@@ -278,15 +293,30 @@
             "requestConfirmationLbl":"هل انت متأكد انك تريد طلب ",
             "ApproveBtn":"وافق",
             "RequestSuccess":"تم الطلب بنجاح",
-            "BackToFeatures":"رجوع الي صفحة الخدمات"
+            "BackToFeatures":"رجوع الي صفحة الخدمات",
+            "feedbackbtn":"تقييمات",
+            "Guest":"زائر",
+            "yourComment":"تعليقك",
+            "SumbitReviewBtn":"أضف تقييمك",
+            "morereviewsbtn":"مزيد من التقييمات",
+            "optinal":"اختاري",
+            "requestbtn":"طلب",
+            "SelectMulti":"اختار علي الاقل واحده",
+            "SelectSingle":"اختار واحده",
+            "from":"من",
+            "to":"الي" ,
+            "Pending":"قيد الانتظار",
+            "Approved":"وافق في",
+            "Rejected":"رفض في",
+            "lastrequestStatus":"اخر طلب في "
         }
         
         $translateProvider.translations('en-us',en_translations);
         
         $translateProvider.translations('ar-eg',ar_translations);
-        
         $translateProvider.preferredLanguage(appCONSTANTS.defaultLanguage);
         
+        // $translateProvider.useSanitizeValueStrategy('sanitize');
         }]);
 
 }());

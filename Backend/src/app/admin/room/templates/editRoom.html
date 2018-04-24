@@ -29,10 +29,29 @@
                             <div ng-if="updateRoomForm.confirmPassword.$error.equalto && !updateRoomForm.confirmPassword.$error.required">Passwords don't match.</div>
                         </div>
                     </div>
+                    <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed">       
+                        <label>{{'BuildingLbl' | translate}}</label>
+                        <select required class="select-simple form-control pmd-select2" ng-model="editRoomDlCtrl.Room.buildingId">
+                            <option ng-selected="editRoomDlCtrl.Room.buildingId == item.buildingId" 
+                                ng-repeat="item in editRoomDlCtrl.Buildings" 
+                                ng-value="{{item.buildingId}}">{{item.buildingName}}</option>
+                        </select>
+                        <div ng-if="editRoomDlCtrl.RestaurantType.length <=0">{{'NoBuildingLbl' | translate}} </div>
+                    </div>
+                    <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed">       
+                        <label>{{'FloorLbl' | translate}}</label>
+                        <select required class="select-simple form-control pmd-select2" ng-model="editRoomDlCtrl.Room.floorId">
+                            <option ng-selected="editRoomDlCtrl.Room.floorId == item.floorId" 
+                                ng-repeat="item in editRoomDlCtrl.Floors" 
+                                ng-value="{{item.floorId}}">{{item.floorName}}</option>
+                        </select>
+                        <div ng-if="editRoomDlCtrl.RestaurantType.length <=0">{{'NoFloorLbl' | translate}} </div>
+                    </div> 
+
             </form>
         </div>
         <div class="pmd-modal-action text-right">
-            <button ng-disabled="updateRoomForm.$invalid" class="btn pmd-ripple-effect btn-primary" type="button" ng-click="editRoomDlCtrl.updateRoom()">{{'saveChangesBtn' | translate}}</button>
+            <button ng-disabled="updateRoomForm.$invalid || editRoomDlCtrl.Room.buildingId <= 0 || editRoomDlCtrl.Room.floorId <= 0" class="btn pmd-ripple-effect btn-primary" type="button" ng-click="editRoomDlCtrl.updateRoom()">{{'saveChangesBtn' | translate}}</button>
             <button class="btn pmd-ripple-effect btn-default" type="button" ng-click="editRoomDlCtrl.close()">{{'DiscardBtn' | translate}}</button>
         </div>
     </div>

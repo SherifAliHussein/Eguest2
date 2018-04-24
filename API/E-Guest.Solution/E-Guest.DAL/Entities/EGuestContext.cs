@@ -47,6 +47,16 @@ namespace E_Guest.DAL.Entities
         public DbSet<Page> Pages { get; set; }
         public DbSet<Branch> Branches { get; set; }
         public DbSet<BranchTranslation> BranchTranslations { get; set; }
+        public DbSet<FeedBack> FeedBacks { get; set; }
+        public DbSet<Floor> Floors { get; set; }
+        public DbSet<Building> Buildings { get; set; }
+        public DbSet<FeaturesBackground> FeaturesBackgrounds { get; set; }
+        public DbSet<FeatureControl> FeatureControls { get; set; }
+        public DbSet<Available> Availables { get; set; }
+        //public DbSet<Control> Controls { get; set; }
+        //public DbSet<ControlTranslation> ControlTranslations { get; set; }
+
+
         public EGuestContext() : base("name=ECuestDB")
         {
             Database.SetInitializer<EGuestContext>(null);
@@ -97,8 +107,23 @@ namespace E_Guest.DAL.Entities
                 .WithMany()
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<FeedBack>()
+                .HasRequired(c => c.Restaurant)
+                .WithMany()
+                .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<Branch>()
                 .HasRequired(c => c.Restaurant)
+                .WithMany()
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Building>()
+                .HasRequired(c => c.Admin)
+                .WithMany()
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Floor>()
+                .HasRequired(c => c.Admin)
                 .WithMany()
                 .WillCascadeOnDelete(false);
         }

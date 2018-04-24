@@ -57,6 +57,12 @@ namespace E_Guest.BLL.Services
                 throw new ValidationException(ErrorCodes.UserDeleted);
             if (!user.IsActive)
                 throw new ValidationException(ErrorCodes.UserDeactivated);
+            if (user.Role == Enums.RoleType.Room)
+            {
+                var room = _roomService.Find(user.UserId);
+                if (DateTime.Now.Date > room.Package.End.Date) throw new ValidationException(ErrorCodes.PackageExpired);
+                if (DateTime.Now.Date < room.Package.Start.Date) throw new ValidationException(ErrorCodes.PackageNotActivated);
+            }
             return user;
 
         }
@@ -294,6 +300,7 @@ namespace E_Guest.BLL.Services
                 newAdmin.Role = Enums.RoleType.Admin;
                 newAdmin.Password = adminDto.Password;
                 newAdmin.IsActive = adminDto.IsActive;
+                newAdmin.FeaturesBackgroundId = Strings.FeaturesBackgroundId;
                 //newAdmin.ProductId = adminDto.ProductId;
                 _adminService.Insert(newAdmin);
                 admin = newAdmin;
@@ -315,7 +322,7 @@ namespace E_Guest.BLL.Services
                 {
                     End = adminDto.End,
                     Start = adminDto.Start,
-                    MaxNumberOfRooms = adminDto.MaxNumberOfWaiters,
+                    MaxNumberOfRooms = adminDto.Limit,
                     PackageGuid = adminDto.PackageGuid,
                     AdminId = admin.UserId
                 });
@@ -353,7 +360,7 @@ namespace E_Guest.BLL.Services
                 {
                     End = adminDto.End,
                     Start = adminDto.Start,
-                    MaxNumberOfRooms= adminDto.MaxNumberOfWaiters,
+                    MaxNumberOfRooms= adminDto.Limit,
                     PackageGuid = adminDto.PackageGuid,
                     AdminId = admin.UserId
                 });
@@ -376,7 +383,7 @@ namespace E_Guest.BLL.Services
         {
             var maxNum = _packageService.GetRoomsCountByAdminId(userId);
 
-            var consumedUsers = _adminService.Find(userId).Rooms.Count();
+            var consumedUsers = _adminService.Find(userId).Rooms.Count(x=>!x.IsDeleted);
 
             UserConsumed MaxCon = new UserConsumed();
             MaxCon.MaxNumUsers = maxNum;
@@ -422,6 +429,7 @@ namespace E_Guest.BLL.Services
             restaurantWaiter.RestaurantId = restaurant.RestaurantId;
             restaurantWaiter.Password = PasswordHelper.Encrypt(restaurantWaiterDto.Password);
             restaurantWaiter.Role = Enums.RoleType.Waiter;
+            restaurantWaiter.IsActive = true;
             //restaurantWaiter.PackageId = package.PackageId;
             _restaurantWaiterService.Insert(restaurantWaiter);
             SaveChanges();

@@ -9,11 +9,15 @@ namespace E_Guest.BLL.DTOs
     public class RequestDetailDto
     {
         public long RequestDetailId { get; set; }
-        public long FeatureDetailId { get; set; }
+        public long? FeatureDetailId { get; set; }
         public int Number { get; set; }
         public Dictionary<string, string> DescriptionDictionary { get; set; }
         public decimal Price { get; set; }
-     //   public bool IsFree { get; set; }
+
+        public long? ItemSizeId { get; set; }
+        //   public bool IsFree { get; set; }
+        public DateTime? From { get; set; }
+        public DateTime? To { get; set; }
 
     }
 }

@@ -29,10 +29,13 @@ namespace E_Guest.API.Controllers
     {
         private IRestaurantFacade _restaurantFacade;
         private IMenuFacade _menuFacade;
-        public RestaurantsController(IRestaurantFacade restaurantFacade, IMenuFacade menuFacade)
+        private IFeedBackFacade _feedBackFacade;
+
+        public RestaurantsController(IRestaurantFacade restaurantFacade, IMenuFacade menuFacade, IFeedBackFacade feedBackFacade)
         {
             _restaurantFacade = restaurantFacade;
             _menuFacade = menuFacade;
+            _feedBackFacade = feedBackFacade;
         }
 
         [AuthorizeRoles(Enums.RoleType.Admin)]
@@ -368,6 +371,7 @@ namespace E_Guest.API.Controllers
             data.LogoUrl = Url.Link("RestaurantLogo", new { restaurantId = restaurants.ResturentId });
             data.BackgroundUrl = Url.Link("BackgroundImage", new { restaurants.BackgroundId });
             data.RestaurantName = restaurants.RestaurantName;
+            data.Rate = restaurants.Rate;
 
             return Ok(data);
 
@@ -398,6 +402,20 @@ namespace E_Guest.API.Controllers
                 menu.ImageURL = Url.Link("MenuImage", new { menu.RestaurantId, menu.MenuId });
             }
             return PagedResponse("GetAllMenuForRestaurant", page, pagesize, menus.TotalCount, data);
+        }
+
+        [AuthorizeRoles(Enums.RoleType.Room)]
+        [Route("api/Restaurants/{restaurantId:long}/FeedBacks/", Name = "GetAllFeedBackForRestaurant")]
+        [HttpGet]
+        [ResponseType(typeof(List<FeedBackModel>))]
+        public IHttpActionResult GetAllFeedBack(long restaurantId, int page = Page, int pagesize = PageSize)
+        {
+            //var categories = _categoryFacade.GetAllCategoriesByMenuId(Language, menuId, page, pagesize);
+            PagedResultsDto feedbacks;
+            feedbacks = _feedBackFacade.GetAllFeedBack(UserId, restaurantId, page, pagesize, UserRole);
+            var data = Mapper.Map<List<FeedBackModel>>(feedbacks.Data);
+
+            return PagedResponse("GetAllFeedBackForRestaurant", page, pagesize, feedbacks.TotalCount, data);
         }
     }
 }

@@ -15,11 +15,12 @@ namespace E_Guest.BLL.DTOs
 
         public bool IsDeleted { get; set; }
         public bool IsActive { get; set; }
-        public bool HasDetails { get; set; }
+        //public bool HasDetails { get; set; }
         public MemoryStream Image { get; set; }
         public bool IsImageChange { get; set; }
 
-        public List<FeatureDetailDto> FeatureDetails { get; set; }
+        //public List<FeatureDetailDto> FeatureDetails { get; set; }
+        public List<FeatureControlDto> FeatureControl { get; set; }
         public Enums.FeatureType Type { get; set; }
         public List<RestaurantNameDto> Restaurants { get; set; }
     }

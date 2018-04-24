@@ -21,5 +21,7 @@ namespace E_Guest.BLL.Services.Interfaces
         PagedResultsDto GetActivatedItemsByCategoryId(string language, long categoryId, int page, int pageSize);
         CategoryPageTemplateDTO GetActivatedItemsWithTemplatesByCategoryId(string language, long categoryId);
         void UpdateItemOrder(List<ItemNamesDto> itemNamesDto);
+        void LikeItem(long itemId);
+        void DislikeItem(long itemId);
     }
 }

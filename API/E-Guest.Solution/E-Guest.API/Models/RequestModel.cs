@@ -17,7 +17,12 @@ namespace E_Guest.API.Models
         public long FeatureId { get; set; }
         public Dictionary<string, string> FeatureNameDictionary { get; set; }
         public string Status { get; set; }
+        public string Type { get; set; }
+        public long? RestaurantId { get; set; }
 
+        public Dictionary<string, string> RestaurantName { get; set; }
         public List<RequestDetailModel> RequestDetails { get; set; }
+        public string Comment { get; set; }
+        public DateTime? RequestTime { get; set; }
     }
 }

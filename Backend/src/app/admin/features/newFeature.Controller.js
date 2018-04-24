@@ -3,12 +3,12 @@
 	
     angular
         .module('home')
-        .controller('newFeatureController', ['$scope','$state','appCONSTANTS','$http','$translate' , 'FeatureResource','ToastService','$rootScope',  newFeatureController])
+        .controller('newFeatureController', ['$scope','$state','appCONSTANTS', 'controlEnum','$http','$translate' , 'FeatureResource','ToastService',  newFeatureController])
 
-	function newFeatureController($scope, $state , appCONSTANTS,$http, $translate , FeatureResource,ToastService,$rootScope){
+	function newFeatureController($scope, $state , appCONSTANTS,controlEnum,$http, $translate , FeatureResource,ToastService){
 		var vm = this;
         vm.language = appCONSTANTS.supportedLanguage;
-        
+        vm.controls= controlEnum;
 		vm.close = function(){
             $state.go('features');            
 		}
@@ -18,6 +18,7 @@
         vm.featureDetails = [] ;
         vm.featureDetailExist =false;
         vm.currentPage = 0;
+        vm.SelectedControl = []
         vm.changePage = function(page){
             vm.currentPage = page-1;
         }
@@ -35,7 +36,7 @@
             if(!isFound)
             vm.featureDetailExist =false;            
         }
-        vm.AddFeatureDetail = function(){
+        vm.AddFeatureDetail = function(){   
             if(vm.editmode){
                 vm.featureDetails[vm.editIndex].descriptionDictionary=vm.featureDetailDescDictionary;
                 vm.featureDetails[vm.editIndex].price = vm.isFree?0:vm.price;
@@ -72,24 +73,30 @@
 			vm.isChanged = true;
             var newFeature = new FeatureResource();
             newFeature.featureNameDictionary = vm.featureNameDictionary;
-            newFeature.hasDetails = vm.hasDetails;
+            var count = 1;
+            newFeature.featureControl =[]
+            vm.SelectedControl.forEach(function(element) {
+                newFeature.featureControl.push({control:element.id,order:count})
+                count++;
+            }, this);
+            // newFeature.featureControl = vm.SelectedControl;
             newFeature.type = "0";
-            if(vm.hasDetails){
-                newFeature.featureDetails = vm.featureDetails
-                // if(vm.editmode){
-                //     vm.featureDetails[vm.editIndex].descriptionDictionary=vm.featureDetailDescDictionary;
-                //     vm.featureDetails[vm.editIndex].price = vm.isFree?0:vm.price;
-                //     vm.featureDetails[vm.editIndex].isFree = vm.isFree;
-                // }
-                // else{
+            // if(vm.hasDetails){
+            //     newFeature.featureDetails = vm.featureDetails
+            //     // if(vm.editmode){
+            //     //     vm.featureDetails[vm.editIndex].descriptionDictionary=vm.featureDetailDescDictionary;
+            //     //     vm.featureDetails[vm.editIndex].price = vm.isFree?0:vm.price;
+            //     //     vm.featureDetails[vm.editIndex].isFree = vm.isFree;
+            //     // }
+            //     // else{
                     
-                //     vm.featureDetails.push({
-                //         descriptionDictionary:vm.featureDetailDescDictionary,
-                //         price:vm.isFree?0:vm.price,
-                //         isFree:vm.isFree
-                //     })
-                // }
-            }
+            //     //     vm.featureDetails.push({
+            //     //         descriptionDictionary:vm.featureDetailDescDictionary,
+            //     //         price:vm.isFree?0:vm.price,
+            //     //         isFree:vm.isFree
+            //     //     })
+            //     // }
+            // }
 
             var model = new FormData();
 			model.append('data', JSON.stringify(newFeature));

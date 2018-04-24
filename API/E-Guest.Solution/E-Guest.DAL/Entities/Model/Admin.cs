@@ -17,6 +17,8 @@ namespace E_Guest.DAL.Entities.Model
             Restaurants = new List<Restaurant>();
             RestaurantTypes = new List<RestaurantType>();
             Packages = new List<Package>();
+            Buildings = new List<Building>();
+            Floors = new List<Floor>();
         }
         public Guid UserAccountId { get; set; }
         public long ProductId { get; set; }
@@ -27,6 +29,9 @@ namespace E_Guest.DAL.Entities.Model
         public virtual ICollection<Package> Packages { get; set; }
         public virtual ICollection<Restaurant> Restaurants { get; set; }
         public virtual ICollection<RestaurantType> RestaurantTypes { get; set; }
+        public virtual ICollection<Building> Buildings { get; set; }
+        public virtual ICollection<Floor> Floors { get; set; }
+        public long? FeaturesBackgroundId { get; set; }
 
     }
 }

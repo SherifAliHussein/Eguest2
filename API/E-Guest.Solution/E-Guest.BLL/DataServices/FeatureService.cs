@@ -47,7 +47,7 @@ namespace E_Guest.BLL.DataServices
 
         public Feature CheckFeatureAsRestaurant(long adminId)
         {
-            return _repository.Query(x => x.CreationBy == adminId && x.Type == Enums.FeatureType.Restaurant).Select().FirstOrDefault();
+            return _repository.Query(x => x.CreationBy == adminId && x.Type == Enums.FeatureType.Restaurant && !x.IsDeleted).Select().FirstOrDefault();
         }
     }
 }

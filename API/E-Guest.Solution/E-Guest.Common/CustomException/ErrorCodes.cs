@@ -107,6 +107,8 @@ namespace E_Guest.Common.CustomException
         BranchDeleted,
         PackageExpired,
         PackageNotActivated,
-        GlobalAdminInactive
+        GlobalAdminInactive,
+        BuildingNameRepeated,
+        FloorNameRepeated
     }
 }

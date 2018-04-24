@@ -33,19 +33,21 @@ namespace E_Guest.API.Controllers
             return Ok();
         }
 
-        [AuthorizeRoles(Enums.RoleType.Admin,Enums.RoleType.Receptionist,Enums.RoleType.Supervisor)]
+        [AuthorizeRoles(Enums.RoleType.Admin,Enums.RoleType.Receptionist, Enums.RoleType.Supervisor, Enums.RoleType.Waiter)]
         [Route("api/Requests/", Name = "GetAllRequests")]
         [HttpGet]
         [ResponseType(typeof(List<RequestModel>))]
-        public IHttpActionResult GetAllRequests(int page = Page, int pagesize = PageSize)
+        public IHttpActionResult GetAllRequests(int page = Page, int pagesize = PageSize, long roomId = 0, long featureId = 0,string from="", string to = "")
         {
-            PagedResultsDto requests = _requestFacade.GetAllRequests(UserId, page, pagesize,UserRole);
+            PagedResultsDto requests = _requestFacade.GetAllRequests(UserId, page, pagesize,UserRole,roomId,featureId, from, to);
             var data = Mapper.Map<List<RequestModel>>(requests.Data);
            
             return PagedResponse("GetAllRequests", page, pagesize, requests.TotalCount, data);
         }
 
-        [AuthorizeRoles(Enums.RoleType.Supervisor)]
+        
+
+        [AuthorizeRoles(Enums.RoleType.Supervisor, Enums.RoleType.Waiter)]
         [Route("api/Requests/{requestId:long}/Approve", Name = "ApproveRequest")]
         [HttpPost]
         public IHttpActionResult ApproveRequest(long requestId, [FromBody] RequestModel requestModel)
@@ -54,7 +56,7 @@ namespace E_Guest.API.Controllers
             return Ok();
         }
 
-        [AuthorizeRoles(Enums.RoleType.Supervisor)]
+        [AuthorizeRoles(Enums.RoleType.Supervisor, Enums.RoleType.Waiter)]
         [Route("api/Requests/{requestId:long}/Reject", Name = "RejectRequest")]
         [HttpGet]
         public IHttpActionResult RejectRequest(long requestId)

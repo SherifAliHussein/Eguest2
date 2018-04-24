@@ -26,5 +26,7 @@ namespace E_Guest.DAL.Entities.Model
         public int MaxSideItemValue { get; set; }
         public bool IsActive { get; set; }
         public int OrderNumber { get; set; }
+        public int Like { get; set; }
+        public int Dislike { get; set; }
     }
 }

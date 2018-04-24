@@ -32,17 +32,27 @@ namespace E_Guest.BLL
             mapperConfiguration.CreateMap<FeatureDetailDto, FeatureDetail>()
                 .ForMember(dto => dto.FeatureDetailTranslations, m => m.MapFrom(src => src.DescriptionDictionary.Select(x => new FeatureDetailTranslation {Description = x.Value, Language = x.Key}).ToList()));
             mapperConfiguration.CreateMap<FeatureDetail, FeatureDetailDto>()
-                .ForMember(dto => dto.DescriptionDictionary, m => m.MapFrom(src => src.FeatureDetailTranslations.ToDictionary(translation => translation.Language.ToLower(), translation => translation.Description)));
+                .ForMember(dto => dto.FeatureId, m => m.MapFrom(src => src.FeatureControl.FeatureId))
+                .ForMember(dto => dto.DescriptionDictionary, m => m.MapFrom(src => src.FeatureDetailTranslations.ToDictionary(translation => translation.Language.ToLower(), translation => translation.Description)))
+                .ForMember(dto => dto.Availables, m => m.MapFrom(src => src.Availables.Where(x=>!x.IsDeleted).ToList()));
 
             mapperConfiguration.CreateMap<FeatureDto, Feature>()
                 .ForMember(dto => dto.FeatureTranslations, m => m.MapFrom(src => src.FeatureNameDictionary.Select(x=>new FeatureTranslation {FeatureName = x.Value,Language = x.Key}).ToList()))
-                .ForMember(dto => dto.FeatureDetails, m => m.MapFrom(src => src.FeatureDetails))
+               // .ForMember(dto => dto.FeatureDetails, m => m.MapFrom(src => src.FeatureDetails))
                 .ForMember(dto => dto.Restaurants, m => m.Ignore());
             mapperConfiguration.CreateMap<Feature, FeatureDto>()
                 .ForMember(dto => dto.FeatureNameDictionary, m => m.MapFrom(src => src.FeatureTranslations.ToDictionary(translation => translation.Language.ToLower(), translation => translation.FeatureName)))
-                .ForMember(dto => dto.FeatureDetails, m => m.MapFrom(src => src.FeatureDetails.Where(x=>!x.IsDeleted)))
-
+                //.ForMember(dto => dto.FeatureDetails, m => m.MapFrom(src => src.FeatureDetails.Where(x=>!x.IsDeleted)))
+                .ForMember(dto => dto.FeatureControl, m => m.MapFrom(src => src.FeatureControls.Where(x=>x.IsActive).OrderBy(x=>x.Order)))
                 .ForMember(dto => dto.Restaurants, m => m.MapFrom(src => src.Restaurants.Where(x => !x.IsDeleted)));
+
+            mapperConfiguration.CreateMap<FeatureControl, FeatureControlDetailDto>()
+                .ForMember(dto => dto.FeatureDetails,m => m.MapFrom(src => src.FeatureDetails.Where(x => !x.IsDeleted).ToList()));
+
+
+            mapperConfiguration.CreateMap<Feature, FeatureInfoDto>()
+                .ForMember(dto => dto.FeatureNameDictionary, m => m.MapFrom(src => src.FeatureTranslations.ToDictionary(translation => translation.Language.ToLower(), translation => translation.FeatureName)))
+                .ForMember(dto => dto.FeatureControl, m => m.MapFrom(src => src.FeatureControls.Where(x => x.IsActive).OrderBy(x => x.Order)));
 
             mapperConfiguration.CreateMap<Supervisor, SupervisorDto>()
                 .ForMember(dto => dto.Password, m => m.MapFrom(src => PasswordHelper.Decrypt(src.Password)))
@@ -56,23 +66,35 @@ namespace E_Guest.BLL
             mapperConfiguration.CreateMap<Room, RoomDto>()
                 .ForMember(dto => dto.Password, m => m.MapFrom(src => PasswordHelper.Decrypt(src.Password)))
                 .ForMember(dto => dto.RoomName, m => m.MapFrom(src => src.UserName))
-                .ForMember(dto => dto.RoomId, m => m.MapFrom(src => src.UserId));
+                .ForMember(dto => dto.RoomId, m => m.MapFrom(src => src.UserId))
+                .ForMember(dto => dto.BuildingName, m => m.MapFrom(src => src.Building.BuildingName))
+                .ForMember(dto => dto.FloorName, m => m.MapFrom(src => src.Floor.FloorName));
 
             mapperConfiguration.CreateMap<RequestDto, Request>()
                 .ForMember(dto => dto.CreationBy, m => m.MapFrom(src => src.RoomId))
                 .ForMember(dto => dto.ModifiedBy, m => m.Ignore());
             mapperConfiguration.CreateMap<Request, RequestDto>()
-                .ForMember(dto => dto.FeatureNameDictionary, m => m.MapFrom(src => src.Feature.FeatureTranslations.ToDictionary(translation => translation.Language.ToLower(), translation => translation.FeatureName)))
+                .ForMember(dto => dto.FeatureNameDictionary,
+                    m => m.MapFrom(src => src.Feature.FeatureTranslations.ToDictionary(
+                        translation => translation.Language.ToLower(), translation => translation.FeatureName)))
+                .ForMember(dto => dto.RestaurantName,
+                    m => m.MapFrom(src => src.Feature.Type == Enums.FeatureType.Restaurant? src.Restaurant.RestaurantTranslations.ToDictionary(
+                        translation => translation.Language.ToLower(), translation => translation.RestaurantName)
+                        : new Dictionary<string, string>()))
                 .ForMember(dto => dto.RoomName, m => m.MapFrom(src => src.Creater.UserName))
                 .ForMember(dto => dto.RoomId, m => m.MapFrom(src => src.Creater.UserId))
                 .ForMember(dto => dto.CreateTime, m => m.MapFrom(src => src.CreateTime))
                 .ForMember(dto => dto.ModifyTime, m => m.MapFrom(src => src.ModifyTime))
                 .ForMember(dto => dto.Modifier, m => m.MapFrom(src => src.Modifier.UserName))
-                .ForMember(dto => dto.RequestDetails, m => m.MapFrom(src => src.RequestDetails));
+                .ForMember(dto => dto.RequestDetails, m => m.MapFrom(src => src.RequestDetails))
+                .ForMember(dto => dto.Type, m => m.MapFrom(src => src.Feature.Type));
 
 
             mapperConfiguration.CreateMap<RequestDetail, RequestDetailDto>()
-                .ForMember(dto => dto.DescriptionDictionary, m => m.MapFrom(src => src.FeatureDetail.FeatureDetailTranslations.ToDictionary(translation => translation.Language.ToLower(), translation => translation.Description)))
+                .ForMember(dto => dto.DescriptionDictionary,
+                    m => m.MapFrom(src => src.Request.Feature.Type == Enums.FeatureType.Normal? src.FeatureDetail.FeatureDetailTranslations.ToDictionary(
+                        translation => translation.Language.ToLower(), translation => translation.Description)
+                        : src.ItemSize.Item.ItemTranslations.ToDictionary(translation => translation.Language.ToLower(), translation => translation.ItemName)))
                 .ForMember(dto => dto.Price, m => m.MapFrom(src => src.Price));
                 //.ForMember(dto => dto.IsFree, m => m.MapFrom(src => src.FeatureDetail.IsFree));
             mapperConfiguration.CreateMap<RequestDetailDto, RequestDetail>();
@@ -95,6 +117,7 @@ namespace E_Guest.BLL
                     m => m.MapFrom(src => PasswordHelper.Decrypt(src.RestaurantAdmin.Password)))
                 .ForMember(dto => dto.Image,m => m.Ignore())
                // .ForMember(dto => dto.ConsumedWaiters,m => m.MapFrom(src => src.RestaurantWaiters.Count(x=>!x.IsDeleted)))
+                .ForMember(dto => dto.RestaurantTypeNameDictionary, m => m.MapFrom(src => src.RestaurantType.RestaurantTypeTranslations.ToDictionary(translation => translation.Language.ToLower(), translation => translation.TypeName)))
                 .ForMember(dto => dto.RestaurantNameDictionary, m => m.MapFrom(src => src.RestaurantTranslations.ToDictionary(translation => translation.Language.ToLower(), translation => translation.RestaurantName)))
                 .ForMember(dto => dto.RestaurantDescriptionDictionary, m => m.MapFrom(src => src.RestaurantTranslations.ToDictionary(translation => translation.Language.ToLower(), translation => translation.RestaurantDescription)));
             //.ForMember(dto => dto.RestaurantAdminUserName,
@@ -179,6 +202,39 @@ namespace E_Guest.BLL
                 .ForMember(dto => dto.BranchTitleDictionary, m => m.MapFrom(src => src.BranchTranslations.ToDictionary(translation => translation.Language.ToLower(), translation => translation.BranchTitle)))
                 .ForMember(dto => dto.BranchAddressDictionary, m => m.MapFrom(src => src.BranchTranslations.ToDictionary(translation => translation.Language.ToLower(), translation => translation.BranchAddress)));
 
+            mapperConfiguration.CreateMap<FeedBackDto, FeedBack>();
+            mapperConfiguration.CreateMap<FeedBack, FeedBackDto>()
+                .ForMember(dto => dto.RoomName, m => m.MapFrom(src => src.Creater.UserName));
+            
+            mapperConfiguration.CreateMap<BuildingDto, Building>();
+            mapperConfiguration.CreateMap<Building, BuildingDto>();
+
+            mapperConfiguration.CreateMap<FloorDto, Floor>();
+            mapperConfiguration.CreateMap<Floor, FloorDto>();
+
+            mapperConfiguration.CreateMap<FeaturesBackground, FeaturesBackgroundDto>();
+            mapperConfiguration.CreateMap<FeaturesBackgroundDto, FeaturesBackground>();
+
+            mapperConfiguration.CreateMap<Available, AvailableDto>();
+            mapperConfiguration.CreateMap<AvailableDto, Available>();
+            mapperConfiguration.CreateMap<Room, RoomNameDto>()
+                .ForMember(dto => dto.RoomName, m => m.MapFrom(src => src.UserName))
+                .ForMember(dto => dto.RoomId, m => m.MapFrom(src => src.UserId));
+            mapperConfiguration.CreateMap<Feature, FeatureNameDto>()
+                .ForMember(dto => dto.FeatureNameDictionary,
+                    m => m.MapFrom(src => src.FeatureTranslations.ToDictionary(
+                        translation => translation.Language.ToLower(), translation => translation.FeatureName)));
+
+            mapperConfiguration.CreateMap<Request, RequestStatusDto>()
+                .ForMember(dto => dto.RoomName, m => m.MapFrom(src => src.Creater.UserName))
+                .ForMember(dto => dto.RoomId, m => m.MapFrom(src => src.Creater.UserId))
+                .ForMember(dto => dto.CreateTime, m => m.MapFrom(src => src.CreateTime))
+                .ForMember(dto => dto.ModifyTime, m => m.MapFrom(src => src.ModifyTime));
+            //mapperConfiguration.CreateMap<Control, ControlDto>()
+            //    .ForMember(dto => dto.NameDictionary,
+            //        m => m.MapFrom(src => src.ControlTranslations.ToDictionary(
+            //            translation => translation.Language.ToLower(), translation => translation.Name)));
+
             Mapper.Initialize(mapperConfiguration); 
             //Mapper.Initialize(m =>
             //{
@@ -228,7 +284,14 @@ namespace E_Guest.BLL
                 .RegisterType<ITemplateService, TemplateService>(new PerResolveLifetimeManager())
                 .RegisterType<IPageService, PageService>(new PerResolveLifetimeManager())
                 .RegisterType<IBranchService, BranchService>(new PerResolveLifetimeManager())
-                .RegisterType<IBranchTranslationService, BranchTranslationService>(new PerResolveLifetimeManager());
+                .RegisterType<IBranchTranslationService, BranchTranslationService>(new PerResolveLifetimeManager())
+                .RegisterType<IFeedBackService, FeedBackService>(new PerResolveLifetimeManager())
+                .RegisterType<IBuildingService, BuildingService>(new PerResolveLifetimeManager())
+                .RegisterType<IFloorService, FloorService>(new PerResolveLifetimeManager())
+                .RegisterType<IFeaturesBackgroundService, FeaturesBackgroundService>(new PerResolveLifetimeManager())
+                //.RegisterType<IControlService, ControlService>(new PerResolveLifetimeManager())
+                .RegisterType<IFeatureControlService, FeatureControlService>(new PerResolveLifetimeManager())
+                .RegisterType<IAvailableService, AvailableService>(new PerResolveLifetimeManager());
         }
     }
 }

@@ -225,5 +225,23 @@ namespace E_Guest.API.Controllers
             _itemFacade.UpdateItemOrder(Mapper.Map<List<ItemNamesDto>>(itemOrder.ItemNames));
             return Ok();
         }
+
+        [AuthorizeRoles(Enums.RoleType.Room)]
+        [Route("api/Items/{itemId:long}/Like", Name = "LikeItem")]
+        [HttpGet]
+        public IHttpActionResult LikeItem(long itemId)
+        {
+            _itemFacade.LikeItem(itemId);
+            return Ok();
+        }
+
+        [AuthorizeRoles(Enums.RoleType.Room)]
+        [Route("api/Items/{itemId:long}/Dislike", Name = "DislikeItem")]
+        [HttpGet]
+        public IHttpActionResult DislikeItem(long itemId)
+        {
+            _itemFacade.DislikeItem(itemId);
+            return Ok();
+        }
     }
 }

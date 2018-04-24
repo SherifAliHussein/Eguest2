@@ -45,6 +45,16 @@ namespace E_Guest.API.Controllers
             return PagedResponse("GetAllRoom", page, pagesize, rooms.TotalCount, data);
         }
 
+        [AuthorizeRoles(Enums.RoleType.Admin, Enums.RoleType.Supervisor, Enums.RoleType.Receptionist, Enums.RoleType.Waiter)]
+        [Route("api/Rooms/Name", Name = "GetAllRoomNames")]
+        [HttpGet]
+        [ResponseType(typeof(List<RoomNameModel>))]
+        public IHttpActionResult GetAllRoomNames()
+        {
+            List<RoomNameModel> rooms = Mapper.Map<List<RoomNameModel>>(_roomFacade.GetAllRoomNames(UserId, UserRole));
+            return Ok(rooms);
+        }
+
         [AuthorizeRoles(Enums.RoleType.Admin)]
         [Route("api/Rooms/{roomId:long}", Name = "GetRoom")]
         [HttpGet]

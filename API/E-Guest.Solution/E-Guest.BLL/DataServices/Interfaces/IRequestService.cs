@@ -10,8 +10,9 @@ namespace E_Guest.BLL.DataServices.Interfaces
 {
     public interface IRequestService:IService<Request>
     {
-        List<Request> GetAllRequestsByAdmin(long adminId, int page, int pageSize);
-        List<Request> GetAllRequestsBySupervisor(long userId, int page, int pageSize);
-        List<Request> GetAllRequestsByReceptionist(long userId, int page, int pageSize);
+        List<Request> GetAllRequestsByAdmin(long adminId, int page, int pageSize, long roomId, long featureId, DateTime fromDateTime, DateTime toDateTime);
+        List<Request> GetAllRequestsBySupervisor(long userId, int page, int pageSize, long roomId, long featureId, DateTime fromDateTime, DateTime toDateTime);
+        List<Request> GetAllRequestsByReceptionist(long userId, int page, int pageSize, long roomId, long featureId, DateTime fromDateTime, DateTime toDateTime);
+        List<Request> GetAllRequestsByWaiter(long restaurantId, int page, int pageSize, long roomId, DateTime fromDateTime, DateTime toDateTime);
     }
 }

@@ -27,7 +27,7 @@
                     'controller': 'loginController'
                 })
                 .state('menu', {
-                    url: '/restaurant/:restaurantId/menu',
+                    url: '/feature/:featureId/restaurant/:restaurantId/menu',
                     templateUrl: './app/menu/menu.html',
                     controller: 'menuController',
                     'controllerAs': 'menuCtrl',
@@ -40,7 +40,7 @@
 
                 //$locationProvider.html5Mode(true);
                 .state('Items', {
-                    url: '/restaurant/:restaurantId/menu/:menuId/Category/:categoryId/Item',
+                    url: '/feature/:featureId/restaurant/:restaurantId/menu/:menuId/Category/:categoryId/Item',
                     templateUrl: './app/items/Templates/Item.html',
                     controller: 'ItemController',
                     'controllerAs': 'itemCtrl',
@@ -57,7 +57,7 @@
                     }
                 })
                 .state('cart', {
-                    url: '/restaurant/:restaurantId/cart',
+                    url: '/feature/:featureId/restaurant/:restaurantId/cart',
                     templateUrl: './app/cart/cart.html',
                     'controller': 'cartController',
                     'controllerAs': 'cartCtrl',

@@ -13,6 +13,7 @@ namespace E_Guest.DAL.Entities.Model
         {
             SupervisorFeatures = new List<SupervisorFeature>();
             Requests = new List<Request>();
+            FeatureDetail= new List<FeatureDetail>();
         }
         [ForeignKey("Admin")]
         public long AdminId { get; set; }
@@ -23,6 +24,7 @@ namespace E_Guest.DAL.Entities.Model
         //public virtual Feature Feature { get; set; }
         public virtual List<SupervisorFeature> SupervisorFeatures { get; set; }
         public virtual List<Request> Requests { get; set; }
+        public virtual List<FeatureDetail> FeatureDetail { get; set; }
 
     }
 }

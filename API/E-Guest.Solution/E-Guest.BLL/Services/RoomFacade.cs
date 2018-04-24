@@ -26,7 +26,8 @@ namespace E_Guest.BLL.Services
         private IPackageService _packageService;
         private ISupervisorService _supervisorService;
         private IReceptionistService _receptionistService;
-        public RoomFacade(IUnitOfWorkAsync unitOFWork, IRoomService roomService, IUserService userService, IAdminService adminService, IPackageService packageService, ISupervisorService supervisorService, IReceptionistService receptionistService) : base(unitOFWork)
+        private IRestaurantWaiterService _restaurantWaiterService;
+        public RoomFacade(IUnitOfWorkAsync unitOFWork, IRoomService roomService, IUserService userService, IAdminService adminService, IPackageService packageService, ISupervisorService supervisorService, IReceptionistService receptionistService, IRestaurantWaiterService restaurantWaiterService) : base(unitOFWork)
         {
             _roomService = roomService;
             _userService = userService;
@@ -34,6 +35,7 @@ namespace E_Guest.BLL.Services
             _packageService = packageService;
             _supervisorService = supervisorService;
             _receptionistService = receptionistService;
+            _restaurantWaiterService = restaurantWaiterService;
         }
 
         public PagedResultsDto GetAllRoom(long adminId, int page, int pageSize)
@@ -47,7 +49,30 @@ namespace E_Guest.BLL.Services
             };
             return results;
         }
-
+        public List<RoomNameDto> GetAllRoomNames(long userId, string role)
+        {
+            List<RoomNameDto> rooms = null;
+            if (role == Enums.RoleType.Admin.ToString())
+            {
+                rooms = Mapper.Map<List<RoomNameDto>>(_roomService.Query(x => !x.IsDeleted && x.AdminId == userId).Select().ToList());
+            }
+            else if (role == Enums.RoleType.Supervisor.ToString())
+            {
+                var adminId = _supervisorService.Find(userId).AdminId;
+                rooms = Mapper.Map<List<RoomNameDto>>(_roomService.Query(x => !x.IsDeleted && x.AdminId == adminId).Select().ToList());
+            }
+            else if (role == Enums.RoleType.Receptionist.ToString())
+            {
+                var adminId = _receptionistService.Find(userId).AdminId;
+                rooms = Mapper.Map<List<RoomNameDto>>(_roomService.Query(x => !x.IsDeleted && x.AdminId == adminId).Select().ToList());
+            }
+            else if (role == Enums.RoleType.Waiter.ToString())
+            {
+                var waiter = _restaurantWaiterService.Find(userId);
+                rooms = Mapper.Map<List<RoomNameDto>>(_roomService.Query(x => !x.IsDeleted && x.AdminId == waiter.Branch.Restaurant.AdminId).Select().ToList());
+            }
+            return rooms;
+        }
         public RoomDto GetRoom(long roomId)
         {
             var room = _roomService.Find(roomId);
@@ -91,7 +116,9 @@ namespace E_Guest.BLL.Services
 
             _roomService.Insert(room);
             SaveChanges();
-            UpdateSubscription(adminId, package.PackageGuid, package.Rooms.Count(x => !x.IsDeleted));
+
+            //UpdateSubscription(adminId, package.PackageGuid, package.Rooms.Count(x => !x.IsDeleted));
+            UpdateSubscription(adminId, package.PackageGuid, _roomService.GetRoomCountByPackageId(package.PackageId));
 
         }
         public void UpdateRoom(RoomDto roomDto, long adminId)
@@ -101,6 +128,8 @@ namespace E_Guest.BLL.Services
 
             ValidateRoom(roomDto, adminId);
             room.UserName = roomDto.RoomName;
+            room.BuildingId = roomDto.BuildingId;
+            room.FloorId = roomDto.FloorId;
             room.Password = PasswordHelper.Encrypt(roomDto.Password);
             _roomService.Update(room);
             SaveChanges();
@@ -131,8 +160,9 @@ namespace E_Guest.BLL.Services
             _roomService.Update(room);
             SaveChanges();
             var package = _packageService.Query(x => x.PackageId == room.PackageId).Include(x => x.Rooms)
-                .Select().FirstOrDefault();
-            UpdateSubscription(package.AdminId, package.PackageGuid, package.Rooms.Count(x => !x.IsDeleted));
+                .Select().FirstOrDefault(); 
+            //UpdateSubscription(package.AdminId, package.PackageGuid, package.Rooms.Count(x => !x.IsDeleted));
+            UpdateSubscription(package.AdminId, package.PackageGuid, _roomService.GetRoomCountByPackageId(package.PackageId));
 
         }
 
@@ -162,7 +192,7 @@ namespace E_Guest.BLL.Services
                 userConsumer = consumed,
                 userAccountId = admin.UserAccountId,
                 backageGuid = packageGuid,
-                productId = admin.ProductId
+                //productId = admin.ProductId
             });
             //request.ContentLength = serializer.Length;
             using (var streamWriter = new StreamWriter(request.GetRequestStream()))

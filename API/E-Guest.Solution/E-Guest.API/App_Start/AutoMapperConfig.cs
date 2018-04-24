@@ -33,11 +33,15 @@ namespace E_Guest.API.App_Start
             mapperConfiguration.CreateMap<FeatureDetailModel, FeatureDetailDto>();
             mapperConfiguration.CreateMap<FeatureDetailDto, FeatureDetailModel>();
 
+            mapperConfiguration.CreateMap<FeatureInfoDto, FeatureInfoModel>();
+            
 
             mapperConfiguration.CreateMap<RequestModel, RequestDto>()
-                .ForMember(dto => dto.Status, m => m.MapFrom(src => Enum.Parse(typeof(Enums.RoleType),src.Status)));
+                .ForMember(dto => dto.Status, m => m.MapFrom(src => Enum.Parse(typeof(Enums.RoleType),src.Status)))
+                .ForMember(dto => dto.Type, m => m.MapFrom(src => Enum.Parse(typeof(Enums.RoleType), src.Type)));
             mapperConfiguration.CreateMap<RequestDto, RequestModel>()
-                .ForMember(dto => dto.Status, m => m.MapFrom(src => src.Status.ToString()));
+                .ForMember(dto => dto.Status, m => m.MapFrom(src => src.Status.ToString()))
+                .ForMember(dto => dto.Type, m => m.MapFrom(src => src.Type.ToString()));
 
 
 
@@ -91,6 +95,24 @@ namespace E_Guest.API.App_Start
 
             mapperConfiguration.CreateMap<BranchModel, BranchDto>();
             mapperConfiguration.CreateMap<BranchDto, BranchModel>();
+
+            mapperConfiguration.CreateMap<FeedBackModel, FeedBackDto>();
+            mapperConfiguration.CreateMap<FeedBackDto, FeedBackModel>();
+
+            mapperConfiguration.CreateMap<FeaturesBackgroundModel, FeaturesBackgroundDto>();
+            mapperConfiguration.CreateMap<FeaturesBackgroundDto, FeaturesBackgroundModel>();
+
+
+            mapperConfiguration.CreateMap<ControlModel, ControlDto>();
+            mapperConfiguration.CreateMap<ControlDto, ControlModel>();
+
+            mapperConfiguration.CreateMap<FeatureControlModel, FeatureControlDto>()
+                .ForMember(dto => dto.ControlType,m => m.MapFrom(src => Enum.Parse(typeof(Enums.ControlType), src.ControlType)));
+            mapperConfiguration.CreateMap<FeatureControlDto, FeatureControlModel>()
+                .ForMember(dto => dto.ControlType, m => m.MapFrom(src => src.ControlType.ToString()));
+
+            mapperConfiguration.CreateMap<RequestStatusDto, RequestStatusModel>()
+               .ForMember(dto => dto.Status, m => m.MapFrom(src => src.Status.ToString()));
 
             EGuestBLLConfig.RegisterMappings(mapperConfiguration);
 

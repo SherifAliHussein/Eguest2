@@ -248,6 +248,23 @@ namespace E_Guest.BLL.Services
             SaveChanges();
         }
 
+        public void LikeItem(long itemId)
+        {
+            var item = _itemService.Find(itemId);
+            if (item == null) throw new NotFoundException(ErrorCodes.MenuNotFound);
+            item.Like = item.Like + 1;
+            _itemService.Update(item);
+            SaveChanges();
+        }
+
+        public void DislikeItem(long itemId)
+        {
+            var item = _itemService.Find(itemId);
+            if (item == null) throw new NotFoundException(ErrorCodes.MenuNotFound);
+            item.Dislike = item.Dislike + 1;
+            _itemService.Update(item);
+            SaveChanges();
+        }
         private void CheckMenuHasCategoryActivated(Item item)
         {
             var menuHasCategoryActivated = item.Category.Menu.Categories.Any(x => x.IsActive);

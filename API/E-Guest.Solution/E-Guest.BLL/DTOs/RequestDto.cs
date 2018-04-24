@@ -19,6 +19,13 @@ namespace E_Guest.BLL.DTOs
         public long FeatureId { get; set; }
         public Dictionary<string, string> FeatureNameDictionary { get; set; }
         public Enums.RequestStatus Status { get; set; }
+        public Enums.FeatureType Type { get; set; }
+
+        public long? RestaurantId { get; set; }
+
+        public Dictionary<string, string> RestaurantName { get; set; }
         public List<RequestDetailDto> RequestDetails { get; set; }
+        public string Comment { get; set; }
+        public DateTime? RequestTime { get; set; }
     }
 }

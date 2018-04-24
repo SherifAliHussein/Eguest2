@@ -1,4 +1,4 @@
-using E_Guest.Common;
+﻿using E_Guest.Common;
 using E_Guest.DAL.Entities.Model;
 
 namespace E_Guest.DAL.Migrations
@@ -26,6 +26,27 @@ namespace E_Guest.DAL.Migrations
             //    Role = Enums.RoleType.Admin
             //});
             //  This method will be called after migrating to the latest version.
+
+            //context.FeaturesBackgrounds.Add(new FeaturesBackground
+            //{
+            //    FeaturesBackgroundId = 1
+            //});
+            //context.FeaturesBackgrounds.Add(new FeaturesBackground
+            //{
+            //    FeaturesBackgroundId = 2
+            //});
+            //context.FeaturesBackgrounds.Add(new FeaturesBackground
+            //{
+            //    FeaturesBackgroundId = 3
+            //});
+            //context.FeaturesBackgrounds.Add(new FeaturesBackground
+            //{
+            //    FeaturesBackgroundId = 4
+            //});
+            //context.FeaturesBackgrounds.Add(new FeaturesBackground
+            //{
+            //    FeaturesBackgroundId = 5
+            //});
 
 
             //context.Backgrounds.Add(new Background
@@ -152,6 +173,17 @@ namespace E_Guest.DAL.Migrations
             //{
             //    Id = 4,
             //    ItemCount = 5
+            //});
+
+            //context.Templates.Add(new Template
+            //{
+            //    Id = 5,
+            //    ItemCount = 1
+            //});
+            //context.Templates.Add(new Template
+            //{
+            //    Id = 6,
+            //    ItemCount = 10
             //});
 
             //  You can use the DbSet<T>.AddOrUpdate() helper extension method 

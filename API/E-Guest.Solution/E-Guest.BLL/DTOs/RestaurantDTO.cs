@@ -23,6 +23,8 @@ namespace E_Guest.BLL.DTOs
         public long RestaurantTypeId { get; set; }
         public HttpPostedFile Logo { get; set; }
         public string RestaurantTypeName { get; set; }
+        public Dictionary<string, string> RestaurantTypeNameDictionary { get; set; }
+
         public bool IsActive { get; set; }
         public MemoryStream Image { get; set; }
         public bool IsLogoChange { get; set; }

@@ -14,6 +14,12 @@
       'ngProgressLite',
     'ui.bootstrap',
     'pascalprecht.translate',
-    'checklist-model'
+    'checklist-model',
+    'jkAngularRatingStars',
+    'ui.carousel',
+    'ui.bootstrap.datetimepicker',
+    'ngScrollbars',
+    'ngSanitize',
+    'ui.select',
     ]);
 }());

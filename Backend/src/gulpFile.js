@@ -68,14 +68,16 @@ var runSequence = require('run-sequence').use(gulp);
     //'./node_modules/angular-material/angular-material.js',
     './node_modules/propellerkit/dist/js/propeller.min.js',
 	'./node_modules/propellerkit/dist/js/bootstrap.min.js',
+  './node_modules/moment/moment.js',
+  './node_modules/propellerkit-datetimepicker/js/bootstrap-datetimepicker.js',
 	'./node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js',
     './node_modules/angular-paging/dist/paging.js',
      './node_modules/ngprogress-lite/ngprogress-lite.min.js',
      './node_modules/angular-translate/dist/angular-translate.min.js',
      './node_modules/angular-ui-event/dist/event.min.js',
-    //  './assets/js/angular.ui-sortable.js',
+     './assets/js/angular.ui-sortable.js',
      './node_modules/select2/dist/js/select2.full.min.js',
-    //  './assets/js/angular.ui-sortable.js',
+     './assets/js/angular.ui-sortable.js',
   ],
 //  sass: {
 //    main: './src/assets/scss/app.scss',
@@ -95,7 +97,10 @@ var runSequence = require('run-sequence').use(gulp);
     './node_modules/select2-bootstrap-theme/dist/select2-bootstrap.min.css',
     './assets/css/*.css',
     './node_modules/ngprogress-lite/ngprogress-lite.css',
-    './node_modules/nvd3/build/nv.d3.min.css'
+    './node_modules/nvd3/build/nv.d3.min.css',
+    './node_modules/propellerkit-datetimepicker/css/bootstrap-datetimepicker.css',
+    './node_modules/propellerkit-datetimepicker/css/pmd-datetimepicker.css',
+    
   ],
   templates: [
     './app/**/*.html'

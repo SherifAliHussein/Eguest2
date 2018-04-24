@@ -29,5 +29,34 @@ namespace E_Guest.Common
             Normal,
             Restaurant
         }
+
+        public enum Control
+        {
+            ListOfText,
+            ListOfImage,
+            ListOfTextAndImage,
+            Videos,
+            Available,
+            Time,
+            ListOfAvailable,
+        }
+        
+        public enum ControlType
+        {
+            None,
+            Single,
+            Multiple
+        }
+
+        public enum Day
+        {
+            Sunday,
+            Monday,
+            Tuesday,
+            Wednesday,
+            Thursday,
+            Friday,
+            Saturday
+        }
     }
 }

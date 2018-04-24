@@ -14,7 +14,13 @@
       'ngProgressLite',
     'ui.bootstrap',
     'pascalprecht.translate',
-    'checklist-model'
+    'checklist-model',
+    'jkAngularRatingStars',
+    'ui.carousel',
+    'ui.bootstrap.datetimepicker',
+    'ngScrollbars',
+    'ngSanitize',
+    'ui.select',
     ]);
 }());
 ;(function() {
@@ -27,7 +33,7 @@
     this.cartIcon = true;
   })  
 .service('totalCartService', function() {
-    this.homeTotalNo = this.homeTotalNo;
+    this.homeTotalNo;
   });
   ;
   
@@ -48,8 +54,8 @@
 	angular
 		.module('core')
 		.constant('appCONSTANTS', {
-			'API_URL': 'http://localhost:36402/api/',
-			// 'API_URL': 'http://eguestbackend.azurewebsites.net/api/',
+			// 'API_URL': 'http://localhost:36402/api/',
+			'API_URL': 'http://eguestbackend-v2.azurewebsites.net/api/',
 			'defaultLanguage':'en'
 		})
 		.constant('messageTypeEnum', {
@@ -88,7 +94,7 @@
                     'controller': 'loginController'
                 })
                 .state('menu', {
-                    url: '/restaurant/:restaurantId/menu',
+                    url: '/feature/:featureId/restaurant/:restaurantId/menu',
                     templateUrl: './app/menu/menu.html',
                     controller: 'menuController',
                     'controllerAs': 'menuCtrl',
@@ -101,7 +107,7 @@
 
                 //$locationProvider.html5Mode(true);
                 .state('Items', {
-                    url: '/restaurant/:restaurantId/menu/:menuId/Category/:categoryId/Item',
+                    url: '/feature/:featureId/restaurant/:restaurantId/menu/:menuId/Category/:categoryId/Item',
                     templateUrl: './app/items/Templates/Item.html',
                     controller: 'ItemController',
                     'controllerAs': 'itemCtrl',
@@ -118,7 +124,7 @@
                     }
                 })
                 .state('cart', {
-                    url: '/restaurant/:restaurantId/cart',
+                    url: '/feature/:featureId/restaurant/:restaurantId/cart',
                     templateUrl: './app/cart/cart.html',
                     'controller': 'cartController',
                     'controllerAs': 'cartCtrl',
@@ -297,7 +303,22 @@
             "requestConfirmationLbl":"Are you sure you want request ",
             "ApproveBtn":"Approve",
             "RequestSuccess":"Request successfuly",
-            "BackToFeatures":"Back to features page"
+            "BackToFeatures":"Back to features page",
+            "feedbackbtn":"FeedBack",
+            "Guest":"Guest",
+            "yourComment":"Write your comment",
+            "SumbitReviewBtn":"Submit review",
+            "morereviewsbtn":"View more reviews",
+            "optinal":"optional",
+            "requestbtn":"Request",
+            "SelectMulti":"Select at least one",
+            "SelectSingle":"Select one",
+            "from":"From",
+            "to":"To",
+            "Pending":"Pending",
+            "Approved":"Approved on",
+            "Rejected":"Rejected on",
+            "lastrequestStatus":"last request create on"
             
         }
         
@@ -439,15 +460,30 @@
             "requestConfirmationLbl":"هل انت متأكد انك تريد طلب ",
             "ApproveBtn":"وافق",
             "RequestSuccess":"تم الطلب بنجاح",
-            "BackToFeatures":"رجوع الي صفحة الخدمات"
+            "BackToFeatures":"رجوع الي صفحة الخدمات",
+            "feedbackbtn":"تقييمات",
+            "Guest":"زائر",
+            "yourComment":"تعليقك",
+            "SumbitReviewBtn":"أضف تقييمك",
+            "morereviewsbtn":"مزيد من التقييمات",
+            "optinal":"اختاري",
+            "requestbtn":"طلب",
+            "SelectMulti":"اختار علي الاقل واحده",
+            "SelectSingle":"اختار واحده",
+            "from":"من",
+            "to":"الي" ,
+            "Pending":"قيد الانتظار",
+            "Approved":"وافق في",
+            "Rejected":"رفض في",
+            "lastrequestStatus":"اخر طلب في "
         }
         
         $translateProvider.translations('en-us',en_translations);
         
         $translateProvider.translations('ar-eg',ar_translations);
-        
         $translateProvider.preferredLanguage(appCONSTANTS.defaultLanguage);
         
+        // $translateProvider.useSanitizeValueStrategy('sanitize');
         }]);
 
 }());
@@ -563,10 +599,10 @@
 
     angular
         .module('home')
-        .controller('homeCtrl', ['$rootScope', '$translate', '$scope', 'HomeResource', 'ResturantResource', 'appCONSTANTS', '$state', '_', 'authenticationService', 'authorizationService', '$localStorage', 'userRolesEnum', 'ToastService', 'CartIconService', 'totalCartService','$location', '$window' , '$timeout', homeCtrl])
+        .controller('homeCtrl', ['$rootScope', '$translate', '$scope', 'HomeResource', 'ResturantResource', 'appCONSTANTS', '$state', '_', 'authenticationService', 'authorizationService', '$localStorage', 'userRolesEnum', 'ToastService', 'CartIconService', 'totalCartService','$location', '$window' , '$timeout','FeedBackResource','$stateParams', '$filter', homeCtrl])
 
 
-    function homeCtrl($rootScope, $translate, $scope, HomeResource, ResturantResource, appCONSTANTS, $state, _, authenticationService, authorizationService, $localStorage, userRolesEnum, ToastService,CartIconService,  totalCartService,$location,$window ,$timeout) {
+    function homeCtrl($rootScope, $translate, $scope, HomeResource, ResturantResource, appCONSTANTS, $state, _, authenticationService, authorizationService, $localStorage, userRolesEnum, ToastService,CartIconService,  totalCartService,$location,$window ,$timeout,FeedBackResource,$stateParams,$filter) {
         // Event listener for state change.
         // if ($location.protocol() !== 'https') {
         //     $window.location.href = $location.absUrl().replace('http', 'https');
@@ -584,7 +620,6 @@
    
 
         var storedNames = JSON.parse(localStorage.getItem("checkOut"));
-        debugger
         vm.cart = storedNames;
         if (vm.cart != null) {
             for (var i = 0; i < vm.cart.length; i++) {
@@ -595,6 +630,7 @@
                 $scope.homeTotalNo = vm.total; 
             }  
         }
+        totalCartService.homeTotalNo =  vm.total;
         // $scope.$watch(function () { return Data.getFirstName(); }, function (newValue, oldValue) {
         //     if (newValue !== oldValue)
         //     {
@@ -792,7 +828,7 @@
             return authorizationService.isLoggedIn();
         }
         $scope.isRestaurantPage = function () {
-            var ff = $state.current.name!='Features';
+            var ff = $state.current.name!='Features' && $state.current.name!='featureDetail';
             return ff;
         }
         $scope.changeLanguage = function (language) {
@@ -810,8 +846,64 @@
             if($state.current.name == "Items")
                 $state.reload();
         }
+        $scope.rate = 0;
+        $scope.createBy = "";
+        $scope.comment = "";
+        $scope.feedbacks= [] ;
+        $scope.page = 1;
+        $scope.getAllComments = function(){
+            $scope.rate = 0;
+            $scope.createBy = "";
+            $scope.comment = "";
+            $scope.page = 1;               
+            ResturantResource.getResturantGlobalInfo({ restaurantId: $stateParams.restaurantId}).$promise.then(function (results) {
+                $scope.globalInfo = results
+            });
 
-        alert($scope.homeTotalNo)
+           
+            FeedBackResource.getAllFeedBack({ restaurantId: $stateParams.restaurantId,pagesize:4}).$promise.then(function (results) {
+                $scope.feedbacks = results;
+                
+                $scope.feedbacks.results.forEach(function(element) {
+                    element.createTime = element.createTime+"z"
+                    element.createTime = $filter('date')(new Date(element.createTime), "dd/MM/yyyy hh:mm a");
+                    
+                }, this);
+            },
+            function (data, status) {
+
+             });
+                
+        }
+        $scope.getMoreComments = function(){
+            $scope.page ++;
+            FeedBackResource.getAllFeedBack({ restaurantId: $stateParams.restaurantId,page:$scope.page,pagesize:4}).$promise.then(function (results) {
+                
+                results.results.forEach(function(element) {
+                    element.createTime = element.createTime+"z"
+                    element.createTime = $filter('date')(new Date(element.createTime), "dd/MM/yyyy hh:mm a");
+                    
+                }, this);
+                $scope.feedbacks.results = $scope.feedbacks.results.concat(results.results);
+                $scope.feedbacks.nextPageURL = results.nextPageURL;
+            },
+            function (data, status) {
+                // $scope.feedbacks.results = $scope.feedbacks.results.concat(results.results);
+                // $scope.feedbacks.nextPageURL = results.nextPageURL;
+                });
+            
+        }
+        $scope.applyComment = function(rate,createBy,comment)
+        {
+            var newComment = new FeedBackResource();
+            newComment.rate = rate;
+            newComment.createBy = createBy;
+            newComment.comment = comment;
+            newComment.restaurantId= $stateParams.restaurantId;
+            newComment.createTime = (new Date()).toISOString();
+            newComment.$createFeedBack();
+           
+        }
         
     }
 }

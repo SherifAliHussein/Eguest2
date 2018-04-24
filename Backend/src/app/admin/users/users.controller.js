@@ -75,7 +75,7 @@
 				controller: 'editReceptionistDialogController',
 				controllerAs: 'editReceptionistDlCtrl',
 				resolve:{
-					Receptionist:function(){ return vm.receptionists.results[index]},
+					Receptionist:function(){ return angular.copy(vm.receptionists.results[index])},
 					callBackFunction:function(){return refreshReceptionists;}
 				}
 				
@@ -171,7 +171,7 @@
                     controller: 'editSupervisorDialogController',
                     controllerAs: 'editSupervisorDlCtrl',
                     resolve:{
-                        Supervisor:function(){ return vm.supervisors.results[index]},
+                        Supervisor:function(){ return angular.copy(vm.supervisors.results[index])},
                         features:function(){ return results},                        
                         callBackFunction:function(){return refreshSupervisors;},
                         selectedLanguage:function(){return $scope.selectedLanguage;}

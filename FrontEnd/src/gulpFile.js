@@ -67,16 +67,26 @@ var runSequence = require('run-sequence').use(gulp);
     './node_modules/angular-messages/angular-messages.js',
     './node_modules/angular-aria/angular-aria.js',
     './node_modules/ngstorage/ngStorage.js',
-    //'./node_modules/angular-material/angular-material.js',
-    './node_modules/propellerkit/dist/js/propeller.min.js',
+    './node_modules/angular-sanitize/angular-sanitize.min.js',
+    // './node_modules/propellerkit/dist/js/propeller.js',
+    // './node_modules/bootstrap-ui-datetime-picker/dist/datetime-picker.min.js',
+    './node_modules/moment/moment.js',
+    './node_modules/angularjs-bootstrap-datetimepicker/src/js/datetimepicker.js',
+    './node_modules/angularjs-bootstrap-datetimepicker/src/js/datetimepicker.templates.js',
 	'./node_modules/propellerkit/dist/js/bootstrap.min.js',
 	'./node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js',
     './node_modules/angular-paging/dist/paging.js',
      './node_modules/ngprogress-lite/ngprogress-lite.min.js',
      './node_modules/angular-translate/dist/angular-translate.min.js',
      './node_modules/angular-ui-event/dist/event.min.js',
-     './node_modules/select2/dist/js/select2.full.min.js', 
+    //  './node_modules/select2/dist/js/select2.full.min.js', 
      './assets/js/*.js',
+     './node_modules/angular-jk-rating-stars/dist/jk-rating-stars.min.js', 
+     './node_modules/angular-ui-carousel/dist/ui-carousel.min.js', 
+     './node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js', 
+     './node_modules/ng-scrollbars/dist/scrollbars.min.js', 
+     './node_modules/ui-select/dist/select.js'
+     
   
   ],
 //  sass: {
@@ -93,29 +103,39 @@ var runSequence = require('run-sequence').use(gulp);
     //'./node_modules/angular-material/angular-material.css',
 	  './node_modules/propellerkit/dist/css/bootstrap.min.css',
     './node_modules/propellerkit/dist/css/propeller.min.css',
-    './node_modules/select2/dist/css/select2.min.css',
-    './node_modules/select2-bootstrap-theme/dist/select2-bootstrap.min.css',
+    // './node_modules/select2/dist/css/select2.min.css',
+    // './node_modules/select2-bootstrap-theme/dist/select2-bootstrap.min.css',
     './node_modules/ngprogress-lite/ngprogress-lite.css',
     './node_modules/nvd3/build/nv.d3.min.css',
     './assets/css/jquery_te.css', 
     './assets/css/bootstrap.min.css', 
     './assets/css/lity.css', 
     './assets/css/style.css', 
-    
+    './node_modules/angular-jk-rating-stars/dist/jk-rating-stars.min.css', 
+    './node_modules/angular-ui-carousel/dist/ui-carousel.min.css', 
+    './node_modules/angularjs-bootstrap-datetimepicker/src/css/datetimepicker.css',
+    './node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css',
+    './node_modules/ui-select/dist/select.min.css'
+
   ],
   
   cssAR: [
     //'./node_modules/angular-material/angular-material.css',
 	  './node_modules/propellerkit/dist/css/bootstrap.min.css',
     './node_modules/propellerkit/dist/css/propeller.min.css',
-    './node_modules/select2/dist/css/select2.min.css',
-    './node_modules/select2-bootstrap-theme/dist/select2-bootstrap.min.css',
+    // './node_modules/select2/dist/css/select2.min.css',
+    // './node_modules/select2-bootstrap-theme/dist/select2-bootstrap.min.css',
     './node_modules/ngprogress-lite/ngprogress-lite.css',
     './node_modules/nvd3/build/nv.d3.min.css',
     './assets/css/jquery_te.css', 
     './assets/css/bootstrap.min.css', 
     './assets/css/lity-ar.css', 
     './assets/css/style-ar.css', 
+    './node_modules/angular-jk-rating-stars/dist/jk-rating-stars.min.css', 
+    './node_modules/angular-ui-carousel/dist/ui-carousel.min.css', 
+    './node_modules/angularjs-bootstrap-datetimepicker/src/css/datetimepicker.css',
+    './node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css',
+    './node_modules/ui-select/dist/select.min.css'
     
   ],
   templates: [
@@ -126,9 +146,7 @@ var runSequence = require('run-sequence').use(gulp);
   build: 'dist',
   temp: '.tmp',
   docs: '.documentation',
-  serviceWorker:[
-    './app/core/service-worker.js',    
-  ],
+ 
   turnJsEN:[
     './assets/turnJS/turn.min.js',    
   ],
@@ -155,13 +173,13 @@ var runSequence = require('run-sequence').use(gulp);
 //});
 
 //service worker js
-gulp.task('copy-serviceWorker', function() {
-  gulp.src(paths.serviceWorker)
- .pipe(concat('serviceWorker.js', {newLine: ''}))
- //.pipe(uglify())
- .pipe(strip())
- .pipe(gulp.dest(paths.build + '/'));
-});
+// gulp.task('copy-serviceWorker', function() {
+//   gulp.src(paths.serviceWorker)
+//  .pipe(concat('serviceWorker.js', {newLine: ''}))
+//  //.pipe(uglify())
+//  .pipe(strip())
+//  .pipe(gulp.dest(paths.build + '/'));
+// });
 
 gulp.task('copy-turnJsEN', function() {
   gulp.src(paths.turnJsEN)
@@ -292,7 +310,7 @@ gulp.task('serve', function() {
 });
 
 // copy task
-gulp.task('copy', ['css','cssAr','copy-libs','copy-core','copy-app','copy-templates','copy-index','images','svgs','fonts','copy-serviceWorker','copy-turnJsEN','copy-tunrJsAr']);
+gulp.task('copy', ['css','cssAr','copy-libs','copy-core','copy-app','copy-templates','copy-index','images','svgs','fonts','copy-turnJsEN','copy-tunrJsAr']);
 
 //clean build
 gulp.task('clean-build', function(cb) {

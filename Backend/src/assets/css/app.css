@@ -67,3 +67,8 @@
 .ngProgressLite .ngProgressLiteBarShadow {
     box-shadow: 0 0 10px #ff5f5f, 0 0 5px #ff5f5f !important;
 }
+.red-text {
+	
+	color: white;
+background-color: #4285f4 !important;
+}

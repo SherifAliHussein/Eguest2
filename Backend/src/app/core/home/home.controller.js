@@ -83,15 +83,19 @@
                 $state.go('features');
 
             } 
-            else if ($scope.user.role == "Room") {
-                $state.go('clientFeatures');
+            // else if ($scope.user.role == "Room") {
+            //     $state.go('clientFeatures');
 
-            }
+            // }
             else if ($scope.user.role == "Supervisor") {
                 $state.go('adminRequests');
 
             } 
             else if ($scope.user.role == "Receptionist") {
+                $state.go('adminRequests');
+
+            } 
+            else if ($scope.user.role == "Waiter") {
                 $state.go('adminRequests');
 
             }  else if ($scope.user.role  == "RestaurantAdmin") {

@@ -15,14 +15,15 @@ namespace E_Guest.DAL.Entities.Model
         {
             SupervisorFeatures = new List<SupervisorFeature>();
             FeatureTranslations = new List<FeatureTranslation>();
-            FeatureDetails = new List<FeatureDetail>();
+            //FeatureDetails = new List<FeatureDetail>();
             Requests = new List<Request>();
             Restaurants = new List<Restaurant>();
+            FeatureControls = new List<FeatureControl>();
         }
         public long FeatureId { get; set; }
         public virtual List<SupervisorFeature> SupervisorFeatures { get; set; }
         public virtual List<FeatureTranslation> FeatureTranslations { get; set; }
-        public virtual List<FeatureDetail> FeatureDetails { get; set; }
+        //public virtual List<FeatureDetail> FeatureDetails { get; set; }
         public virtual List<Restaurant> Restaurants { get; set; }
         public virtual List<Request> Requests { get; set; }
 
@@ -47,9 +48,9 @@ namespace E_Guest.DAL.Entities.Model
         public DateTime DeleteTime { get; set; }
         public bool IsDeleted { get; set; }
         public bool IsActive { get; set; }
-        public bool HasDetails { get; set; }
+        //public bool HasDetails { get; set; }
         public Enums.FeatureType Type { get; set; }
-
+        public virtual List<FeatureControl> FeatureControls { get; set; }
     }
 
 }

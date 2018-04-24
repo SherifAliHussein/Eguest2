@@ -24,7 +24,7 @@ namespace E_Guest.DAL.Entities.Model
 
         [ForeignKey("Modifier")]
         public long? ModifiedBy { get; set; }
-        public virtual Supervisor Modifier { get; set; }
+        public virtual User Modifier { get; set; }
         [Column(TypeName = "datetime2")]
         public DateTime ModifyTime { get; set; }
 
@@ -32,8 +32,13 @@ namespace E_Guest.DAL.Entities.Model
         public long FeatureId { get; set; }
         public virtual Feature Feature { get; set; }
 
+        [ForeignKey("Restaurant")]
+        public long? RestaurantId { get; set; }
+        public virtual Restaurant Restaurant { get; set; }
         public Enums.RequestStatus Status { get; set; }
         public virtual List<RequestDetail> RequestDetails { get; set; }
-
+        public string Comment { get; set; }
+        [Column(TypeName = "datetime2")]
+        public DateTime? RequestTime { get; set; }
     }
 }

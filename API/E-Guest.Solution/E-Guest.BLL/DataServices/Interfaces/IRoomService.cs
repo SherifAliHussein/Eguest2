@@ -12,5 +12,6 @@ namespace E_Guest.BLL.DataServices.Interfaces
     {
         List<Room> GetAllRooms(long adminId, int page, int pageSize);
         bool CheckUserNameDuplicated(string userName, long userId, long adminId);
+        int GetRoomCountByPackageId(long packageId);
     }
 }
