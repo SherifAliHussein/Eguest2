@@ -15,5 +15,6 @@
     'ui.bootstrap',
     'pascalprecht.translate',
     'ui.sortable',
+    'ngSanitize', 'ngCsv'
     ]);
 }());

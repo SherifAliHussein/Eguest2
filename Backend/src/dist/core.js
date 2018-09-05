@@ -15,6 +15,7 @@
     'ui.bootstrap',
     'pascalprecht.translate',
     'ui.sortable',
+    'ngSanitize', 'ngCsv'
     ]);
 }());
 ;(function() {
@@ -55,7 +56,7 @@
 		.module('core')
 		.constant('appCONSTANTS', {
 			//  'API_URL': 'http://localhost:36402/api/',
-			'API_URL': 'http://eguestbackend-v2.azurewebsites.net/api/',			
+			'API_URL': 'http://eguestbackend-v2-testing.azurewebsites.net/api/',			
 			'defaultLanguage':'en-us',
 			'supportedLanguage':{
 				'en-us':{'key':'en-us','value':'english'},
@@ -486,7 +487,10 @@ angular.module('core')
             "From":"From",
             "To":"To",
             "EditBtn":"Edit",
-            "applyFilterBtn":"apply filter"
+            "applyFilterBtn":"apply filter",
+            "Reports":"Reports",
+            "ExportCsvBtn":"Export to csv",
+            "downloadBtn":"download"
         }
         
         var ar_translations = {
@@ -826,7 +830,10 @@ angular.module('core')
             "From":"من",
             "To":"الي",
             "EditBtn":"تحديث",
-            "applyFilterBtn":"تطبيق التصفية"
+            "applyFilterBtn":"تطبيق التصفية",
+            "Reports":"تقارير",
+            "ExportCsvBtn":"csv تصدير الى",
+            "downloadBtn":"تحميل"
         }
         
         $translateProvider.translations('en-us',en_translations);

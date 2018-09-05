@@ -333,7 +333,10 @@
             "From":"From",
             "To":"To",
             "EditBtn":"Edit",
-            "applyFilterBtn":"apply filter"
+            "applyFilterBtn":"apply filter",
+            "Reports":"Reports",
+            "ExportCsvBtn":"Export to csv",
+            "downloadBtn":"download"
         }
         
         var ar_translations = {
@@ -673,7 +676,10 @@
             "From":"من",
             "To":"الي",
             "EditBtn":"تحديث",
-            "applyFilterBtn":"تطبيق التصفية"
+            "applyFilterBtn":"تطبيق التصفية",
+            "Reports":"تقارير",
+            "ExportCsvBtn":"csv تصدير الى",
+            "downloadBtn":"تحميل"
         }
         
         $translateProvider.translations('en-us',en_translations);

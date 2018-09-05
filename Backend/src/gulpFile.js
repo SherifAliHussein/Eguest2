@@ -65,6 +65,8 @@ var runSequence = require('run-sequence').use(gulp);
     './node_modules/angular-messages/angular-messages.js',
     './node_modules/angular-aria/angular-aria.js',
     './node_modules/ngstorage/ngStorage.js',
+    './node_modules/angular-sanitize/angular-sanitize.min.js',
+    './node_modules/ng-csv/build/ng-csv.min.js',
     //'./node_modules/angular-material/angular-material.js',
     './node_modules/propellerkit/dist/js/propeller.min.js',
 	'./node_modules/propellerkit/dist/js/bootstrap.min.js',

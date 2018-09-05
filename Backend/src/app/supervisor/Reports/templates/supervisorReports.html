@@ -67,7 +67,9 @@
         <div  style="text-align: center;">
             <img ng-show="reportsCtrl.isLoading" src="assets/img/loading.gif" style="height: 80px;">
         </div>
-       
+        <button class="btn pmd-ripple-effect btn-primary" type="button" ng-click="reportsCtrl.downloadFile()">{{'ExportCsvBtn'|translate}}</button>
+        <button class="btn pmd-ripple-effect btn-primary" ng-show="reportsCtrl.canDownload" ng-click="reportsCtrl.download()" type="button" add-bom="true" charset="reportsCtrl.charEncode" csv-header="reportsCtrl.fileColumnHeaders" ng-csv="reportsCtrl.reportData" filename="{{reportsCtrl.fileName}}">{{'downloadBtn'|translate}}</button>
+        
         <div class="pmd-card pmd-z-depth pmd-card-custom-view" ng-show="reportsCtrl.requests.results.length > 0 && !reportsCtrl.isLoading">
             <div class="table-responsive pmd-card pmd-z-depth">
                 <table class="table table-mc-red pmd-table">
