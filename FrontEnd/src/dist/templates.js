@@ -36,7 +36,7 @@ angular.module('home').run(['$templateCache', function($templateCache) {
     '                       \n' +
     '                            <td>   \n' +
     '                                    <span ><img  class="arrow_img" ng-click="removeCounter($index)" style="width: 21px!important;height: 21px!important;" ng-src="../assets/img/Subtract2.png" /></span>\n' +
-    '                                <input style="width: 36px;"  type="number"  ng-model="c.itemobj.count" readonly="readonly" style="color: black;">\n' +
+    '                                <input style="width: 36px;color: black !important;"  type="number"  ng-model="c.itemobj.count" readonly="readonly">\n' +
     '                                <span><img class="arrow_img" ng-click="addCounter($index)" style="width: 21px!important;height: 21px!important;" ng-src="../assets/img/plus2.png" /></span>\n' +
     '        \n' +
     '                        </td>\n' +

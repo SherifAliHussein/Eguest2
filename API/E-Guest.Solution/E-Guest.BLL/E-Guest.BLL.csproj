@@ -190,6 +190,7 @@
     <Compile Include="DTOs\FloorDto.cs" />
     <Compile Include="DTOs\ItemDTO.cs" />
     <Compile Include="DTOs\ItemNamesDto.cs" />
+    <Compile Include="DTOs\ItemSizeDto.cs" />
     <Compile Include="DTOs\MenuDTO.cs" />
     <Compile Include="DTOs\MenuWithCategoriesDTO.cs" />
     <Compile Include="DTOs\PagedResultsDto.cs" />

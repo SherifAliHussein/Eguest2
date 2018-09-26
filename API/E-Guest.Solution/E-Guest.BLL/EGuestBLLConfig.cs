@@ -162,9 +162,14 @@ namespace E_Guest.BLL
                 .ForMember(dest => dest.MenuId, m => m.MapFrom(src => src.Category.MenuId))
                 .ForMember(dest => dest.RestaurantId, m => m.MapFrom(src => src.Category.Menu.RestaurantId))
                 .ForMember(dest => dest.Sizes, m => m.MapFrom(src => src.ItemSizes.Where(x=>!x.Size.IsDeleted)))
+                .ForMember(dest => dest.ItemSizes, m => m.MapFrom(src => src.ItemSizes.Where(x=>!x.Size.IsDeleted)))
                 .ForMember(dest => dest.SideItems, m => m.MapFrom(src => src.ItemSideItems.Where(x=>!x.SideItem.IsDeleted)))
                 .ForMember(dto => dto.ItemNameDictionary, m => m.MapFrom(src => src.ItemTranslations.ToDictionary(translation => translation.Language.ToLower(), translation => translation.ItemName)))
                 .ForMember(dto => dto.ItemDescriptionDictionary, m => m.MapFrom(src => src.ItemTranslations.ToDictionary(translation => translation.Language.ToLower(), translation => translation.ItemDescription)));
+
+            mapperConfiguration.CreateMap<ItemSize, ItemSizeDto>()
+                .ForMember(dest => dest.SizeName, m => m.MapFrom(src => src.Size.SizeTranslations.FirstOrDefault().SizeName))
+                .ForMember(dto => dto.SizeNameDictionary, m => m.MapFrom(src => src.Size.SizeTranslations.ToDictionary(translation => translation.Language.ToLower(), translation => translation.SizeName)));
 
             mapperConfiguration.CreateMap<SizeDto, Size>();
             mapperConfiguration.CreateMap<Size, SizeDto>()

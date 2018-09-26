@@ -28,8 +28,7 @@ namespace E_Guest.API.App_Start
 
             mapperConfiguration.CreateMap<SupervisorModel, SupervisorDto>();
             mapperConfiguration.CreateMap<SupervisorDto, SupervisorModel>();
-
-
+            
             mapperConfiguration.CreateMap<FeatureDetailModel, FeatureDetailDto>();
             mapperConfiguration.CreateMap<FeatureDetailDto, FeatureDetailModel>();
 
@@ -67,6 +66,10 @@ namespace E_Guest.API.App_Start
 
             mapperConfiguration.CreateMap<ItemModel, ItemDTO>();
             mapperConfiguration.CreateMap<ItemDTO, ItemModel>();
+
+            mapperConfiguration.CreateMap<ItemSizeDto, ItemSizeModel>();
+            mapperConfiguration.CreateMap<ItemSizeModel, ItemSizeDto>();
+
 
             mapperConfiguration.CreateMap<ItemNamesDto, ItemNameModel>();
 

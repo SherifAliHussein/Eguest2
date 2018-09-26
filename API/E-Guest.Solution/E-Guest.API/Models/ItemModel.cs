@@ -17,6 +17,8 @@ namespace E_Guest.API.Models
         public long MenuId { get; set; }
         public long RestaurantId { get; set; }
         public List<SizeModel> Sizes { get; set; }
+        public List<ItemSizeModel> ItemSizes { get; set; }
+
         public List<SideItemModel> SideItems { get; set; }
         public string ImageURL { get; set; }
         public bool IsImageChange { get; set; }

@@ -19,6 +19,7 @@ namespace E_Guest.BLL.DTOs
         public long RestaurantId { get; set; }
         //public double Price { get; set; }
         public List<SizeDto> Sizes { get; set; }
+        public List<ItemSizeDto> ItemSizes { get; set; }
         public List<SideItemDTO> SideItems{ get; set; }
         public MemoryStream Image { get; set; }
         public MemoryStream Image2 { get; set; }

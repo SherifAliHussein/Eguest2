@@ -1,6 +1,136 @@
 (function () {
     'use strict';
 
+    angular
+        .module('home')
+        .controller('cartController', ['$rootScope', '$translate', '$scope', 'CartResource', 'appCONSTANTS', '$stateParams', '$state', '_', 'authenticationService', 'authorizationService', '$localStorage', 'userRolesEnum', 'ToastService', 'MenuOfflineResource', 'OfflineDataResource', 'totalCartService', 'CartIconService', 'ResturantPrepService','RequestResource', cartController])
+
+    function cartController($rootScope, $translate, $scope, CartResource, appCONSTANTS, $stateParams, $state, _, authenticationService, authorizationService, $localStorage, userRolesEnum, ToastService, MenuOfflineResource, OfflineDataResource, totalCartService, CartIconService,ResturantPrepService,RequestResource) {
+
+        $scope.$parent.globalInfo= ResturantPrepService;
+
+                $scope.homeTotalNo = 0;
+        $scope.cartIcon = false;
+        $scope.$watch("cartIcon", function (newValue) {
+            CartIconService.cartIcon = newValue;
+        });
+        var vm = this;
+        vm.item = {
+            itemobj: "",
+            size: "", 
+        };
+        vm.currentItem=0; 
+        vm.index = 0;
+        vm.isItemLoaded = false;
+        var total = 0;
+        $scope.selectedCount = 0;
+
+                $scope.total = 0;
+        $scope.selectedCount = 1;
+
+
+        vm.repeatCart = JSON.parse(localStorage.getItem("checkOut"));
+
+                for (var i = 0; i < vm.repeatCart.length; i++) {
+            var product = vm.repeatCart[i];
+            total += (product.size.price * product.itemobj.count);
+        }
+        $scope.totalItem = total;
+
+
+                $scope.addCounter = function (index) {
+            vm.repeatCart[index].itemobj.count++;
+            localStorage.setItem('checkOut', JSON.stringify(vm.repeatCart));
+            var total = 0;            
+            for (var i = 0; i < vm.repeatCart.length; i++) {
+                var product = vm.repeatCart[i];
+                total += (product.size.price * product.itemobj.count);
+            }
+            $scope.totalItem = total;
+            $scope.homeTotalNo = $scope.totalItem;
+            totalCartService.homeTotalNo = $scope.totalItem;
+        }
+
+                $scope.removeCounter = function (index) {
+            vm.repeatCart[index].itemobj.count--;
+           if(vm.repeatCart[index].itemobj.count <= 0) {
+            vm.repeatCart.splice(index, 1);            
+           }
+           localStorage.setItem('checkOut', JSON.stringify(vm.repeatCart));
+           if (vm.repeatCart == null || vm.repeatCart.length == 0) {
+            $state.go('menu',{featureId: $stateParams.featureId,restaurantId:$stateParams.restaurantId});
+           }
+           var total = 0;           
+           for (var i = 0; i < vm.repeatCart.length; i++) {
+                var product = vm.repeatCart[i];
+                total += (product.size.price * product.itemobj.count);
+            }
+            $scope.totalItem = total;
+            $scope.homeTotalNo = $scope.totalItem;
+            totalCartService.homeTotalNo = $scope.totalItem;
+
+        };
+
+
+
+                vm.isChanged = false;
+        $scope.checkOut = function () {
+            vm.isChanged = true;
+            var items = JSON.parse(localStorage.getItem("checkOut"));
+            var requestDetails = []
+            items.forEach(function(element) {
+                element.itemobj.itemSizes.forEach(function(itemSize) {
+                    if(itemSize.sizeId == element.size.sizeId){
+                        requestDetails.push({itemSizeId:itemSize.itemSizeId,number:element.itemobj.count,price:element.size.price})                        
+                    }
+                }, this);
+
+            }, this);
+            var newRequest = new RequestResource();
+            newRequest.featureId = $stateParams.featureId;
+            newRequest.requestDetails = requestDetails;
+            newRequest.restaurantId = $stateParams.restaurantId;
+            newRequest.$create().then(
+                function(data, status) {
+                    vm.isChanged = false;
+                    $scope.homeTotalNo = 0;
+                    $scope.$watch("homeTotalNo", function (newValue) {
+                        totalCartService.homeTotalNo = newValue;
+                    });
+                    localStorage.removeItem('checkOut');
+                    $state.go('menu',{featureId: $stateParams.featureId,restaurantId:$stateParams.restaurantId});
+                },
+                function(data, status) {
+                }
+            );
+            console.log(items)
+
+                    };
+
+
+
+
+
+    }
+
+
+}());
+(function() {
+    angular
+      .module('home')
+      .factory('CartResource', ['$resource', 'appCONSTANTS', CartResource])   
+
+    function CartResource($resource, appCONSTANTS) {
+      return $resource(appCONSTANTS.API_URL + 'Items/:itemId', {}, {
+        getItemById: { method: 'GET', useToken: true, params:{lang:'@lang'} } 
+      })
+    }
+
+
+     }());
+  (function () {
+    'use strict';
+
 	    angular
         .module('home')
         .controller('clientFeatureController', ['$scope','$uibModal','$translate', 'appCONSTANTS', 'FeatureResource','featuresPrepService','featureBackgroundPrepService','RequestResource','ToastService','totalCartService',  clientFeatureController])
@@ -597,36 +727,36 @@ angular.module('home').directive('flipbook', function($timeout){
         return{
           pre: function(scope, iElement, iAttrs, controller){
             var element = $('.text_editor').children();
-            
-            element.jqte({ 
+
+                        element.jqte({ 
               focus: function () {
                  element.parents(".jqte").find(".jqte_toolbar").show();
                  element.parents(".jqte").click(function () { element.parents(".jqte").find(".jqte_toolbar").show(); });
                   scope.$apply(function () {
-                     
-                  });
+
+                                       });
               }, 
               blur: function () {
                 element.parents(".jqte").find(".jqte_toolbar").hide();
                   scope.$apply(function () {
-                      
-                  });
+
+                                        });
               }, 
               change: function () {
                 ngModel.$setViewValue(element.parents(".jqte").find(".jqte_editor")[0].innerHTML);
                   scope.$apply(function () {
-                      
-                  });
+
+                                        });
               }
             });
             element.parents(".jqte").find(".jqte_toolbar").hide();
           },
           post: function(scope, iElement, iAttrs, controller) {
-         
-            $timeout(function(){
+
+                     $timeout(function(){
               iElement.turn({
-              
-               pages: 10,
+
+                             pages: 10,
                page: 2,
                when: {
                 turned: function(event, page, pageObj) {
@@ -640,8 +770,8 @@ angular.module('home').directive('flipbook', function($timeout){
                 }
               }
              }).bind("start", function(event, pageObject, corner) {
-              
-              if(pageObject.next == 1) {
+
+                            if(pageObject.next == 1) {
                 event.preventDefault();
             }
             })
@@ -649,16 +779,16 @@ angular.module('home').directive('flipbook', function($timeout){
 
            }, 0);
           }
-              
-        }
+
+                      }
       },
       controller: function($scope, $rootScope){
         $scope.hide_book = function(){
           console.log("hide_book");
           $rootScope.show_book = false;
         }
-        
-      },
+
+              },
       templateUrl: "./app/items/Templates/ItemList.html"
     }
   });(function () {
@@ -669,8 +799,8 @@ angular.module('home').directive('flipbook', function($timeout){
         .controller('ItemController', ['$compile','$scope', '$translate', '$stateParams', 'appCONSTANTS', 'categoryItemsTemplatePrepService', 'ResturantPrepService', 'totalCartService','CartIconService','ItemsResource', ItemController])
 
     function ItemController($compile,$scope, $translate, $stateParams, appCONSTANTS, categoryItemsTemplatePrepService, ResturantPrepService, totalCartService,CartIconService,ItemsResource) {
- 
-        var vm = this;
+
+         var vm = this;
         $scope.cartIcon = true;
         $scope.$watch("cartIcon", function (newValue) {
             CartIconService.cartIcon = newValue;
@@ -678,10 +808,9 @@ angular.module('home').directive('flipbook', function($timeout){
         vm.catgoryTemplates = categoryItemsTemplatePrepService;
         $scope.$parent.globalInfo= ResturantPrepService;
         vm.selectedLanguage = $scope.selectedLanguage;
-        
-        vm.restaurantId = $stateParams.restaurantId;
+
+                vm.restaurantId = $stateParams.restaurantId;
         console.log($scope.selectedLanguage)
-       
        vm.currentItem=0; 
        vm.selectedSize = 10;
         vm.selectedSide = 10; 
@@ -741,8 +870,8 @@ if(vm.currentItem != product.itemID){
                 for (var s = 0; s < CheckOutLocalstorage.length; s++) {
                     var repeat = false;
                     for (var z = 0; z < $scope.cart.length; z++) {
-                      
-                        var id=$scope.cart[z].itemobj.itemID;
+
+                                              var id=$scope.cart[z].itemobj.itemID;
                         var objsize=$scope.cart[z].size.sizeId;
 
                         var stordId=CheckOutLocalstorage[s].itemobj.itemID ;
@@ -751,16 +880,16 @@ if(vm.currentItem != product.itemID){
                           if (id === stordId && objsize ===stordSize) {
                             repeat = true;
                             $scope.cart[z].itemobj.count +=CheckOutLocalstorage[s].itemobj.count;
-                           
-                        
-                        }
+
+
+                                                                           }
                     }
                     if (!repeat) {
                         $scope.item.itemobj = product;
                         $scope.cart.push(CheckOutLocalstorage[s]); 
                     }
-                    
-                }
+
+                                    }
             $scope.total=0;
             for (var t = 0; t < $scope.cart.length; t++) {
                 var product = $scope.cart[t];
@@ -773,8 +902,8 @@ if(vm.currentItem != product.itemID){
             $scope.$watch("homeTotalNo", function (newValue) {
                 totalCartService.homeTotalNo = newValue;
               });
-              
-            localStorage.setItem('checkOut', JSON.stringify($scope.cart));
+
+                          localStorage.setItem('checkOut', JSON.stringify($scope.cart));
             $scope.cart=[];
             $scope.item = {
                 itemobj: "",
@@ -786,8 +915,8 @@ if(vm.currentItem != product.itemID){
             $scope.selectedCount=1;
         };
 
-        
-        $scope.radioSizeClick = function (size,item) {
+
+                $scope.radioSizeClick = function (size,item) {
             vm.currentItem=item;
             $scope.checkradioasd = size.sizeId;
             $scope.item.size = size;
@@ -802,20 +931,18 @@ if(vm.currentItem != product.itemID){
                 var index = $scope.item.sides.indexOf(side);
                 $scope.item.sides.splice(index, 1);
                 if ($scope.item.sides.length == 0) {
-                        
                 }
             }
             else {
                 $scope.item.sides.push(side);
                 if ($scope.item.sides.length > 0 && $scope.item.size != "") {
-                    
                 }
             }
         };
         $scope.addCounter = function () { 
             $scope.selectedCount = $scope.selectedCount+1;  
-            
-        };
+
+                    };
         $scope.removeCounter = function () { 
             if($scope.selectedCount <= 1){
                 return;
@@ -830,8 +957,8 @@ if(vm.currentItem != product.itemID){
         vm.dislikeItem = function(item){
             item.dislike++;
             ItemsResource.dislikeItem({itemId:item.itemID});
-           
-        }
+
+                   }
     }
 
 }
@@ -925,8 +1052,8 @@ if(vm.currentItem != product.itemID){
                 $scope.$parent.$parent.$parent.itemdetails = item;                
             }    
         }
-        
-    };
+
+            };
 });angular.module('home').directive('pageTemplate6', function(){
     return {
         restrict: 'E',
@@ -940,151 +1067,25 @@ if(vm.currentItem != product.itemID){
                 $scope.$parent.$parent.$parent.itemdetails = item;                
             }    
         }
-        
-    };
+
+            };
 });(function () {
     'use strict';
 
-    angular
-        .module('home')
-        .controller('cartController', ['$rootScope', '$translate', '$scope', 'CartResource', 'appCONSTANTS', '$stateParams', '$state', '_', 'authenticationService', 'authorizationService', '$localStorage', 'userRolesEnum', 'ToastService', 'MenuOfflineResource', 'OfflineDataResource', 'totalCartService', 'CartIconService', 'ResturantPrepService','RequestResource', cartController])
-
-    function cartController($rootScope, $translate, $scope, CartResource, appCONSTANTS, $stateParams, $state, _, authenticationService, authorizationService, $localStorage, userRolesEnum, ToastService, MenuOfflineResource, OfflineDataResource, totalCartService, CartIconService,ResturantPrepService,RequestResource) {
-
-        $scope.$parent.globalInfo= ResturantPrepService;
-        
-        $scope.homeTotalNo = 0;
-        $scope.cartIcon = false;
-        $scope.$watch("cartIcon", function (newValue) {
-            CartIconService.cartIcon = newValue;
-        });
-        var vm = this;
-        vm.item = {
-            itemobj: "",
-            size: "", 
-        };
-        vm.currentItem=0; 
-        vm.index = 0;
-        vm.isItemLoaded = false;
-        var total = 0;
-        $scope.selectedCount = 0;
-        
-        $scope.total = 0;
-        $scope.selectedCount = 1;
-
-
-        vm.repeatCart = JSON.parse(localStorage.getItem("checkOut"));
-        
-        for (var i = 0; i < vm.repeatCart.length; i++) {
-            var product = vm.repeatCart[i];
-            total += (product.size.price * product.itemobj.count);
-        }
-        $scope.totalItem = total;
-
-        
-        $scope.addCounter = function (index) {
-            vm.repeatCart[index].itemobj.count++;
-            localStorage.setItem('checkOut', JSON.stringify(vm.repeatCart));
-            var total = 0;            
-            for (var i = 0; i < vm.repeatCart.length; i++) {
-                var product = vm.repeatCart[i];
-                total += (product.size.price * product.itemobj.count);
-            }
-            $scope.totalItem = total;
-            $scope.homeTotalNo = $scope.totalItem;
-            totalCartService.homeTotalNo = $scope.totalItem;
-        }
-        
-        $scope.removeCounter = function (index) {
-            vm.repeatCart[index].itemobj.count--;
-           if(vm.repeatCart[index].itemobj.count <= 0) {
-            vm.repeatCart.splice(index, 1);            
-           }
-           localStorage.setItem('checkOut', JSON.stringify(vm.repeatCart));
-           if (vm.repeatCart == null || vm.repeatCart.length == 0) {
-            $state.go('menu',{featureId: $stateParams.featureId,restaurantId:$stateParams.restaurantId});
-           }
-           var total = 0;           
-           for (var i = 0; i < vm.repeatCart.length; i++) {
-                var product = vm.repeatCart[i];
-                total += (product.size.price * product.itemobj.count);
-            }
-            $scope.totalItem = total;
-            $scope.homeTotalNo = $scope.totalItem;
-            totalCartService.homeTotalNo = $scope.totalItem;
-
-        };
-
-        
-
-        vm.isChanged = false;
-        $scope.checkOut = function () {
-            vm.isChanged = true;
-            var items = JSON.parse(localStorage.getItem("checkOut"));
-            var requestDetails = []
-            items.forEach(function(element) {
-                requestDetails.push({itemSizeId:element.itemobj.itemID,number:element.itemobj.count,price:element.size.price})
-            }, this);
-            var newRequest = new RequestResource();
-            newRequest.featureId = $stateParams.featureId;
-            newRequest.requestDetails = requestDetails;
-            newRequest.restaurantId = $stateParams.restaurantId;
-            newRequest.$create().then(
-                function(data, status) {
-                    vm.isChanged = false;
-                    $scope.homeTotalNo = 0;
-                    $scope.$watch("homeTotalNo", function (newValue) {
-                        totalCartService.homeTotalNo = newValue;
-                    });
-                    localStorage.removeItem('checkOut');
-                    $state.go('menu',{featureId: $stateParams.featureId,restaurantId:$stateParams.restaurantId});
-                },
-                function(data, status) {
-                    
-                }
-            );
-            console.log(items)
-            
-        };
-
-
-
-
-
-    }
-
-
-}());
-(function() {
-    angular
-      .module('home')
-      .factory('CartResource', ['$resource', 'appCONSTANTS', CartResource])   
-
-    function CartResource($resource, appCONSTANTS) {
-      return $resource(appCONSTANTS.API_URL + 'Items/:itemId', {}, {
-        getItemById: { method: 'GET', useToken: true, params:{lang:'@lang'} } 
-      })
-    }
-     
-
-}());
-  (function () {
-    'use strict';
-	
-    angular
+	    angular
         .module('home')
         .controller('showCategoryDialogController', ['$uibModalInstance','$translate', 'MenuResource','ToastService','GetCategoriesResource','category',  showCategoryDialogController])
 
 	function showCategoryDialogController($uibModalInstance, $translate, MenuResource,ToastService,GetCategoriesResource, category){
 		var vm = this;
 		vm.menuName = "";
-		
-		vm.categories = category; 
+
+				vm.categories = category; 
 		vm.close = function(){
 			$uibModalInstance.dismiss('cancel');
 		}
-	 
-	}	
+
+	 	}	
 }());
 (function () {
     'use strict';
@@ -1161,8 +1162,8 @@ if(vm.currentItem != product.itemID){
         getAllMenus: { method: 'GET', useToken: true, params:{lang:'@lang'} } 
       })
     }
-    
-    function CategoriesResource($resource, appCONSTANTS) {
+
+        function CategoriesResource($resource, appCONSTANTS) {
         return $resource(appCONSTANTS.API_URL + 'Menus/:MenuId/Categories', {}, {
           getAllCategories: { method: 'GET', useToken: true, params:{lang:'@lang'} }
         })
@@ -1187,4 +1188,3 @@ if(vm.currentItem != product.itemID){
     }
 
 }());
-  

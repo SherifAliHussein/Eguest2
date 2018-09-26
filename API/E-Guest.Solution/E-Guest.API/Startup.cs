@@ -35,6 +35,8 @@ namespace E_Guest.API
 
             AutoMapperConfig.RegisterMappings();
             //ECatalogBLLConfig.RegisterMappings();
+            //app.MapSignalR();
+
         }
         public void ConfigureOAuth(IAppBuilder app)
         {

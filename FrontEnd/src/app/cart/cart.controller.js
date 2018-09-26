@@ -79,7 +79,13 @@
             var items = JSON.parse(localStorage.getItem("checkOut"));
             var requestDetails = []
             items.forEach(function(element) {
-                requestDetails.push({itemSizeId:element.itemobj.itemID,number:element.itemobj.count,price:element.size.price})
+                element.itemobj.itemSizes.forEach(function(itemSize) {
+                    if(itemSize.sizeId == element.size.sizeId){
+                        requestDetails.push({itemSizeId:itemSize.itemSizeId,number:element.itemobj.count,price:element.size.price})                        
+                    }
+                }, this);
+                
+                // requestDetails.push({itemSizeId:element.itemobj.itemID,number:element.itemobj.count,price:element.size.price})
             }, this);
             var newRequest = new RequestResource();
             newRequest.featureId = $stateParams.featureId;
