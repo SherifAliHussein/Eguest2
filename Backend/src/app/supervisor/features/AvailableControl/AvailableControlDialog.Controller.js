@@ -48,8 +48,8 @@ angular.module('home').directive('availableControlForm', function(){
                 vm.days.forEach(function(element) {
                     if(element.isSelected){
                         newFeatureDetail.availables.push({                            
-                            from: (new Date(today.getMonth()+"/"+today.getDate()+"/"+today.getFullYear()+" "+element.startTime).toISOString()).replace('Z',''),
-                            to: (new Date(today.getMonth()+"/"+today.getDate()+"/"+today.getFullYear()+" "+element.endTime).toISOString()).replace('Z',''),
+                            from: (new Date((today.getMonth()+1)+"/"+today.getDate()+"/"+today.getFullYear()+" "+element.startTime).toISOString()).replace('Z',''),
+                            to: (new Date((today.getMonth()+1)+"/"+today.getDate()+"/"+today.getFullYear()+" "+element.endTime).toISOString()).replace('Z',''),
                             max:element.max,day:element.id});
                     }
                 }, this);
@@ -91,8 +91,8 @@ angular.module('home').directive('availableControlForm', function(){
                 vm.days.forEach(function(element) {
                     if(element.isSelected){
                         newFeatureDetail.availables.push({
-                            from:(new Date(today.getMonth()+"/"+today.getDate()+"/"+today.getFullYear()+" "+element.startTime).toISOString()).replace('Z',''),
-                            to:(new Date(today.getMonth()+"/"+today.getDate()+"/"+today.getFullYear()+" "+element.endTime).toISOString()).replace('Z',''),
+                            from:(new Date((today.getMonth()+1)+"/"+today.getDate()+"/"+today.getFullYear()+" "+element.startTime).toISOString()).replace('Z',''),
+                            to:(new Date((today.getMonth()+1)+"/"+today.getDate()+"/"+today.getFullYear()+" "+element.endTime).toISOString()).replace('Z',''),
                             max:element.max,day:element.id,availableId:element.availableId});
                     }
                 }, this);

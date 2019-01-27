@@ -2439,480 +2439,6 @@ angular.module('home').run(['$templateCache', function($templateCache) {
 }]);
 
 angular.module('home').run(['$templateCache', function($templateCache) {
-  $templateCache.put('./app/admin/featuresbackground/templates/background.html',
-    '<div >\n' +
-    '       \n' +
-    '    <div style="margin-bottom:10px">\n' +
-    '            <button  ng-click="backgroundCtrl.openbackgroundDialog()" class="btn pmd-ripple-effect btn-primary pmd-z-depth" type="button">{{\'AddbackgroundBtn\' | translate}}</button>\n' +
-    '            <!-- <span ng-if="!backgroundCtrl.Backgrounds.isParentTranslated"> <i class="material-icons md-dark pmd-md warrningIcon">warning</i> {{\'MenuNotTranslated\' | translate}}</span> -->\n' +
-    '        </div> \n' +
-    '        <div ng-if="backgroundCtrl.Backgrounds.results.length == 0">\n' +
-    '                <span>{{\'NoBackgroundAvailable\' | translate}}</span>\n' +
-    '        </div>\n' +
-    '        <div class="pmd-card pmd-z-depth pmd-card-custom-view" ng-if="backgroundCtrl.Backgrounds.results.length > 0">\n' +
-    '            <div class="table-responsive">\n' +
-    '                <table class="table pmd-table table-hover">\n' +
-    '                    <thead>\n' +
-    '                        <tr> \n' +
-    '                            <th >{{\'Imagelbl\' | translate}}</th>\n' +
-    '                            <th >{{\'status\' | translate}}</th>\n' +
-    '                            <th ></th>\n' +
-    '                        </tr>\n' +
-    '                    </thead>\n' +
-    '                    <tbody>\n' +
-    '                        <tr ng-class="{\'red-text\': Background.isSelected == true }" ng-repeat="Background in backgroundCtrl.Backgrounds.results"> \n' +
-    '                            <td data-title="Image" ><img ng-src="{{Background.imageUrl}}" ng-alt="{{Background.BackgroundName}}" style="max-height: 200px;max-width: 200px;"/></td>\n' +
-    '                            <!-- <td></td> -->\n' +
-    '                            <td>\n' +
-    '                                 <a ng-show="Background.isSelected"   class="cursorPointer" style="color: white;">{{\'CurrentBtn\' | translate}}</a>\n' +
-    '                                 <a ng-show="!Background.isSelected" ng-click="backgroundCtrl.Activate(Background)" class="cursorPointer">{{\'NotCurrentBtn\' | translate}}</a>\n' +
-    '                            </td>\n' +
-    '                          \n' +
-    '                        </tr>\n' +
-    '                    </tbody>\n' +
-    '                </table>\n' +
-    '            </div>\n' +
-    '            <div style="text-align:center;" paging page="1" page-size="10" total="backgroundCtrl.Backgrounds.totalCount" paging-action="backgroundCtrl.changePage( page)"\n' +
-    '            flex="nogrow" show-prev-next="true" show-first-last="true" hide-if-empty="true" disabled-class="hide">\n' +
-    '               </div>\n' +
-    '        </div> \n' +
-    '    \n' +
-    '    \n' +
-    '    </div>					\n' +
-    '    ');
-}]);
-
-angular.module('home').run(['$templateCache', function($templateCache) {
-  $templateCache.put('./app/admin/featuresbackground/templates/newBackground.html',
-    '<div class="modal-content">\n' +
-    '        <div class="modal-header bordered">\n' +
-    '            <button class="close" type="button" ng-click="backgroundCtrl.close()">×</button>\n' +
-    '            <h2 class="pmd-card-title-text">{{\'NewbackgroundLbl\' | translate}}</h2>\n' +
-    '        </div>\n' +
-    '        <div class="modal-body">\n' +
-    '            <form class="form-horizontal" name="newbackgroundForm">\n' +
-    '           \n' +
-    '                <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed" >       \n' +
-    '                        <input id="backgroundImage" name="backgroundImage" style="display: none;" onchange="angular.element(this).scope().AddbackgroundImage(this.files)" type="file" required>\n' +
-    '                        <button ng-click="backgroundCtrl.LoadUploadImage()" >{{\'UploadImageBtn\' | translate}}</button>\n' +
-    '                        <img ng-src="{{backgroundCtrl.backgroundImage}}" style="max-height: 200px;max-width: 200px;">\n' +
-    '                        <span > <i class="material-icons md-dark pmd-md warrningIcon">warning</i> {{\'RecommendedBackgroundImage\' | translate}}</span>\n' +
-    '                          <div ng-messages="newbackgroundForm.backgroundImage.$error" >\n' +
-    '                            <div ng-if="newbackgroundForm.backgroundImage.$error.required">{{\'requiredErr\' | translate}}</div>\n' +
-    '                        </div>\n' +
-    '                </div>\n' +
-    '            </form>\n' +
-    '        </div>\n' +
-    '        <div class="pmd-modal-action text-right">\n' +
-    '            <button ng-disabled="newbackgroundForm.$invalid  || backgroundCtrl.backgroundImage== null" class="btn pmd-ripple-effect btn-primary" type="button" ng-click="backgroundCtrl.AddNewbackground()">{{\'saveChangesBtn\' | translate}}</button>\n' +
-    '            <button class="btn pmd-ripple-effect btn-default" type="button" ng-click="backgroundCtrl.close()">{{\'DiscardBtn\' | translate}}</button>\n' +
-    '        </div>\n' +
-    '    </div>\n' +
-    '    \n' +
-    '        \n' +
-    '    ');
-}]);
-
-angular.module('home').run(['$templateCache', function($templateCache) {
-  $templateCache.put('./app/admin/room/templates/editBuilding.html',
-    '<div class="modal-content">\n' +
-    '    <div class="modal-header bordered">\n' +
-    '        <button class="close" type="button" ng-click="editBuildingDlCtrl.close()">×</button>\n' +
-    '        <h2 class="pmd-card-title-text">{{\'UpdateBuildingLbl\' | translate}}</h2>\n' +
-    '    </div>\n' +
-    '    <div class="modal-body">\n' +
-    '        <form class="form-horizontal" name="updateBuildingForm">\n' +
-    '            <div class="form-group pmd-textfield pmd-textfield-floating-label  pmd-textfield-floating-label-completed">\n' +
-    '                <label for="first-name">{{\'roomName\' | translate}}</label>\n' +
-    '                <input required type="text" class="mat-input form-control" name="buildingName" ng-model="editBuildingDlCtrl.Building.buildingName"  ng-maxlength="20">\n' +
-    '                <div ng-messages="updateBuildingForm.buildingName.$error" >\n' +
-    '                    <div ng-if="updateBuildingForm.buildingName.$error.required && !updateBuildingForm.buildingName.$pristine">{{\'requiredErr\' | translate}}</div>\n' +
-    '                    <div ng-if="(updateBuildingForm.buildingName.$error.maxlength) && !updateBuildingForm.roomName.$error.required">{{\'maximumMsg\' | translate}}20</div>\n' +
-    '                </div>\n' +
-    '            </div>\n' +
-    '        </form>\n' +
-    '    </div>\n' +
-    '    <div class="pmd-modal-action text-right">\n' +
-    '        <button ng-disabled="updateBuildingForm.$invalid" class="btn pmd-ripple-effect btn-primary" type="button" ng-click="editBuildingDlCtrl.updateBuilding()">{{\'saveChangesBtn\' | translate}}</button>\n' +
-    '        <button class="btn pmd-ripple-effect btn-default" type="button" ng-click="editBuildingDlCtrl.close()">{{\'DiscardBtn\' | translate}}</button>\n' +
-    '    </div>\n' +
-    '</div>\n' +
-    '\n' +
-    '    \n' +
-    '');
-}]);
-
-angular.module('home').run(['$templateCache', function($templateCache) {
-  $templateCache.put('./app/admin/room/templates/editFloor.html',
-    '<div class="modal-content">\n' +
-    '    <div class="modal-header bordered">\n' +
-    '        <button class="close" type="button" ng-click="editFloorDlCtrl.close()">×</button>\n' +
-    '        <h2 class="pmd-card-title-text">{{\'UpdateFloorLbl\' | translate}}</h2>\n' +
-    '    </div>\n' +
-    '    <div class="modal-body">\n' +
-    '        <form class="form-horizontal" name="updateFloorForm">\n' +
-    '            <div class="form-group pmd-textfield pmd-textfield-floating-label  pmd-textfield-floating-label-completed">\n' +
-    '                <label for="first-name">{{\'roomName\' | translate}}</label>\n' +
-    '                <input required type="text" class="mat-input form-control" name="floorName" ng-model="editFloorDlCtrl.Floor.floorName" ng-maxlength="20">\n' +
-    '                <div ng-messages="updateFloorForm.floorName.$error" >\n' +
-    '                    <div ng-if="updateFloorForm.floorName.$error.required && !updateFloorForm.floorName.$pristine">{{\'requiredErr\' | translate}}</div>\n' +
-    '                    <div ng-if="(updateFloorForm.floorName.$error.maxlength) && !updateFloorForm.roomName.$error.required">{{\'maximumMsg\' | translate}} 20</div>\n' +
-    '                </div>\n' +
-    '            </div>\n' +
-    '        </form>\n' +
-    '    </div>\n' +
-    '    <div class="pmd-modal-action text-right">\n' +
-    '        <button ng-disabled="updateFloorForm.$invalid" class="btn pmd-ripple-effect btn-primary" type="button" ng-click="editFloorDlCtrl.updateFloor()">{{\'saveChangesBtn\' | translate}}</button>\n' +
-    '        <button class="btn pmd-ripple-effect btn-default" type="button" ng-click="editFloorDlCtrl.close()">{{\'DiscardBtn\' | translate}}</button>\n' +
-    '    </div>\n' +
-    '</div>\n' +
-    '');
-}]);
-
-angular.module('home').run(['$templateCache', function($templateCache) {
-  $templateCache.put('./app/admin/room/templates/editRoom.html',
-    '<div class="modal-content">\n' +
-    '        <div class="modal-header bordered">\n' +
-    '            <button class="close" type="button" ng-click="editRoomDlCtrl.close()">×</button>\n' +
-    '            <h2 class="pmd-card-title-text">{{\'UpdateRoomLbl\' | translate}}</h2>\n' +
-    '        </div>\n' +
-    '        <div class="modal-body">\n' +
-    '            <form class="form-horizontal" name="updateRoomForm">\n' +
-    '                <div class="form-group pmd-textfield pmd-textfield-floating-label  pmd-textfield-floating-label-completed">\n' +
-    '                    <label for="first-name">{{\'roomName\' | translate}}</label>\n' +
-    '                    <input required type="text" class="mat-input form-control" name="roomName" ng-model="editRoomDlCtrl.Room.roomName" ng-minlength="3" ng-maxlength="100">\n' +
-    '                    <div ng-messages="updateRoomForm.roomName.$error" >\n' +
-    '                        <div ng-if="updateRoomForm.roomName.$error.required && !updateRoomForm.roomName.$pristine">{{\'requiredErr\' | translate}}</div>\n' +
-    '                        <div ng-if="(updateRoomForm.roomName.$error.minlength || updateRoomForm.roomName.$error.maxlength) && !updateRoomForm.roomName.$error.required">{{\'NameLengthError\' | translate}}</div>\n' +
-    '                    </div>\n' +
-    '                </div>\n' +
-    '                <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed" >\n' +
-    '                        <label for="first-name">{{\'RoomPasswordLbl\' | translate}}</label>\n' +
-    '                        <input required type="password" class="mat-input form-control" name="password" ng-model="editRoomDlCtrl.Room.password" ng-minlength="8" ng-maxlength="25">\n' +
-    '                        <div ng-messages="updateRoomForm.password.$error" >\n' +
-    '                            <div ng-if="updateRoomForm.password.$error.required && !updateRoomForm.password.$pristine">{{\'requiredErr\' | translate}}</div>\n' +
-    '                            <div ng-if="(updateRoomForm.password.$error.minlength || updateRoomForm.password.$error.maxlength) && !updateRoomForm.password.newPassword.$error.required">Password length must be 8-25 char.</div>\n' +
-    '                        </div>\n' +
-    '                    </div>\n' +
-    '                    <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed" >\n' +
-    '                        <label for="first-name">{{\'ConfirmPasswordLbl\' | translate}}</label>\n' +
-    '                        <input required type="password" class="mat-input form-control" name="confirmPassword"  ng-model="editRoomDlCtrl.Room.confirmPassword" equalto="updateRoomForm.password" >\n' +
-    '                        <div ng-messages="updateRoomForm.confirmPassword.$error" >\n' +
-    '                            <div ng-if="updateRoomForm.confirmPassword.$error.required && !updateRoomForm.confirmPassword.$pristine">{{\'requiredErr\' | translate}}</div>\n' +
-    '                            <div ng-if="updateRoomForm.confirmPassword.$error.equalto && !updateRoomForm.confirmPassword.$error.required">Passwords don\'t match.</div>\n' +
-    '                        </div>\n' +
-    '                    </div>\n' +
-    '                    <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed">       \n' +
-    '                        <label>{{\'BuildingLbl\' | translate}}</label>\n' +
-    '                        <select required class="select-simple form-control pmd-select2" ng-model="editRoomDlCtrl.Room.buildingId">\n' +
-    '                            <option ng-selected="editRoomDlCtrl.Room.buildingId == item.buildingId" \n' +
-    '                                ng-repeat="item in editRoomDlCtrl.Buildings" \n' +
-    '                                ng-value="{{item.buildingId}}">{{item.buildingName}}</option>\n' +
-    '                        </select>\n' +
-    '                        <div ng-if="editRoomDlCtrl.RestaurantType.length <=0">{{\'NoBuildingLbl\' | translate}} </div>\n' +
-    '                    </div>\n' +
-    '                    <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed">       \n' +
-    '                        <label>{{\'FloorLbl\' | translate}}</label>\n' +
-    '                        <select required class="select-simple form-control pmd-select2" ng-model="editRoomDlCtrl.Room.floorId">\n' +
-    '                            <option ng-selected="editRoomDlCtrl.Room.floorId == item.floorId" \n' +
-    '                                ng-repeat="item in editRoomDlCtrl.Floors" \n' +
-    '                                ng-value="{{item.floorId}}">{{item.floorName}}</option>\n' +
-    '                        </select>\n' +
-    '                        <div ng-if="editRoomDlCtrl.RestaurantType.length <=0">{{\'NoFloorLbl\' | translate}} </div>\n' +
-    '                    </div> \n' +
-    '\n' +
-    '            </form>\n' +
-    '        </div>\n' +
-    '        <div class="pmd-modal-action text-right">\n' +
-    '            <button ng-disabled="updateRoomForm.$invalid || editRoomDlCtrl.Room.buildingId <= 0 || editRoomDlCtrl.Room.floorId <= 0" class="btn pmd-ripple-effect btn-primary" type="button" ng-click="editRoomDlCtrl.updateRoom()">{{\'saveChangesBtn\' | translate}}</button>\n' +
-    '            <button class="btn pmd-ripple-effect btn-default" type="button" ng-click="editRoomDlCtrl.close()">{{\'DiscardBtn\' | translate}}</button>\n' +
-    '        </div>\n' +
-    '    </div>\n' +
-    '    \n' +
-    '        \n' +
-    '    ');
-}]);
-
-angular.module('home').run(['$templateCache', function($templateCache) {
-  $templateCache.put('./app/admin/room/templates/newBuilding.html',
-    '<div class="modal-content">\n' +
-    '    <div class="modal-header bordered">\n' +
-    '        <button class="close" type="button" ng-click="buildingDlCtrl.close()">×</button>\n' +
-    '        <h2 class="pmd-card-title-text">{{\'NewBuildingLbl\' | translate}}</h2>\n' +
-    '    </div>\n' +
-    '    <div class="modal-body">\n' +
-    '        <form class="form-horizontal" name="newBuildingForm">\n' +
-    '            <div class="form-group pmd-textfield pmd-textfield-floating-label">\n' +
-    '                <label for="first-name">{{\'buildingName\' | translate}}</label>\n' +
-    '                <input required type="text" class="mat-input form-control" name="buildingName" ng-model="buildingDlCtrl.buildingName" ng-maxlength="20">\n' +
-    '                <div ng-messages="newBuildingForm.buildingName.$error" >\n' +
-    '                    <div ng-if="newBuildingForm.buildingName.$error.required && !newBuildingForm.buildingName.$pristine">{{\'requiredErr\' | translate}}</div>\n' +
-    '                    <div ng-if="(newBuildingForm.buildingName.$error.maxlength) && !newBuildingForm.buildingName.$error.required">{{\'maximumMsg\' | translate}} 20</div>\n' +
-    '                </div>\n' +
-    '            </div>\n' +
-    '        </form>\n' +
-    '    </div>\n' +
-    '    <div class="pmd-modal-action text-right">\n' +
-    '        <button ng-disabled="newBuildingForm.$invalid" class="btn pmd-ripple-effect btn-primary" type="button" ng-click="buildingDlCtrl.AddNewBuilding()">{{\'saveChangesBtn\' | translate}}</button>\n' +
-    '        <button class="btn pmd-ripple-effect btn-default" type="button" ng-click="buildingDlCtrl.close()">{{\'DiscardBtn\' | translate}}</button>\n' +
-    '    </div>\n' +
-    '</div>\n' +
-    '\n' +
-    '    \n' +
-    '');
-}]);
-
-angular.module('home').run(['$templateCache', function($templateCache) {
-  $templateCache.put('./app/admin/room/templates/newFloor.html',
-    '<div class="modal-content">\n' +
-    '    <div class="modal-header bordered">\n' +
-    '        <button class="close" type="button" ng-click="floorDlCtrl.close()">×</button>\n' +
-    '        <h2 class="pmd-card-title-text">{{\'NewFloorLbl\' | translate}}</h2>\n' +
-    '    </div>\n' +
-    '    <div class="modal-body">\n' +
-    '        <form class="form-horizontal" name="newFloorForm">\n' +
-    '            <div class="form-group pmd-textfield pmd-textfield-floating-label">\n' +
-    '                <label for="first-name">{{\'floorName\' | translate}}</label>\n' +
-    '                <input required type="text" class="mat-input form-control" name="floorName" ng-model="floorDlCtrl.floorName"  ng-maxlength="20">\n' +
-    '                <div ng-messages="newFloorForm.floorName.$error" >\n' +
-    '                    <div ng-if="newFloorForm.floorName.$error.required && !newFloorForm.floorName.$pristine">{{\'requiredErr\' | translate}}</div>\n' +
-    '                    <div ng-if="(newFloorForm.floorName.$error.maxlength) && !newFloorForm.floorName.$error.required">{{\'maximumMsg\' | translate}} 20</div>\n' +
-    '                </div>\n' +
-    '            </div>\n' +
-    '        </form>\n' +
-    '    </div>\n' +
-    '    <div class="pmd-modal-action text-right">\n' +
-    '        <button ng-disabled="newFloorForm.$invalid" class="btn pmd-ripple-effect btn-primary" type="button" ng-click="floorDlCtrl.AddNewFloor()">{{\'saveChangesBtn\' | translate}}</button>\n' +
-    '        <button class="btn pmd-ripple-effect btn-default" type="button" ng-click="floorDlCtrl.close()">{{\'DiscardBtn\' | translate}}</button>\n' +
-    '    </div>\n' +
-    '</div>\n' +
-    '\n' +
-    '    \n' +
-    '');
-}]);
-
-angular.module('home').run(['$templateCache', function($templateCache) {
-  $templateCache.put('./app/admin/room/templates/newRoom.html',
-    '<div class="modal-content">\n' +
-    '        <div class="modal-header bordered">\n' +
-    '            <button class="close" type="button" ng-click="roomDlCtrl.close()">×</button>\n' +
-    '            <h2 class="pmd-card-title-text">{{\'NewRoomLbl\' | translate}}</h2>\n' +
-    '        </div>\n' +
-    '        <div class="modal-body">\n' +
-    '            <form class="form-horizontal" name="newRoomForm">\n' +
-    '                <div class="form-group pmd-textfield pmd-textfield-floating-label">\n' +
-    '                    <label for="first-name">{{\'roomName\' | translate}}</label>\n' +
-    '                    <input required type="text" class="mat-input form-control" name="roomName" ng-model="roomDlCtrl.roomName" ng-minlength="3" ng-maxlength="100">\n' +
-    '                    <div ng-messages="newRoomForm.roomName.$error" >\n' +
-    '                        <div ng-if="newRoomForm.roomName.$error.required && !newRoomForm.roomName.$pristine">{{\'requiredErr\' | translate}}</div>\n' +
-    '                        <div ng-if="(newRoomForm.roomName.$error.minlength || newRoomForm.roomName.$error.maxlength) && !newRoomForm.roomName.$error.required">{{\'NameLengthError\' | translate}}</div>\n' +
-    '                    </div>\n' +
-    '                </div>\n' +
-    '                <div class="form-group pmd-textfield pmd-textfield-floating-label" >\n' +
-    '                        <label for="first-name">{{\'RoomPasswordLbl\' | translate}}</label>\n' +
-    '                        <input required type="password" class="mat-input form-control" name="password" ng-model="roomDlCtrl.password" ng-minlength="8" ng-maxlength="25">\n' +
-    '                        <div ng-messages="newRoomForm.password.$error" >\n' +
-    '                            <div ng-if="newRoomForm.password.$error.required && !newRoomForm.password.$pristine">{{\'requiredErr\' | translate}}</div>\n' +
-    '                            <div ng-if="(newRoomForm.password.$error.minlength || newRoomForm.password.$error.maxlength) && !newRoomForm.password.newPassword.$error.required">Password length must be 8-25 char.</div>\n' +
-    '                        </div>\n' +
-    '                    </div>\n' +
-    '                    <div class="form-group pmd-textfield pmd-textfield-floating-label" >\n' +
-    '                        <label for="first-name">{{\'ConfirmPasswordLbl\' | translate}}</label>\n' +
-    '                        <input required type="password" class="mat-input form-control" name="confirmPassword"  ng-model="roomDlCtrl.confirmPassword" equalto="newRoomForm.password" >\n' +
-    '                        <div ng-messages="newRoomForm.confirmPassword.$error" >\n' +
-    '                            <div ng-if="newRoomForm.confirmPassword.$error.required && !newRoomForm.confirmPassword.$pristine">{{\'requiredErr\' | translate}}</div>\n' +
-    '                            <div ng-if="newRoomForm.confirmPassword.$error.equalto && !newRoomForm.confirmPassword.$error.required">Passwords don\'t match.</div>\n' +
-    '                        </div>\n' +
-    '                    </div>\n' +
-    '                    <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed" >\n' +
-    '                        <label>{{\'BuildingLbl\' | translate}}</label>\n' +
-    '                        <select class="select-simple form-control pmd-select2" \n' +
-    '                            ng-options="building.buildingName for building in roomDlCtrl.Buildings"  \n' +
-    '                            ng-model="roomDlCtrl.selectedBuilding">\n' +
-    '                        </select>\n' +
-    '                    </div>\n' +
-    '                    <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed" >\n' +
-    '                        <label>{{\'FloorLbl\' | translate}}</label>\n' +
-    '                        <select class="select-simple form-control pmd-select2" \n' +
-    '                            ng-options="floor.floorName for floor in roomDlCtrl.Floors"  \n' +
-    '                            ng-model="roomDlCtrl.selectedFloor">\n' +
-    '                        </select>\n' +
-    '                    </div>\n' +
-    '            </form>\n' +
-    '        </div>\n' +
-    '        <div class="pmd-modal-action text-right">\n' +
-    '            <button ng-disabled="newRoomForm.$invalid || roomDlCtrl.selectedBuilding == NULL || roomDlCtrl.selectedFloor == NULL" class="btn pmd-ripple-effect btn-primary" type="button" ng-click="roomDlCtrl.AddNewRoom()">{{\'saveChangesBtn\' | translate}}</button>\n' +
-    '            <button class="btn pmd-ripple-effect btn-default" type="button" ng-click="roomDlCtrl.close()">{{\'DiscardBtn\' | translate}}</button>\n' +
-    '        </div>\n' +
-    '    </div>\n' +
-    '    \n' +
-    '        \n' +
-    '    ');
-}]);
-
-angular.module('home').run(['$templateCache', function($templateCache) {
-  $templateCache.put('./app/admin/room/templates/rooms.html',
-    '<div class="row">        \n' +
-    '    <div class="pmd-card pmd-z-depth" style="margin: 10px">\n' +
-    '        <div class="pmd-card-title">\n' +
-    '            <div class="media-body media-middle">\n' +
-    '                <span>\n' +
-    '                    {{\'Rooms\'|translate}}\n' +
-    '                </span>\n' +
-    '                <br>\n' +
-    '                <span>\n' +
-    '                    {{roomsCtrl.roomsLimit.consumedUsers}} / {{roomsCtrl.roomsLimit.maxNumUsers}} ({{\'roomsLimitConsumedLbl\'|translate}})\n' +
-    '                </span>\n' +
-    '            </div>\n' +
-    '            <!-- <div class="media-body media-middle">\n' +
-    '            </div> -->\n' +
-    '            <div class="media-right datetimepicker">\n' +
-    '            <button ng-disabled="roomsCtrl.roomsLimit.consumedUsers == roomsCtrl.roomsLimit.maxNumUsers" ng-click="roomsCtrl.openRoomDialog()" class="btn pmd-ripple-effect btn-primary pmd-z-depth" type="button">{{\'AddRoomBtn\' | translate}}</button>\n' +
-    '\n' +
-    '            </div>\n' +
-    '        </div>\n' +
-    '        \n' +
-    '        <div ng-if="roomsCtrl.rooms.results.length == 0">\n' +
-    '                <span>{{\'NoroomsAvailable\' | translate}}</span>\n' +
-    '        </div>\n' +
-    '       \n' +
-    '        <div class="pmd-card-body" ng-if="roomsCtrl.rooms.results.length > 0">\n' +
-    '            <div class="table-responsive">\n' +
-    '                <table class="table pmd-table table-hover">\n' +
-    '                    <thead>\n' +
-    '                        <tr>\n' +
-    '                            <th >{{\'Name\' | translate}}</th>\n' +
-    '                            <th >{{\'BuildingLbl\' | translate}}</th>\n' +
-    '                            <th >{{\'FloorLbl\' | translate}}</th>\n' +
-    '                            <th ></th>\n' +
-    '                        </tr>\n' +
-    '                    </thead>\n' +
-    '                    <tbody>\n' +
-    '                        <tr ng-repeat="room in roomsCtrl.rooms.results">\n' +
-    '                            <td data-title="Name" >{{room.roomName}}</td>\n' +
-    '                            <td data-title="Name" >{{room.buildingName}}</td>\n' +
-    '                            <td data-title="Name" >{{room.floorName}}</td>\n' +
-    '                            \n' +
-    '                            <td>\n' +
-    '                                <a ng-show="!room.isActive" ng-click="roomsCtrl.ActivateRoom(room)" class="cursorPointer">{{\'ActivateBtn\' | translate}}</a>\n' +
-    '                                <a ng-show="room.isActive" ng-click="roomsCtrl.DeactivateRoom(room)" class="cursorPointer">{{\'DeActivateBtn\' | translate}}</a>\n' +
-    '                            </td>\n' +
-    '                            <td >\n' +
-    '                                <i class="material-icons md-dark pmd-md cursorPointer font25" ng-click="roomsCtrl.openEditRoomDialog($index);">mode_edit</i>\n' +
-    '                                <i class="material-icons pmd-md deleteButton cursorPointer font25" ng-click="roomsCtrl.openDeleteRoomDialog(room.roomName,room.roomId)">delete</i>\n' +
-    '                            </td>\n' +
-    '                        </tr>\n' +
-    '                    </tbody>\n' +
-    '                </table>\n' +
-    '            </div>\n' +
-    '            <div style="text-align:center;" paging page="1" page-size="10" total="roomsCtrl.rooms.totalCount" paging-action="roomsCtrl.changePageRooms( page)"\n' +
-    '            flex="nogrow" show-prev-next="true" show-first-last="true" hide-if-empty="true" disabled-class="hide">\n' +
-    '                </div>\n' +
-    '        </div> \n' +
-    '        \n' +
-    '    </div>\n' +
-    '    <div class="col-xs-10 col-sm-10 col-md-4">\n' +
-    '        <div class="pmd-card pmd-z-depth">\n' +
-    '            <div class="pmd-card-title">\n' +
-    '                <div class="media-body media-middle">\n' +
-    '                    <span>\n' +
-    '                        {{\'BuildingLbl\'|translate}}\n' +
-    '                    </span>\n' +
-    '                </div>\n' +
-    '                <!-- <div class="media-body media-middle">\n' +
-    '                </div> -->\n' +
-    '                <div class="media-right datetimepicker">\n' +
-    '                    <button ng-click="roomsCtrl.openBuildingDialog()" class="btn pmd-ripple-effect btn-primary pmd-z-depth" type="button">{{\'AddBuildingBtn\' | translate}}</button>\n' +
-    '\n' +
-    '                </div>\n' +
-    '            </div>\n' +
-    '            <div class="pmd-card-body">\n' +
-    '                <div class="total-sales" ng-if="roomsCtrl.buildings.results.length > 0">\n' +
-    '                    <div class="table-responsive">\n' +
-    '                        <table class="table pmd-table table-hover">\n' +
-    '                            <thead>\n' +
-    '                                <tr>\n' +
-    '                                    <th>{{\'Name\' | translate}}</th>\n' +
-    '                                    <th></th>\n' +
-    '                                </tr>\n' +
-    '                            </thead>\n' +
-    '                            <tbody>\n' +
-    '                                <tr ng-repeat="building in roomsCtrl.buildings.results">\n' +
-    '                                    <td data-title="Name">{{building.buildingName}}</td>\n' +
-    '\n' +
-    '                                    <td width="30%">\n' +
-    '                                        <i class="material-icons md-dark pmd-md cursorPointer font25" ng-click="roomsCtrl.openEditBuildingDialog($index);">mode_edit</i>\n' +
-    '                                        <!-- <i class="material-icons pmd-md deleteButton cursorPointer font25" ng-click="roomsCtrl.openDeleteBuildingDialog(building.buildingName,building.buildingId)">delete</i> -->\n' +
-    '                                    </td>\n' +
-    '                                </tr>\n' +
-    '                            </tbody>\n' +
-    '                        </table>\n' +
-    '                    </div>\n' +
-    '                    <div style="text-align:center;" paging page="1" page-size="10" total="roomsCtrl.buildings.totalCount" paging-action="roomsCtrl.changePageBuilding( page)"\n' +
-    '                        flex="nogrow" show-prev-next="true" show-first-last="true" hide-if-empty="true" disabled-class="hide">\n' +
-    '                    </div>\n' +
-    '                </div>\n' +
-    '                <div  class="total-sales" ng-if="roomsCtrl.buildings.results.length <= 0">\n' +
-    '                        {{\'NoBuildingLbl\'|translate}}                        \n' +
-    '                </div>\n' +
-    '            </div>\n' +
-    '        </div>\n' +
-    '    </div>\n' +
-    '\n' +
-    '\n' +
-    '    <div class="col-xs-10 col-sm-10 col-md-4">\n' +
-    '            <div class="pmd-card pmd-z-depth">\n' +
-    '                <div class="pmd-card-title">\n' +
-    '                    <div class="media-body media-middle">\n' +
-    '                        <span>\n' +
-    '                            {{\'FloorLbl\'|translate}}\n' +
-    '                        </span>\n' +
-    '                    </div>\n' +
-    '                    <!-- <div class="media-body media-middle">\n' +
-    '                    </div> -->\n' +
-    '                    <div class="media-right datetimepicker">\n' +
-    '                        <button ng-click="roomsCtrl.openFloorDialog()" class="btn pmd-ripple-effect btn-primary pmd-z-depth" type="button">{{\'AddFloorBtn\' | translate}}</button>\n' +
-    '\n' +
-    '                    </div>\n' +
-    '                </div>\n' +
-    '                <div class="pmd-card-body">\n' +
-    '                    <div class="total-sales" ng-if="roomsCtrl.floors.results.length > 0">\n' +
-    '                        <div class="table-responsive">\n' +
-    '                            <table class="table pmd-table table-hover">\n' +
-    '                                <thead>\n' +
-    '                                    <tr>\n' +
-    '                                        <th>{{\'Name\' | translate}}</th>\n' +
-    '                                        <th></th>\n' +
-    '                                    </tr>\n' +
-    '                                </thead>\n' +
-    '                                <tbody>\n' +
-    '                                    <tr ng-repeat="floor in roomsCtrl.floors.results">\n' +
-    '                                        <td data-title="Name">{{floor.floorName}}</td>\n' +
-    '                                        \n' +
-    '                                        <td width="30%">\n' +
-    '                                            <i class="material-icons md-dark pmd-md cursorPointer font25" ng-click="roomsCtrl.openEditFloorDialog($index);">mode_edit</i>\n' +
-    '                                            <!-- <i class="material-icons pmd-md deleteButton cursorPointer font25" ng-click="roomsCtrl.openDeleteFloorDialog(floor.floorName,floor.floorId)">delete</i> -->\n' +
-    '                                        </td>\n' +
-    '                                    </tr>\n' +
-    '                                </tbody>\n' +
-    '                            </table>\n' +
-    '                        </div>\n' +
-    '                        <div style="text-align:center;" paging page="1" page-size="10" total="roomsCtrl.floors.totalCount" paging-action="roomsCtrl.changePageFloor( page)"\n' +
-    '                            flex="nogrow" show-prev-next="true" show-first-last="true" hide-if-empty="true" disabled-class="hide">\n' +
-    '                        </div>\n' +
-    '                    </div>\n' +
-    '                    <div  class="total-sales" ng-if="roomsCtrl.floors.results.length <= 0">\n' +
-    '                            {{\'NoFloorLbl\'|translate}}                        \n' +
-    '                    </div>\n' +
-    '                </div>\n' +
-    '            </div>\n' +
-    '    </div>\n' +
-    '\n' +
-    '   \n' +
-    '</div>');
-}]);
-
-angular.module('home').run(['$templateCache', function($templateCache) {
   $templateCache.put('./app/admin/requests/templates/requestDetail.html',
     '<div class="modal-content">\n' +
     '        <div class="modal-header bordered">\n' +
@@ -3116,6 +2642,81 @@ angular.module('home').run(['$templateCache', function($templateCache) {
     '    </div> \n' +
     '    \n' +
     '</div>					\n' +
+    '    ');
+}]);
+
+angular.module('home').run(['$templateCache', function($templateCache) {
+  $templateCache.put('./app/admin/featuresbackground/templates/background.html',
+    '<div >\n' +
+    '       \n' +
+    '    <div style="margin-bottom:10px">\n' +
+    '            <button  ng-click="backgroundCtrl.openbackgroundDialog()" class="btn pmd-ripple-effect btn-primary pmd-z-depth" type="button">{{\'AddbackgroundBtn\' | translate}}</button>\n' +
+    '            <!-- <span ng-if="!backgroundCtrl.Backgrounds.isParentTranslated"> <i class="material-icons md-dark pmd-md warrningIcon">warning</i> {{\'MenuNotTranslated\' | translate}}</span> -->\n' +
+    '        </div> \n' +
+    '        <div ng-if="backgroundCtrl.Backgrounds.results.length == 0">\n' +
+    '                <span>{{\'NoBackgroundAvailable\' | translate}}</span>\n' +
+    '        </div>\n' +
+    '        <div class="pmd-card pmd-z-depth pmd-card-custom-view" ng-if="backgroundCtrl.Backgrounds.results.length > 0">\n' +
+    '            <div class="table-responsive">\n' +
+    '                <table class="table pmd-table table-hover">\n' +
+    '                    <thead>\n' +
+    '                        <tr> \n' +
+    '                            <th >{{\'Imagelbl\' | translate}}</th>\n' +
+    '                            <th >{{\'status\' | translate}}</th>\n' +
+    '                            <th ></th>\n' +
+    '                        </tr>\n' +
+    '                    </thead>\n' +
+    '                    <tbody>\n' +
+    '                        <tr ng-class="{\'red-text\': Background.isSelected == true }" ng-repeat="Background in backgroundCtrl.Backgrounds.results"> \n' +
+    '                            <td data-title="Image" ><img ng-src="{{Background.imageUrl}}" ng-alt="{{Background.BackgroundName}}" style="max-height: 200px;max-width: 200px;"/></td>\n' +
+    '                            <!-- <td></td> -->\n' +
+    '                            <td>\n' +
+    '                                 <a ng-show="Background.isSelected"   class="cursorPointer" style="color: white;">{{\'CurrentBtn\' | translate}}</a>\n' +
+    '                                 <a ng-show="!Background.isSelected" ng-click="backgroundCtrl.Activate(Background)" class="cursorPointer">{{\'NotCurrentBtn\' | translate}}</a>\n' +
+    '                            </td>\n' +
+    '                          \n' +
+    '                        </tr>\n' +
+    '                    </tbody>\n' +
+    '                </table>\n' +
+    '            </div>\n' +
+    '            <div style="text-align:center;" paging page="1" page-size="10" total="backgroundCtrl.Backgrounds.totalCount" paging-action="backgroundCtrl.changePage( page)"\n' +
+    '            flex="nogrow" show-prev-next="true" show-first-last="true" hide-if-empty="true" disabled-class="hide">\n' +
+    '               </div>\n' +
+    '        </div> \n' +
+    '    \n' +
+    '    \n' +
+    '    </div>					\n' +
+    '    ');
+}]);
+
+angular.module('home').run(['$templateCache', function($templateCache) {
+  $templateCache.put('./app/admin/featuresbackground/templates/newBackground.html',
+    '<div class="modal-content">\n' +
+    '        <div class="modal-header bordered">\n' +
+    '            <button class="close" type="button" ng-click="backgroundCtrl.close()">×</button>\n' +
+    '            <h2 class="pmd-card-title-text">{{\'NewbackgroundLbl\' | translate}}</h2>\n' +
+    '        </div>\n' +
+    '        <div class="modal-body">\n' +
+    '            <form class="form-horizontal" name="newbackgroundForm">\n' +
+    '           \n' +
+    '                <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed" >       \n' +
+    '                        <input id="backgroundImage" name="backgroundImage" style="display: none;" onchange="angular.element(this).scope().AddbackgroundImage(this.files)" type="file" required>\n' +
+    '                        <button ng-click="backgroundCtrl.LoadUploadImage()" >{{\'UploadImageBtn\' | translate}}</button>\n' +
+    '                        <img ng-src="{{backgroundCtrl.backgroundImage}}" style="max-height: 200px;max-width: 200px;">\n' +
+    '                        <span > <i class="material-icons md-dark pmd-md warrningIcon">warning</i> {{\'RecommendedBackgroundImage\' | translate}}</span>\n' +
+    '                          <div ng-messages="newbackgroundForm.backgroundImage.$error" >\n' +
+    '                            <div ng-if="newbackgroundForm.backgroundImage.$error.required">{{\'requiredErr\' | translate}}</div>\n' +
+    '                        </div>\n' +
+    '                </div>\n' +
+    '            </form>\n' +
+    '        </div>\n' +
+    '        <div class="pmd-modal-action text-right">\n' +
+    '            <button ng-disabled="newbackgroundForm.$invalid  || backgroundCtrl.backgroundImage== null" class="btn pmd-ripple-effect btn-primary" type="button" ng-click="backgroundCtrl.AddNewbackground()">{{\'saveChangesBtn\' | translate}}</button>\n' +
+    '            <button class="btn pmd-ripple-effect btn-default" type="button" ng-click="backgroundCtrl.close()">{{\'DiscardBtn\' | translate}}</button>\n' +
+    '        </div>\n' +
+    '    </div>\n' +
+    '    \n' +
+    '        \n' +
     '    ');
 }]);
 
@@ -3938,6 +3539,405 @@ angular.module('home').run(['$templateCache', function($templateCache) {
     '        </div>\n' +
     '</div>\n' +
     '');
+}]);
+
+angular.module('home').run(['$templateCache', function($templateCache) {
+  $templateCache.put('./app/admin/room/templates/editBuilding.html',
+    '<div class="modal-content">\n' +
+    '    <div class="modal-header bordered">\n' +
+    '        <button class="close" type="button" ng-click="editBuildingDlCtrl.close()">×</button>\n' +
+    '        <h2 class="pmd-card-title-text">{{\'UpdateBuildingLbl\' | translate}}</h2>\n' +
+    '    </div>\n' +
+    '    <div class="modal-body">\n' +
+    '        <form class="form-horizontal" name="updateBuildingForm">\n' +
+    '            <div class="form-group pmd-textfield pmd-textfield-floating-label  pmd-textfield-floating-label-completed">\n' +
+    '                <label for="first-name">{{\'roomName\' | translate}}</label>\n' +
+    '                <input required type="text" class="mat-input form-control" name="buildingName" ng-model="editBuildingDlCtrl.Building.buildingName"  ng-maxlength="20">\n' +
+    '                <div ng-messages="updateBuildingForm.buildingName.$error" >\n' +
+    '                    <div ng-if="updateBuildingForm.buildingName.$error.required && !updateBuildingForm.buildingName.$pristine">{{\'requiredErr\' | translate}}</div>\n' +
+    '                    <div ng-if="(updateBuildingForm.buildingName.$error.maxlength) && !updateBuildingForm.roomName.$error.required">{{\'maximumMsg\' | translate}}20</div>\n' +
+    '                </div>\n' +
+    '            </div>\n' +
+    '        </form>\n' +
+    '    </div>\n' +
+    '    <div class="pmd-modal-action text-right">\n' +
+    '        <button ng-disabled="updateBuildingForm.$invalid" class="btn pmd-ripple-effect btn-primary" type="button" ng-click="editBuildingDlCtrl.updateBuilding()">{{\'saveChangesBtn\' | translate}}</button>\n' +
+    '        <button class="btn pmd-ripple-effect btn-default" type="button" ng-click="editBuildingDlCtrl.close()">{{\'DiscardBtn\' | translate}}</button>\n' +
+    '    </div>\n' +
+    '</div>\n' +
+    '\n' +
+    '    \n' +
+    '');
+}]);
+
+angular.module('home').run(['$templateCache', function($templateCache) {
+  $templateCache.put('./app/admin/room/templates/editFloor.html',
+    '<div class="modal-content">\n' +
+    '    <div class="modal-header bordered">\n' +
+    '        <button class="close" type="button" ng-click="editFloorDlCtrl.close()">×</button>\n' +
+    '        <h2 class="pmd-card-title-text">{{\'UpdateFloorLbl\' | translate}}</h2>\n' +
+    '    </div>\n' +
+    '    <div class="modal-body">\n' +
+    '        <form class="form-horizontal" name="updateFloorForm">\n' +
+    '            <div class="form-group pmd-textfield pmd-textfield-floating-label  pmd-textfield-floating-label-completed">\n' +
+    '                <label for="first-name">{{\'roomName\' | translate}}</label>\n' +
+    '                <input required type="text" class="mat-input form-control" name="floorName" ng-model="editFloorDlCtrl.Floor.floorName" ng-maxlength="20">\n' +
+    '                <div ng-messages="updateFloorForm.floorName.$error" >\n' +
+    '                    <div ng-if="updateFloorForm.floorName.$error.required && !updateFloorForm.floorName.$pristine">{{\'requiredErr\' | translate}}</div>\n' +
+    '                    <div ng-if="(updateFloorForm.floorName.$error.maxlength) && !updateFloorForm.roomName.$error.required">{{\'maximumMsg\' | translate}} 20</div>\n' +
+    '                </div>\n' +
+    '            </div>\n' +
+    '        </form>\n' +
+    '    </div>\n' +
+    '    <div class="pmd-modal-action text-right">\n' +
+    '        <button ng-disabled="updateFloorForm.$invalid" class="btn pmd-ripple-effect btn-primary" type="button" ng-click="editFloorDlCtrl.updateFloor()">{{\'saveChangesBtn\' | translate}}</button>\n' +
+    '        <button class="btn pmd-ripple-effect btn-default" type="button" ng-click="editFloorDlCtrl.close()">{{\'DiscardBtn\' | translate}}</button>\n' +
+    '    </div>\n' +
+    '</div>\n' +
+    '');
+}]);
+
+angular.module('home').run(['$templateCache', function($templateCache) {
+  $templateCache.put('./app/admin/room/templates/editRoom.html',
+    '<div class="modal-content">\n' +
+    '        <div class="modal-header bordered">\n' +
+    '            <button class="close" type="button" ng-click="editRoomDlCtrl.close()">×</button>\n' +
+    '            <h2 class="pmd-card-title-text">{{\'UpdateRoomLbl\' | translate}}</h2>\n' +
+    '        </div>\n' +
+    '        <div class="modal-body">\n' +
+    '            <form class="form-horizontal" name="updateRoomForm">\n' +
+    '                <div class="form-group pmd-textfield pmd-textfield-floating-label  pmd-textfield-floating-label-completed">\n' +
+    '                    <label for="first-name">{{\'roomName\' | translate}}</label>\n' +
+    '                    <input required type="text" class="mat-input form-control" name="roomName" ng-model="editRoomDlCtrl.Room.roomName" ng-minlength="3" ng-maxlength="100">\n' +
+    '                    <div ng-messages="updateRoomForm.roomName.$error" >\n' +
+    '                        <div ng-if="updateRoomForm.roomName.$error.required && !updateRoomForm.roomName.$pristine">{{\'requiredErr\' | translate}}</div>\n' +
+    '                        <div ng-if="(updateRoomForm.roomName.$error.minlength || updateRoomForm.roomName.$error.maxlength) && !updateRoomForm.roomName.$error.required">{{\'NameLengthError\' | translate}}</div>\n' +
+    '                    </div>\n' +
+    '                </div>\n' +
+    '                <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed" >\n' +
+    '                        <label for="first-name">{{\'RoomPasswordLbl\' | translate}}</label>\n' +
+    '                        <input required type="password" class="mat-input form-control" name="password" ng-model="editRoomDlCtrl.Room.password" ng-minlength="8" ng-maxlength="25">\n' +
+    '                        <div ng-messages="updateRoomForm.password.$error" >\n' +
+    '                            <div ng-if="updateRoomForm.password.$error.required && !updateRoomForm.password.$pristine">{{\'requiredErr\' | translate}}</div>\n' +
+    '                            <div ng-if="(updateRoomForm.password.$error.minlength || updateRoomForm.password.$error.maxlength) && !updateRoomForm.password.newPassword.$error.required">Password length must be 8-25 char.</div>\n' +
+    '                        </div>\n' +
+    '                    </div>\n' +
+    '                    <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed" >\n' +
+    '                        <label for="first-name">{{\'ConfirmPasswordLbl\' | translate}}</label>\n' +
+    '                        <input required type="password" class="mat-input form-control" name="confirmPassword"  ng-model="editRoomDlCtrl.Room.confirmPassword" equalto="updateRoomForm.password" >\n' +
+    '                        <div ng-messages="updateRoomForm.confirmPassword.$error" >\n' +
+    '                            <div ng-if="updateRoomForm.confirmPassword.$error.required && !updateRoomForm.confirmPassword.$pristine">{{\'requiredErr\' | translate}}</div>\n' +
+    '                            <div ng-if="updateRoomForm.confirmPassword.$error.equalto && !updateRoomForm.confirmPassword.$error.required">Passwords don\'t match.</div>\n' +
+    '                        </div>\n' +
+    '                    </div>\n' +
+    '                    <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed">       \n' +
+    '                        <label>{{\'BuildingLbl\' | translate}}</label>\n' +
+    '                        <select required class="select-simple form-control pmd-select2" ng-model="editRoomDlCtrl.Room.buildingId">\n' +
+    '                            <option ng-selected="editRoomDlCtrl.Room.buildingId == item.buildingId" \n' +
+    '                                ng-repeat="item in editRoomDlCtrl.Buildings" \n' +
+    '                                ng-value="{{item.buildingId}}">{{item.buildingName}}</option>\n' +
+    '                        </select>\n' +
+    '                        <div ng-if="editRoomDlCtrl.RestaurantType.length <=0">{{\'NoBuildingLbl\' | translate}} </div>\n' +
+    '                    </div>\n' +
+    '                    <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed">       \n' +
+    '                        <label>{{\'FloorLbl\' | translate}}</label>\n' +
+    '                        <select required class="select-simple form-control pmd-select2" ng-model="editRoomDlCtrl.Room.floorId">\n' +
+    '                            <option ng-selected="editRoomDlCtrl.Room.floorId == item.floorId" \n' +
+    '                                ng-repeat="item in editRoomDlCtrl.Floors" \n' +
+    '                                ng-value="{{item.floorId}}">{{item.floorName}}</option>\n' +
+    '                        </select>\n' +
+    '                        <div ng-if="editRoomDlCtrl.RestaurantType.length <=0">{{\'NoFloorLbl\' | translate}} </div>\n' +
+    '                    </div> \n' +
+    '\n' +
+    '            </form>\n' +
+    '        </div>\n' +
+    '        <div class="pmd-modal-action text-right">\n' +
+    '            <button ng-disabled="updateRoomForm.$invalid || editRoomDlCtrl.Room.buildingId <= 0 || editRoomDlCtrl.Room.floorId <= 0" class="btn pmd-ripple-effect btn-primary" type="button" ng-click="editRoomDlCtrl.updateRoom()">{{\'saveChangesBtn\' | translate}}</button>\n' +
+    '            <button class="btn pmd-ripple-effect btn-default" type="button" ng-click="editRoomDlCtrl.close()">{{\'DiscardBtn\' | translate}}</button>\n' +
+    '        </div>\n' +
+    '    </div>\n' +
+    '    \n' +
+    '        \n' +
+    '    ');
+}]);
+
+angular.module('home').run(['$templateCache', function($templateCache) {
+  $templateCache.put('./app/admin/room/templates/newBuilding.html',
+    '<div class="modal-content">\n' +
+    '    <div class="modal-header bordered">\n' +
+    '        <button class="close" type="button" ng-click="buildingDlCtrl.close()">×</button>\n' +
+    '        <h2 class="pmd-card-title-text">{{\'NewBuildingLbl\' | translate}}</h2>\n' +
+    '    </div>\n' +
+    '    <div class="modal-body">\n' +
+    '        <form class="form-horizontal" name="newBuildingForm">\n' +
+    '            <div class="form-group pmd-textfield pmd-textfield-floating-label">\n' +
+    '                <label for="first-name">{{\'buildingName\' | translate}}</label>\n' +
+    '                <input required type="text" class="mat-input form-control" name="buildingName" ng-model="buildingDlCtrl.buildingName" ng-maxlength="20">\n' +
+    '                <div ng-messages="newBuildingForm.buildingName.$error" >\n' +
+    '                    <div ng-if="newBuildingForm.buildingName.$error.required && !newBuildingForm.buildingName.$pristine">{{\'requiredErr\' | translate}}</div>\n' +
+    '                    <div ng-if="(newBuildingForm.buildingName.$error.maxlength) && !newBuildingForm.buildingName.$error.required">{{\'maximumMsg\' | translate}} 20</div>\n' +
+    '                </div>\n' +
+    '            </div>\n' +
+    '        </form>\n' +
+    '    </div>\n' +
+    '    <div class="pmd-modal-action text-right">\n' +
+    '        <button ng-disabled="newBuildingForm.$invalid" class="btn pmd-ripple-effect btn-primary" type="button" ng-click="buildingDlCtrl.AddNewBuilding()">{{\'saveChangesBtn\' | translate}}</button>\n' +
+    '        <button class="btn pmd-ripple-effect btn-default" type="button" ng-click="buildingDlCtrl.close()">{{\'DiscardBtn\' | translate}}</button>\n' +
+    '    </div>\n' +
+    '</div>\n' +
+    '\n' +
+    '    \n' +
+    '');
+}]);
+
+angular.module('home').run(['$templateCache', function($templateCache) {
+  $templateCache.put('./app/admin/room/templates/newFloor.html',
+    '<div class="modal-content">\n' +
+    '    <div class="modal-header bordered">\n' +
+    '        <button class="close" type="button" ng-click="floorDlCtrl.close()">×</button>\n' +
+    '        <h2 class="pmd-card-title-text">{{\'NewFloorLbl\' | translate}}</h2>\n' +
+    '    </div>\n' +
+    '    <div class="modal-body">\n' +
+    '        <form class="form-horizontal" name="newFloorForm">\n' +
+    '            <div class="form-group pmd-textfield pmd-textfield-floating-label">\n' +
+    '                <label for="first-name">{{\'floorName\' | translate}}</label>\n' +
+    '                <input required type="text" class="mat-input form-control" name="floorName" ng-model="floorDlCtrl.floorName"  ng-maxlength="20">\n' +
+    '                <div ng-messages="newFloorForm.floorName.$error" >\n' +
+    '                    <div ng-if="newFloorForm.floorName.$error.required && !newFloorForm.floorName.$pristine">{{\'requiredErr\' | translate}}</div>\n' +
+    '                    <div ng-if="(newFloorForm.floorName.$error.maxlength) && !newFloorForm.floorName.$error.required">{{\'maximumMsg\' | translate}} 20</div>\n' +
+    '                </div>\n' +
+    '            </div>\n' +
+    '        </form>\n' +
+    '    </div>\n' +
+    '    <div class="pmd-modal-action text-right">\n' +
+    '        <button ng-disabled="newFloorForm.$invalid" class="btn pmd-ripple-effect btn-primary" type="button" ng-click="floorDlCtrl.AddNewFloor()">{{\'saveChangesBtn\' | translate}}</button>\n' +
+    '        <button class="btn pmd-ripple-effect btn-default" type="button" ng-click="floorDlCtrl.close()">{{\'DiscardBtn\' | translate}}</button>\n' +
+    '    </div>\n' +
+    '</div>\n' +
+    '\n' +
+    '    \n' +
+    '');
+}]);
+
+angular.module('home').run(['$templateCache', function($templateCache) {
+  $templateCache.put('./app/admin/room/templates/newRoom.html',
+    '<div class="modal-content">\n' +
+    '        <div class="modal-header bordered">\n' +
+    '            <button class="close" type="button" ng-click="roomDlCtrl.close()">×</button>\n' +
+    '            <h2 class="pmd-card-title-text">{{\'NewRoomLbl\' | translate}}</h2>\n' +
+    '        </div>\n' +
+    '        <div class="modal-body">\n' +
+    '            <form class="form-horizontal" name="newRoomForm">\n' +
+    '                <div class="form-group pmd-textfield pmd-textfield-floating-label">\n' +
+    '                    <label for="first-name">{{\'roomName\' | translate}}</label>\n' +
+    '                    <input required type="text" class="mat-input form-control" name="roomName" ng-model="roomDlCtrl.roomName" ng-minlength="3" ng-maxlength="100">\n' +
+    '                    <div ng-messages="newRoomForm.roomName.$error" >\n' +
+    '                        <div ng-if="newRoomForm.roomName.$error.required && !newRoomForm.roomName.$pristine">{{\'requiredErr\' | translate}}</div>\n' +
+    '                        <div ng-if="(newRoomForm.roomName.$error.minlength || newRoomForm.roomName.$error.maxlength) && !newRoomForm.roomName.$error.required">{{\'NameLengthError\' | translate}}</div>\n' +
+    '                    </div>\n' +
+    '                </div>\n' +
+    '                <div class="form-group pmd-textfield pmd-textfield-floating-label" >\n' +
+    '                        <label for="first-name">{{\'RoomPasswordLbl\' | translate}}</label>\n' +
+    '                        <input required type="password" class="mat-input form-control" name="password" ng-model="roomDlCtrl.password" ng-minlength="8" ng-maxlength="25">\n' +
+    '                        <div ng-messages="newRoomForm.password.$error" >\n' +
+    '                            <div ng-if="newRoomForm.password.$error.required && !newRoomForm.password.$pristine">{{\'requiredErr\' | translate}}</div>\n' +
+    '                            <div ng-if="(newRoomForm.password.$error.minlength || newRoomForm.password.$error.maxlength) && !newRoomForm.password.newPassword.$error.required">Password length must be 8-25 char.</div>\n' +
+    '                        </div>\n' +
+    '                    </div>\n' +
+    '                    <div class="form-group pmd-textfield pmd-textfield-floating-label" >\n' +
+    '                        <label for="first-name">{{\'ConfirmPasswordLbl\' | translate}}</label>\n' +
+    '                        <input required type="password" class="mat-input form-control" name="confirmPassword"  ng-model="roomDlCtrl.confirmPassword" equalto="newRoomForm.password" >\n' +
+    '                        <div ng-messages="newRoomForm.confirmPassword.$error" >\n' +
+    '                            <div ng-if="newRoomForm.confirmPassword.$error.required && !newRoomForm.confirmPassword.$pristine">{{\'requiredErr\' | translate}}</div>\n' +
+    '                            <div ng-if="newRoomForm.confirmPassword.$error.equalto && !newRoomForm.confirmPassword.$error.required">Passwords don\'t match.</div>\n' +
+    '                        </div>\n' +
+    '                    </div>\n' +
+    '                    <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed" >\n' +
+    '                        <label>{{\'BuildingLbl\' | translate}}</label>\n' +
+    '                        <select class="select-simple form-control pmd-select2" \n' +
+    '                            ng-options="building.buildingName for building in roomDlCtrl.Buildings"  \n' +
+    '                            ng-model="roomDlCtrl.selectedBuilding">\n' +
+    '                        </select>\n' +
+    '                    </div>\n' +
+    '                    <div class="form-group pmd-textfield pmd-textfield-floating-label pmd-textfield-floating-label-completed" >\n' +
+    '                        <label>{{\'FloorLbl\' | translate}}</label>\n' +
+    '                        <select class="select-simple form-control pmd-select2" \n' +
+    '                            ng-options="floor.floorName for floor in roomDlCtrl.Floors"  \n' +
+    '                            ng-model="roomDlCtrl.selectedFloor">\n' +
+    '                        </select>\n' +
+    '                    </div>\n' +
+    '            </form>\n' +
+    '        </div>\n' +
+    '        <div class="pmd-modal-action text-right">\n' +
+    '            <button ng-disabled="newRoomForm.$invalid || roomDlCtrl.selectedBuilding == NULL || roomDlCtrl.selectedFloor == NULL" class="btn pmd-ripple-effect btn-primary" type="button" ng-click="roomDlCtrl.AddNewRoom()">{{\'saveChangesBtn\' | translate}}</button>\n' +
+    '            <button class="btn pmd-ripple-effect btn-default" type="button" ng-click="roomDlCtrl.close()">{{\'DiscardBtn\' | translate}}</button>\n' +
+    '        </div>\n' +
+    '    </div>\n' +
+    '    \n' +
+    '        \n' +
+    '    ');
+}]);
+
+angular.module('home').run(['$templateCache', function($templateCache) {
+  $templateCache.put('./app/admin/room/templates/rooms.html',
+    '<div class="row">        \n' +
+    '    <div class="pmd-card pmd-z-depth" style="margin: 10px">\n' +
+    '        <div class="pmd-card-title">\n' +
+    '            <div class="media-body media-middle">\n' +
+    '                <span>\n' +
+    '                    {{\'Rooms\'|translate}}\n' +
+    '                </span>\n' +
+    '                <br>\n' +
+    '                <span>\n' +
+    '                    {{roomsCtrl.roomsLimit.consumedUsers}} / {{roomsCtrl.roomsLimit.maxNumUsers}} ({{\'roomsLimitConsumedLbl\'|translate}})\n' +
+    '                </span>\n' +
+    '            </div>\n' +
+    '            <!-- <div class="media-body media-middle">\n' +
+    '            </div> -->\n' +
+    '            <div class="media-right datetimepicker">\n' +
+    '            <button ng-disabled="roomsCtrl.roomsLimit.consumedUsers == roomsCtrl.roomsLimit.maxNumUsers" ng-click="roomsCtrl.openRoomDialog()" class="btn pmd-ripple-effect btn-primary pmd-z-depth" type="button">{{\'AddRoomBtn\' | translate}}</button>\n' +
+    '\n' +
+    '            </div>\n' +
+    '        </div>\n' +
+    '        \n' +
+    '        <div ng-if="roomsCtrl.rooms.results.length == 0">\n' +
+    '                <span>{{\'NoroomsAvailable\' | translate}}</span>\n' +
+    '        </div>\n' +
+    '       \n' +
+    '        <div class="pmd-card-body" ng-if="roomsCtrl.rooms.results.length > 0">\n' +
+    '            <div class="table-responsive">\n' +
+    '                <table class="table pmd-table table-hover">\n' +
+    '                    <thead>\n' +
+    '                        <tr>\n' +
+    '                            <th >{{\'Name\' | translate}}</th>\n' +
+    '                            <th >{{\'BuildingLbl\' | translate}}</th>\n' +
+    '                            <th >{{\'FloorLbl\' | translate}}</th>\n' +
+    '                            <th ></th>\n' +
+    '                        </tr>\n' +
+    '                    </thead>\n' +
+    '                    <tbody>\n' +
+    '                        <tr ng-repeat="room in roomsCtrl.rooms.results">\n' +
+    '                            <td data-title="Name" >{{room.roomName}}</td>\n' +
+    '                            <td data-title="Name" >{{room.buildingName}}</td>\n' +
+    '                            <td data-title="Name" >{{room.floorName}}</td>\n' +
+    '                            \n' +
+    '                            <td>\n' +
+    '                                <a ng-show="!room.isActive" ng-click="roomsCtrl.ActivateRoom(room)" class="cursorPointer">{{\'ActivateBtn\' | translate}}</a>\n' +
+    '                                <a ng-show="room.isActive" ng-click="roomsCtrl.DeactivateRoom(room)" class="cursorPointer">{{\'DeActivateBtn\' | translate}}</a>\n' +
+    '                            </td>\n' +
+    '                            <td >\n' +
+    '                                <i class="material-icons md-dark pmd-md cursorPointer font25" ng-click="roomsCtrl.openEditRoomDialog($index);">mode_edit</i>\n' +
+    '                                <i class="material-icons pmd-md deleteButton cursorPointer font25" ng-click="roomsCtrl.openDeleteRoomDialog(room.roomName,room.roomId)">delete</i>\n' +
+    '                            </td>\n' +
+    '                        </tr>\n' +
+    '                    </tbody>\n' +
+    '                </table>\n' +
+    '            </div>\n' +
+    '            <div style="text-align:center;" paging page="1" page-size="10" total="roomsCtrl.rooms.totalCount" paging-action="roomsCtrl.changePageRooms( page)"\n' +
+    '            flex="nogrow" show-prev-next="true" show-first-last="true" hide-if-empty="true" disabled-class="hide">\n' +
+    '                </div>\n' +
+    '        </div> \n' +
+    '        \n' +
+    '    </div>\n' +
+    '    <div class="col-xs-10 col-sm-10 col-md-4">\n' +
+    '        <div class="pmd-card pmd-z-depth">\n' +
+    '            <div class="pmd-card-title">\n' +
+    '                <div class="media-body media-middle">\n' +
+    '                    <span>\n' +
+    '                        {{\'BuildingLbl\'|translate}}\n' +
+    '                    </span>\n' +
+    '                </div>\n' +
+    '                <!-- <div class="media-body media-middle">\n' +
+    '                </div> -->\n' +
+    '                <div class="media-right datetimepicker">\n' +
+    '                    <button ng-click="roomsCtrl.openBuildingDialog()" class="btn pmd-ripple-effect btn-primary pmd-z-depth" type="button">{{\'AddBuildingBtn\' | translate}}</button>\n' +
+    '\n' +
+    '                </div>\n' +
+    '            </div>\n' +
+    '            <div class="pmd-card-body">\n' +
+    '                <div class="total-sales" ng-if="roomsCtrl.buildings.results.length > 0">\n' +
+    '                    <div class="table-responsive">\n' +
+    '                        <table class="table pmd-table table-hover">\n' +
+    '                            <thead>\n' +
+    '                                <tr>\n' +
+    '                                    <th>{{\'Name\' | translate}}</th>\n' +
+    '                                    <th></th>\n' +
+    '                                </tr>\n' +
+    '                            </thead>\n' +
+    '                            <tbody>\n' +
+    '                                <tr ng-repeat="building in roomsCtrl.buildings.results">\n' +
+    '                                    <td data-title="Name">{{building.buildingName}}</td>\n' +
+    '\n' +
+    '                                    <td width="30%">\n' +
+    '                                        <i class="material-icons md-dark pmd-md cursorPointer font25" ng-click="roomsCtrl.openEditBuildingDialog($index);">mode_edit</i>\n' +
+    '                                        <!-- <i class="material-icons pmd-md deleteButton cursorPointer font25" ng-click="roomsCtrl.openDeleteBuildingDialog(building.buildingName,building.buildingId)">delete</i> -->\n' +
+    '                                    </td>\n' +
+    '                                </tr>\n' +
+    '                            </tbody>\n' +
+    '                        </table>\n' +
+    '                    </div>\n' +
+    '                    <div style="text-align:center;" paging page="1" page-size="10" total="roomsCtrl.buildings.totalCount" paging-action="roomsCtrl.changePageBuilding( page)"\n' +
+    '                        flex="nogrow" show-prev-next="true" show-first-last="true" hide-if-empty="true" disabled-class="hide">\n' +
+    '                    </div>\n' +
+    '                </div>\n' +
+    '                <div  class="total-sales" ng-if="roomsCtrl.buildings.results.length <= 0">\n' +
+    '                        {{\'NoBuildingLbl\'|translate}}                        \n' +
+    '                </div>\n' +
+    '            </div>\n' +
+    '        </div>\n' +
+    '    </div>\n' +
+    '\n' +
+    '\n' +
+    '    <div class="col-xs-10 col-sm-10 col-md-4">\n' +
+    '            <div class="pmd-card pmd-z-depth">\n' +
+    '                <div class="pmd-card-title">\n' +
+    '                    <div class="media-body media-middle">\n' +
+    '                        <span>\n' +
+    '                            {{\'FloorLbl\'|translate}}\n' +
+    '                        </span>\n' +
+    '                    </div>\n' +
+    '                    <!-- <div class="media-body media-middle">\n' +
+    '                    </div> -->\n' +
+    '                    <div class="media-right datetimepicker">\n' +
+    '                        <button ng-click="roomsCtrl.openFloorDialog()" class="btn pmd-ripple-effect btn-primary pmd-z-depth" type="button">{{\'AddFloorBtn\' | translate}}</button>\n' +
+    '\n' +
+    '                    </div>\n' +
+    '                </div>\n' +
+    '                <div class="pmd-card-body">\n' +
+    '                    <div class="total-sales" ng-if="roomsCtrl.floors.results.length > 0">\n' +
+    '                        <div class="table-responsive">\n' +
+    '                            <table class="table pmd-table table-hover">\n' +
+    '                                <thead>\n' +
+    '                                    <tr>\n' +
+    '                                        <th>{{\'Name\' | translate}}</th>\n' +
+    '                                        <th></th>\n' +
+    '                                    </tr>\n' +
+    '                                </thead>\n' +
+    '                                <tbody>\n' +
+    '                                    <tr ng-repeat="floor in roomsCtrl.floors.results">\n' +
+    '                                        <td data-title="Name">{{floor.floorName}}</td>\n' +
+    '                                        \n' +
+    '                                        <td width="30%">\n' +
+    '                                            <i class="material-icons md-dark pmd-md cursorPointer font25" ng-click="roomsCtrl.openEditFloorDialog($index);">mode_edit</i>\n' +
+    '                                            <!-- <i class="material-icons pmd-md deleteButton cursorPointer font25" ng-click="roomsCtrl.openDeleteFloorDialog(floor.floorName,floor.floorId)">delete</i> -->\n' +
+    '                                        </td>\n' +
+    '                                    </tr>\n' +
+    '                                </tbody>\n' +
+    '                            </table>\n' +
+    '                        </div>\n' +
+    '                        <div style="text-align:center;" paging page="1" page-size="10" total="roomsCtrl.floors.totalCount" paging-action="roomsCtrl.changePageFloor( page)"\n' +
+    '                            flex="nogrow" show-prev-next="true" show-first-last="true" hide-if-empty="true" disabled-class="hide">\n' +
+    '                        </div>\n' +
+    '                    </div>\n' +
+    '                    <div  class="total-sales" ng-if="roomsCtrl.floors.results.length <= 0">\n' +
+    '                            {{\'NoFloorLbl\'|translate}}                        \n' +
+    '                    </div>\n' +
+    '                </div>\n' +
+    '            </div>\n' +
+    '    </div>\n' +
+    '\n' +
+    '   \n' +
+    '</div>');
 }]);
 
 angular.module('home').run(['$templateCache', function($templateCache) {
